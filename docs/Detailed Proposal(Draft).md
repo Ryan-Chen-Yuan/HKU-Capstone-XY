@@ -131,7 +131,8 @@ TODO(@chenyuan)
 TODO(@suyingcheng)
 
 #### 内容搜索和推荐
-
+整合ai搜推引擎
+开发搜推uiux工具栏
 TODO(@xuhanlin)
 
 ### 个人信息与评测
