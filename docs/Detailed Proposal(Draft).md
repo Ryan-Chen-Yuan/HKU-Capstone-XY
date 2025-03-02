@@ -134,9 +134,63 @@ TODO(@suyingcheng)
 
 TODO(@xuhanlin)
 
-### 个人信息与评测
+### (个人信息与评测@wangxueyao)
 
-TODO(@wangxueyao)
+### User Profile Feature
+
+#### Overview
+Users can view and edit their personal information in the profile section.
+
+### Psychological Assessment Feature
+
+#### Overview
+
+The Psychological Assessment feature is designed to help users understand their mental health status through regular assessments, detailed reports, and trend analysis. By combining questionnaire results and chat history analysis, this feature provides users with valuable insights into their emotional state, stress levels, and key concerns over time.
+
+#### Key Functions
+
+##### 1. Regular Assessments
+- Frequency: Monthly assessments for regular users.
+- Data Sources:
+  - Questionnaire Results: Users complete a psychological questionnaire.
+  - Chat History: Analysis of user chat history with the AI assistant.
+- Assessment Report:
+  - Emotional Score: A sentiment analysis score derived from chat history.
+  - Stress Level: A calculated score based on questionnaire responses.
+  - Keyword List: A list of high-frequency keywords extracted from chat history (e.g., ["stress", "anxiety"]).
+
+##### 2. Visualization Report
+
+
+##### 3. Trend Analysis
+- Identify patterns and trends in the user's mental health status and provide long-term insights to help users track their progress after continuous assessments.
+---
+
+#### Technical Implementation
+
+###### Assessment Data
+| **Content**         | **Data Source**          | **Technology**                          |
+|----------------------|--------------------------|-----------------------------------------|
+| Emotional score      | Chat History             | Sentiment analysis by NLP APIs    |
+| Stress level         | Questionnaire Results    | Design a psychological questionnaire and calculate stress levels based on user responses|
+| High-frequency keyword List| Chat History| Extract keywords using NLP techniques (e.g., NLP API, TF-IDF, LDA).
+ |
+
+
+##### Example
+
+###### User ID: 12345 | Assessment Date: 2025-03-01
+
+###### Emotional Score: 0.3 (Negative)
+###### Stress Level: 7.5 (High)
+###### Keyword List: ["stress", "anxiety", "work pressure"]
+
+
+###### Trend Analysis
+- Emotional Score Trend: [Line Chart]
+- Stress Level Trend: [Line Chart]
+- Keyword Cloud: [Word Cloud]
+
 
 ## Roadmap
 
