@@ -287,7 +287,7 @@ Real-time mental state function will employ a sentiment score to reflect the use
 |----------------------|--------------------------|-----------------------------------------|
 | Emotional score      | Chat History             | Sentiment analysis by NLP APIs    |
 | Stress level         | Questionnaire Results    | Design a psychological questionnaire and calculate stress levels based on user responses|
-| High-frequency keyword List| Chat History| Extract keywords using NLP techniques (e.g., NLP API, TF-IDF, LDA).
+| High-frequency keyword List| Chat History| Extract keywords using NLP techniques (e.g., NLP API, TF-IDF, LDA)
 
 ###### Example
 
@@ -311,15 +311,25 @@ The user's real-time mental state can be evaluated by performing sentiment analy
 
 TODO(@all)
 
-Item Time
-Short proposal February 5
-Detailed Proposal March 10
-Progress 1 April 7
-Progress 2 May 5
-Interim Report & Presentation June 1
-Progress 3 June 16
-Progress 4 July 7
-Webpage July 15
-Project Report July 18
-Oral Examination end of July
-Revised Project Report August 1
+(WANG Xueyao / Features 3.3 and 3.4)
+
+| **Tasks**         | **Estimated completion time**          | **Estimated number of learning hours**                          |
+|----------------------|--------------------------|-----------------------------------------|
+| User Profile Feature | Progress 1 April 7 | 2-3 Weeks
+| Regular Assessments | Progress 2 May 5 | 4 Weeks
+| Visualization Report| Progress 3 June 16 | 2 Weeks
+| Trend Analysis | Progress 3 June 16  | 2 Weeks
+| Real-time mental state | Progress 4 July 7  | 4-6 Weeks
+
+Item Time  
+Short proposal February 5  
+Detailed Proposal March 10  
+Progress 1 April 7  
+Progress 2 May 5  
+Interim Report & Presentation June 1  
+Progress 3 June 16  
+Progress 4 July 7  
+Webpage July 15  
+Project Report July 18  
+Oral Examination end of July  
+Revised Project Report August 1  
