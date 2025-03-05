@@ -406,7 +406,7 @@ Real-time mental state function will employ a sentiment score to reflect the use
 |----------------------|--------------------------|-----------------------------------------|
 | Emotional score      | Chat History             | Sentiment analysis by NLP APIs    |
 | Stress level         | Questionnaire Results    | Design a psychological questionnaire and calculate stress levels based on user responses|
-| High-frequency keyword List| Chat History| Extract keywords using NLP techniques (e.g., NLP API, TF-IDF, LDA).
+| High-frequency keyword List| Chat History| Extract keywords using NLP techniques (e.g., NLP API, TF-IDF, LDA)
 
 ###### Example
 ###### Example
