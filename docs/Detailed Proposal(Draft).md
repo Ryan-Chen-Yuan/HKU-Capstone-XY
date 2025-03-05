@@ -209,6 +209,112 @@ sequenceDiagram
 
 ##### 内容搜索和推荐方案
 
+1. **数据存储层**
+   - **MongoDB 核心集合设计**：
+     ```javascript
+     // 用户集合（users）
+     {
+       _id: ObjectId,
+       username: String,
+       preferences: { tags: [String], topics: [String] }, // 动态更新的用户兴趣
+       behavior_history: [ // 固定长度队列（保留最近100条）
+         { action: "search/click/like", content_id: ObjectId, timestamp: Date }
+       ]
+     }
+     
+     // 内容集合（contents）
+     {
+       _id: ObjectId,
+       title: String,
+       body: String,
+       tags: [String],
+       embeddings: [Float], // 文本向量（通过AI模型预计算）
+       stats: { views: Int, likes: Int },
+       created_at: Date
+     }
+     ```
+
+   - **索引策略**：
+     - 内容集合：`tags`（多键索引）、`created_at`（降序复合索引）、`title`（文本索引）
+     - 用户行为日志：`content_id` + `timestamp` 复合索引
+
+2. **搜索模块**
+   - **中文搜索实现**：
+     - 预处理：使用 `jieba` 对内容标题/正文分词，存储为 `tags` 数组字段
+     - 查询时：将用户输入同样分词后，通过 `$in` + `$text` 索引联合查询
+     - 权重策略：标题匹配权重 > 标签匹配 > 正文匹配
+
+   - **性能优化**：
+     - 分页采用 `seek pagination`（基于 `_id` + `created_at` 游标分页，避免skip性能问题）
+     - 热词缓存：Redis 存储近期高频搜索词，辅助自动补全
+
+3. **推荐模块**
+   
+   - **冷启动策略**：
+     - 新用户：基于全局热门内容（`stats.likes` 降序）
+     - 新内容：基于标签相似性推荐（余弦相似度匹配 `tags` 字段）
+   
+   - **实时推荐流程**：
+     ```python
+     # 用户触发行为（如点击内容）后：
+     1. 更新用户.behavior_history（维护固定长度队列）
+     2. 基于最近10条行为的 content.embeddings 计算平均向量
+     3. 在 contents 集合中 ANN 检索相似内容（MongoDB $vectorSearch）
+     4. 混合热度权重（0.2*views + 0.3*likes）生成最终推荐列表
+     4. 结果缓存至 Redis（用户ID为key，过期时间5分钟）
+     ```
+
+4. **AI增强**
+
+- **文本向量化**：
+  - 使用 `BERT-base-Chinese` 模型生成内容 `embeddings`（768维）
+  - 预计算：内容入库时通过批处理生成向量
+  - 更新策略：内容修改后触发向量重算
+
+- **轻量级主题建模**：
+  - 对 `tags` 字段进行 TF-IDF 统计，自动合并高频关联标签（如 "机器学习" 和 "AI"）
+  - 结果用于用户兴趣画像的 `preferences.topics` 字段
+
+- **深度学习部署**
+
+  - **模型选型**：
+    - 双塔召回模型：用户行为序列（通过LSTM编码） + 内容向量 计算相似度
+    - 离线训练：TensorFlow，每周全量更新
+    - 在线服务：TF Serving + Docker 容器化，响应时间 <50ms
+
+
+  - **特征工程**：
+    
+    ```python
+    # 用户特征：
+    [
+      mean(behavior_embeddings), // 行为序列的向量均值
+      preferences.topic_weights, // 主题兴趣分布（通过历史行为统计）
+      time_decay_factors // 按行为时间衰减加权（最近行为权重更高）
+    ]
+    
+    # 内容特征：
+    [
+      embeddings, 
+      tags_onehot, 
+      stats_normalized // 归一化的热度值
+    ]
+    ```
+
+5. **技术栈**
+
+| 模块     | 核心组件                   |
+| -------- | -------------------------- |
+| 向量搜索 | MongoDB $vectorSearch      |
+| 缓存     | Redis                      |
+| 行为队列 | MongoDB Update with $slice |
+| NLP模型  | BERT-base-Chinese          |
+
+6. **基础性能要求**
+
+- 90% 搜索请求响应时间 <200ms（含中文分词）
+- 支持1000 QPS 并发查询
+
 TODO(@xuhanlin)
 
 #### 运行效果示例
