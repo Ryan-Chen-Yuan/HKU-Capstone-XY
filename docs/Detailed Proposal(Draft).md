@@ -43,10 +43,7 @@
 | ​**模型优化**​          | 专注于用 LLM 的能力提供心理咨询服务，而不是训练用于心理咨询的大模型。                            |
 | ​**语音**​ | 文字与语音的转化是一个专业性很强的领域，本项目提供基于文本的回复。                               |
 
-
 ### 2.2 做什么
-
-
 
 ### 不做TTS(Text to Speech)
 
@@ -61,18 +58,20 @@ AI倾听情绪输出，给予情绪肯定。
 匿名树洞 + AI情感共鸣 ： 用户可以分享自己的心理困扰、日常情绪或成长故事，LLM 自动生成鼓励性回复或建议（比如“你最近感觉焦虑，试试深呼吸或写日记吧”）。
 示例：发布“职场压力”故事的用户，会收到AI整理的相关CBT技巧，并进入“打工人互助小组”聊天室。
 
-### 做评测工具：心理量表。
+### 做评测工具：心理量表
 
 ## Object & Metric
 
-针对心理咨询AI Agent的功能设计，以下是各模块可量化的指标及设计目标建议：
+针对心理咨询AI Agent的功能设计，以下是各模块可量化的指标及设计目标建议
 =======
+
 | ​**Item**​                     | ​**Description**​                                                                                   |
 |-------------------------------|---------------------------------------------------------------------------------------------------|
 | ​**心理对话 Chatbot**​    | 根据来访者的需求提供倾听和咨询服务。                                                             |
 | ​**心理内容社区**​        | 由用户发帖驱动的日常生活、心理学习资源、咨询经历分享。                                           |
 | ​**心理评测工具**​        | 自动检测实时情绪水平，主动评测心理量表。                                                         |
 | ​**隐私政策合规**​          | 参考 HIPAA/GDPR 合规框架标准，实现所有场景的隐私政策覆盖和数据脱敏。                             |
+
 >>>>>>> 8df9d816d17a197e7bb6f616283f6aadb2b0884c
 
 ---
@@ -253,11 +252,12 @@ Users can view and edit their personal information in the profile section.
 
 ### 3.4 Psychological Assessment Feature
 
-The Psychological Assessment feature is designed to help users understand their mental health status through regular assessments, detailed reports, and trend analysis. By combining questionnaire results and chat history analysis, this feature provides users with valuable insights into their emotional state, stress levels, and key concerns over time.
+The Psychological Assessment feature is mainly designed to help users understand their mental health status through regular assessments, detailed reports, and trend analysis. By combining questionnaire results and chat history analysis, this feature provides users with valuable insights into their emotional state, stress levels, and key concerns over time. And there is another function to read user's real-time mental state.
 
 #### Key Functions
 
 ##### 1. Regular Assessments
+
 - Frequency: Monthly assessments for regular users.
 - Data Sources:
   - Questionnaire Results: Users complete a psychological questionnaire.
@@ -269,36 +269,43 @@ The Psychological Assessment feature is designed to help users understand their 
 
 ##### 2. Visualization Report
 
-
 ##### 3. Trend Analysis
-- Identify patterns and trends in the user's mental health status and provide long-term insights to help users track their progress after continuous assessments.
+
+Trend Analysis function is to identify patterns and trends in the user's mental health status and provide long-term insights to help users track their progress after continuous assessments.
+
+##### 4. Real-time mental state
+
+Real-time mental state function will employ a sentiment score to reflect the user's current mental state, which is derived from the real-time conversation between the AI Agent and the user, and with this score, the system will be able to offer more appropriate content for the user in the community based on their current needs.  In other words, the real-time mental state function enables the three modules of AI dialog, community, and user assessment to interact and produce a more intelligent AI dialog system.
+
 ---
 
 #### Technical Implementation
 
-###### Assessment Data
+##### 1. Assessment Data
+
 | **Content**         | **Data Source**          | **Technology**                          |
 |----------------------|--------------------------|-----------------------------------------|
 | Emotional score      | Chat History             | Sentiment analysis by NLP APIs    |
 | Stress level         | Questionnaire Results    | Design a psychological questionnaire and calculate stress levels based on user responses|
 | High-frequency keyword List| Chat History| Extract keywords using NLP techniques (e.g., NLP API, TF-IDF, LDA).
- |
 
+###### Example
 
-##### Example
+User ID: 12345 | Assessment Date: 2025-03-01  
 
-###### User ID: 12345 | Assessment Date: 2025-03-01
+- Emotional Score: 0.3 (Negative)  
+- Stress Level: 7.5 (High)  
+- Keyword List: ["stress", "anxiety", "work pressure"]  
 
-###### Emotional Score: 0.3 (Negative)
-###### Stress Level: 7.5 (High)
-###### Keyword List: ["stress", "anxiety", "work pressure"]
+###### 2. Trend Analysis
 
-
-###### Trend Analysis
 - Emotional Score Trend: [Line Chart]
 - Stress Level Trend: [Line Chart]
 - Keyword Cloud: [Word Cloud]
 
+###### 3. Real-time mental state
+
+The user's real-time mental state can be evaluated by performing sentiment analysis using NLP on the user chat conversations within a reasonably short time period and context.  
 
 ## 4. Roadmap
 
