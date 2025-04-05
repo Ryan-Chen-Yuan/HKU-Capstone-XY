@@ -3,5 +3,6 @@
   "projectname": "agent_ui",
   "setting": {
     "compileHotReLoad": true
-  }
+  },
+  "libVersion": "3.8.0"
 }
