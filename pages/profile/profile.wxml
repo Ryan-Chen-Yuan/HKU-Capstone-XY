@@ -1,0 +1,67 @@
+<view class="container">
+  <!-- 自定义导航栏 -->
+  <view class="custom-nav">
+    <view class="nav-back" bindtap="navigateBack">
+      <view class="back-icon"></view>
+    </view>
+    <view class="nav-title">个人中心</view>
+  </view>
+
+  <!-- 用户信息区域 -->
+  <view class="user-info-section" bindtap="handleLogin">
+    <view class="avatar-container">
+      <image class="avatar" src="{{userInfo.avatarUrl}}" mode="aspectFill"></image>
+    </view>
+    <view class="user-details">
+      <text class="nickname">{{userInfo.nickName}}</text>
+      <text class="user-id">ID: {{userId}}</text>
+    </view>
+  </view>
+
+  <!-- 我的奖章 -->
+  <view class="medals-section">
+    <view class="section-title">我的奖章</view>
+    <view class="medals-container">
+      <block wx:if="{{medals.length > 0}}">
+        <view class="medal-item" wx:for="{{medals}}" wx:key="id">
+          <image class="medal-icon" src="{{item.icon}}" mode="aspectFit"></image>
+          <text class="medal-name">{{item.name}}</text>
+          <text class="medal-date">{{item.date}}</text>
+        </view>
+      </block>
+      <view class="no-medals" wx:else>
+        <image class="no-medals-icon" src="/images/no-medals.png" mode="aspectFit"></image>
+        <text class="no-medals-text">暂无奖章，继续努力吧！</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 功能列表 -->
+  <view class="function-list">
+    <view class="function-group">
+      <view class="function-item" bindtap="navigateToHistory">
+        <image class="function-icon" src="/images/history.png"></image>
+        <text class="function-text">对话历史</text>
+        <image class="arrow-icon" src="/images/arrow-right.png"></image>
+      </view>
+      <view class="function-item" bindtap="navigateToSettings">
+        <image class="function-icon" src="/images/settings.png"></image>
+        <text class="function-text">设置</text>
+        <image class="arrow-icon" src="/images/arrow-right.png"></image>
+      </view>
+    </view>
+
+    <view class="function-group">
+      <view class="function-item" bindtap="navigateToAbout">
+        <image class="function-icon" src="/images/about.png"></image>
+        <text class="function-text">关于我们</text>
+        <image class="arrow-icon" src="/images/arrow-right.png"></image>
+      </view>
+      <view class="function-item" bindtap="navigateToFeedback">
+        <image class="function-icon" src="/images/feedback.png"></image>
+        <text class="function-text">意见反馈</text>
+        <image class="arrow-icon" src="/images/arrow-right.png"></image>
+      </view>
+    </view>
+  </view>
+</view> 

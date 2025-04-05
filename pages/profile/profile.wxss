@@ -1,0 +1,234 @@
+.container {
+  min-height: 100vh;
+  background-color: #f8f9fa;
+  padding-bottom: 40rpx;
+}
+
+/* 自定义导航栏 */
+.custom-nav {
+  padding: 88rpx 30rpx 20rpx;
+  background: #ffffff;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  box-shadow: 0 2rpx 10rpx rgba(0, 0, 0, 0.05);
+  display: flex;
+  align-items: center;
+}
+
+.nav-back {
+  width: 60rpx;
+  height: 60rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.back-icon {
+  width: 20rpx;
+  height: 20rpx;
+  border-left: 4rpx solid #333;
+  border-bottom: 4rpx solid #333;
+  transform: rotate(45deg);
+}
+
+.nav-title {
+  flex: 1;
+  font-size: 36rpx;
+  font-weight: 600;
+  color: #333;
+  text-align: center;
+}
+
+/* 用户信息区域样式 */
+.user-info-section {
+  padding: 40rpx;
+  display: flex;
+  align-items: center;
+  background: #ffffff;
+  margin-bottom: 20rpx;
+  position: relative;
+}
+
+.user-info-section:active {
+  opacity: 0.8;
+}
+
+.avatar-container {
+  margin-right: 30rpx;
+}
+
+.avatar {
+  width: 120rpx;
+  height: 120rpx;
+  border-radius: 60rpx;
+  border: 2rpx solid #f0f0f0;
+}
+
+.user-details {
+  flex: 1;
+}
+
+.nickname {
+  font-size: 36rpx;
+  font-weight: 500;
+  color: #333333;
+  margin-bottom: 10rpx;
+  display: block;
+}
+
+.user-id {
+  font-size: 28rpx;
+  color: #999999;
+  display: block;
+}
+
+.login-tip {
+  font-size: 28rpx;
+  color: #07C160;
+  display: block;
+  margin-top: 10rpx;
+}
+
+/* 奖章区域样式 */
+.medals-section {
+  margin: 0 30rpx 20rpx;
+  background-color: #ffffff;
+  border-radius: 20rpx;
+  padding: 30rpx;
+  box-shadow: 0 2rpx 10rpx rgba(0, 0, 0, 0.05);
+}
+
+.section-title {
+  font-size: 32rpx;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 20rpx;
+}
+
+.medals-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+}
+
+.medal-item {
+  width: 160rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-right: 20rpx;
+  margin-bottom: 20rpx;
+}
+
+.medal-icon {
+  width: 100rpx;
+  height: 100rpx;
+  margin-bottom: 10rpx;
+}
+
+.medal-name {
+  font-size: 24rpx;
+  color: #333;
+  text-align: center;
+  margin-bottom: 6rpx;
+}
+
+.medal-date {
+  font-size: 20rpx;
+  color: #999;
+}
+
+.no-medals {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 40rpx 0;
+}
+
+.no-medals-icon {
+  width: 120rpx;
+  height: 120rpx;
+  margin-bottom: 20rpx;
+  opacity: 0.5;
+}
+
+.no-medals-text {
+  font-size: 28rpx;
+  color: #999;
+}
+
+/* 功能列表样式 */
+.function-list {
+  margin: 0 30rpx 40rpx;
+}
+
+.function-group {
+  background-color: #ffffff;
+  margin-bottom: 20rpx;
+  border-radius: 20rpx;
+  overflow: hidden;
+  box-shadow: 0 2rpx 10rpx rgba(0, 0, 0, 0.05);
+}
+
+.function-item {
+  display: flex;
+  align-items: center;
+  padding: 30rpx;
+  border-bottom: 1rpx solid #f5f5f5;
+  transition: all 0.3s ease;
+}
+
+.function-item:active {
+  background-color: #f8f9fa;
+}
+
+.function-item:last-child {
+  border-bottom: none;
+}
+
+.function-icon {
+  width: 40rpx;
+  height: 40rpx;
+  margin-right: 20rpx;
+}
+
+.function-text {
+  flex: 1;
+  font-size: 28rpx;
+  color: #333333;
+  font-weight: 500;
+}
+
+.arrow-icon {
+  width: 32rpx;
+  height: 32rpx;
+  opacity: 0.3;
+}
+
+/* 退出登录按钮样式 */
+.logout-section {
+  padding: 0 30rpx;
+}
+
+.logout-button {
+  width: 100%;
+  height: 88rpx;
+  line-height: 88rpx;
+  text-align: center;
+  background-color: #ffffff;
+  color: #ff4d4f;
+  font-size: 32rpx;
+  border-radius: 44rpx;
+  margin-top: 40rpx;
+  box-shadow: 0 2rpx 10rpx rgba(0, 0, 0, 0.05);
+  transition: all 0.3s ease;
+}
+
+.logout-button:active {
+  transform: scale(0.98);
+  background-color: #fff5f5;
+} 
