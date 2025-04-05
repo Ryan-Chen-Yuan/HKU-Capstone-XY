@@ -48,8 +48,11 @@
   display: flex;
   align-items: center;
   background: #ffffff;
-  margin-bottom: 20rpx;
-  position: relative;
+  margin-top: 180rpx;
+  border-radius: 20rpx;
+  box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.05);
+  margin-left: 30rpx;
+  margin-right: 30rpx;
 }
 
 .user-info-section:active {
@@ -94,11 +97,13 @@
 
 /* 奖章区域样式 */
 .medals-section {
-  margin: 0 30rpx 20rpx;
-  background-color: #ffffff;
+  margin-top: 30rpx;
+  margin-left: 30rpx;
+  margin-right: 30rpx;
+  background: #ffffff;
   border-radius: 20rpx;
   padding: 30rpx;
-  box-shadow: 0 2rpx 10rpx rgba(0, 0, 0, 0.05);
+  box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.05);
 }
 
 .section-title {

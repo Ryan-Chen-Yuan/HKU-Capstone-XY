@@ -61,4 +61,25 @@
   color: #999999;
   text-align: center;
   display: block;
+}
+
+/* 返回按钮样式 */
+.back-button {
+  position: absolute;
+  top: 110rpx;
+  left: 30rpx;
+  width: 60rpx;
+  height: 60rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+}
+
+.back-icon {
+  width: 20rpx;
+  height: 20rpx;
+  border-left: 4rpx solid #333;
+  border-bottom: 4rpx solid #333;
+  transform: rotate(45deg);
 } 
