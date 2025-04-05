@@ -1,0 +1,14 @@
+<view class="login-container">
+  <view class="logo-section">
+    <image class="logo" src="/images/logo.png" mode="aspectFit"></image>
+    <text class="app-name">AI助手</text>
+  </view>
+  
+  <view class="login-section">
+    <button class="login-btn" bindtap="handleLogin">
+      <image class="wechat-icon" src="/images/wechat.png" mode="aspectFit"></image>
+      微信一键登录
+    </button>
+    <text class="privacy-tip">登录即表示同意《用户协议》和《隐私政策》</text>
+  </view>
+</view> 

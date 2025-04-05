@@ -1,0 +1,760 @@
+/* ========== 基础布局 ========== */
+/* 全局容器样式 */
+.container {
+  height: 100vh;
+  width: 100vw;
+  display: flex;
+  flex-direction: column;
+  background-color: #f5f5f7;
+  position: relative;
+  overflow: hidden;
+  font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
+}
+
+/* 主要内容区域 */
+.main-content {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  overflow: hidden;
+  background-color: #f5f5f7;
+  width: 100%;
+}
+
+/* ========== 导航栏 ========== */
+/* 自定义导航栏样式 */
+.custom-nav {
+  padding: calc(88rpx + env(safe-area-inset-top)) 0 20rpx;
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(10px);
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  box-shadow: 0 2rpx 10rpx rgba(0, 0, 0, 0.05);
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.nav-content {
+  max-width: 1200rpx;
+  margin: 0 auto;
+  padding: 0 30rpx;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 88rpx;
+}
+
+/* 导航栏左侧区域 */
+.nav-left {
+  display: flex;
+  align-items: center;
+  gap: 20rpx;
+  min-width: 160rpx;
+  position: absolute;
+  left: 30rpx;
+  z-index: 1;
+}
+
+/* 导航栏标题 */
+.nav-title {
+  font-size: 40rpx;
+  font-weight: 600;
+  color: #333;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 60%;
+  padding: 0;
+  pointer-events: none;
+}
+
+/* ========== 菜单按钮 ========== */
+/* 菜单按钮样式 */
+.menu-button {
+  width: 70rpx;
+  height: 70rpx;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 10rpx;
+  border-radius: 35rpx;
+  background: rgba(0, 0, 0, 0.05);
+  transition: background-color 0.2s ease;
+}
+
+/* 菜单按钮点击效果 */
+.menu-button:active {
+  background: rgba(0, 0, 0, 0.1);
+}
+
+/* 菜单图标样式 */
+.menu-icon {
+  width: 28rpx;
+  height: 2rpx;
+  background-color: #333;
+  border-radius: 1rpx;
+}
+
+/* ========== 新建聊天按钮 ========== */
+/* 小型新建聊天按钮 */
+.new-chat-button-small {
+  width: 70rpx;
+  height: 70rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 35rpx;
+  background: linear-gradient(135deg, #007AFF, #5856D6);
+  box-shadow: 0 4rpx 12rpx rgba(0, 122, 255, 0.3);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+/* 小型新建聊天按钮点击效果 */
+.new-chat-button-small:active {
+  transform: scale(0.95);
+  box-shadow: 0 2rpx 8rpx rgba(0, 122, 255, 0.2);
+}
+
+/* 新建聊天图标 */
+.new-chat-icon {
+  color: #ffffff;
+  font-size: 36rpx;
+  font-weight: 300;
+}
+
+/* ========== 头像气泡 ========== */
+/* 可拖动头像气泡样式 */
+.floating-avatar {
+  position: absolute;
+  width: 80rpx;
+  height: 80rpx;
+  border-radius: 40rpx;
+  overflow: hidden;
+  box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.15);
+  border: 3rpx solid #ffffff;
+  z-index: 1000;
+  transition: transform 0.2s ease;
+}
+
+/* 头像拖动时的效果 */
+.floating-avatar.dragging {
+  transform: scale(1.1);
+  box-shadow: 0 6rpx 16rpx rgba(0, 0, 0, 0.2);
+}
+
+/* 头像图片 */
+.avatar-image {
+  width: 100%;
+  height: 100%;
+}
+
+/* ========== 聊天区域 ========== */
+/* 聊天容器 */
+.chat-container {
+  height: 100%;
+  padding-top: 200rpx;
+  padding-bottom: calc(120rpx + env(safe-area-inset-bottom));
+  box-sizing: border-box;
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+  width: 100%;
+}
+
+/* 聊天列表 */
+.chat-list {
+  padding: 0 30rpx;
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  transition: justify-content 0.3s ease;
+  width: 100%;
+  box-sizing: border-box;
+  max-width: 1200rpx;
+  margin: 0 auto;
+}
+
+/* 有消息时的聊天列表样式 */
+.chat-list.has-messages {
+  justify-content: flex-end;
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+/* ========== 消息样式 ========== */
+/* 消息容器基础样式 */
+.message {
+  margin-bottom: 30rpx;
+  display: flex;
+  flex-direction: column;
+  animation: fadeIn 0.3s ease-out;
+  max-width: 85%;
+  padding: 0 10rpx;
+  box-sizing: border-box;
+  width: fit-content;
+}
+
+/* 消息内容样式 */
+.message-content {
+  padding: 24rpx 30rpx;
+  border-radius: 24rpx;
+  font-size: 28rpx;
+  line-height: 1.5;
+  position: relative;
+  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.05);
+  max-width: 100%;
+  width: fit-content;
+  word-break: break-word;
+  white-space: pre-wrap;
+  box-sizing: border-box;
+}
+
+/* 用户消息样式 */
+.user-message {
+  align-items: flex-end;
+  align-self: flex-end;
+  margin-left: auto;
+}
+
+/* AI助手消息样式 */
+.agent-message {
+  align-items: flex-start;
+  align-self: flex-start;
+  margin-right: auto;
+}
+
+/* 用户消息内容样式 */
+.user-message .message-content {
+  background: linear-gradient(135deg, #007AFF, #5856D6);
+  color: #ffffff;
+  border-bottom-right-radius: 8rpx;
+}
+
+/* AI助手消息内容样式 */
+.agent-message .message-content {
+  background-color: #ffffff;
+  color: #333;
+  border-bottom-left-radius: 8rpx;
+  box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.08);
+}
+
+/* ========== 加载动画 ========== */
+/* 加载中容器 */
+.loading-container {
+  display: flex;
+  justify-content: center;
+  margin: 20rpx 0;
+}
+
+/* 加载动画点容器 */
+.loading-dots {
+  display: flex;
+  align-items: center;
+  gap: 8rpx;
+  padding: 20rpx 30rpx;
+  background-color: #ffffff;
+  border-radius: 24rpx;
+  box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.08);
+}
+
+/* 加载动画点样式 */
+.dot {
+  width: 12rpx;
+  height: 12rpx;
+  background-color: #007AFF;
+  border-radius: 50%;
+  margin: 0 6rpx;
+  animation: bounce 1.4s infinite ease-in-out;
+}
+
+/* 加载动画点延迟 */
+.dot:nth-child(1) {
+  animation-delay: -0.32s;
+}
+
+.dot:nth-child(2) {
+  animation-delay: -0.16s;
+}
+
+/* ========== 侧边栏 ========== */
+/* 侧边栏背景遮罩 */
+.sidebar-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 200;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+/* 显示侧边栏背景遮罩 */
+.sidebar-backdrop.show {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* 侧边栏基础样式 */
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: -80vw;
+  width: 80vw;
+  height: 100vh;
+  background-color: #ffffff;
+  z-index: 300;
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 0 20rpx rgba(0, 0, 0, 0.1);
+}
+
+/* 侧边栏打开状态 */
+.sidebar.open {
+  transform: translateX(80vw);
+}
+
+/* 侧边栏头部 */
+.sidebar-header {
+  padding: 88rpx 30rpx 20rpx;
+  border-bottom: 1rpx solid #f0f0f0;
+}
+
+/* 侧边栏标题 */
+.sidebar-title {
+  font-size: 36rpx;
+  font-weight: 600;
+  color: #333;
+}
+
+/* 关闭侧边栏按钮 */
+.close-sidebar {
+  font-size: 40rpx;
+  color: #666;
+  padding: 10rpx;
+}
+
+/* ========== 历史记录 ========== */
+/* 历史记录列表 */
+.history-list {
+  flex: 1;
+  padding: 20rpx 0;
+  overflow-y: auto;
+}
+
+/* 历史记录项 */
+.history-item {
+  padding: 30rpx;
+  border-bottom: 1rpx solid #f0f0f0;
+  transition: background-color 0.2s ease;
+}
+
+/* 历史记录项点击效果 */
+.history-item:active {
+  background-color: #f5f5f7;
+}
+
+/* 历史记录标题 */
+.history-title {
+  font-size: 28rpx;
+  color: #333;
+  margin-bottom: 10rpx;
+  font-weight: 500;
+}
+
+/* 历史记录时间 */
+.history-time {
+  font-size: 24rpx;
+  color: #999;
+}
+
+/* ========== 个人信息 ========== */
+/* 侧边栏底部个人信息 */
+.sidebar-footer {
+  padding: 30rpx;
+  border-top: 1rpx solid #f0f0f0;
+  display: flex;
+  align-items: center;
+  gap: 20rpx;
+  transition: background-color 0.2s ease;
+}
+
+/* 侧边栏底部点击效果 */
+.sidebar-footer:active {
+  background-color: #f5f5f7;
+}
+
+/* 个人资料图标 */
+.profile-icon {
+  width: 80rpx;
+  height: 80rpx;
+  border-radius: 40rpx;
+  overflow: hidden;
+  box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.1);
+  border: 3rpx solid #ffffff;
+}
+
+/* 个人资料图片 */
+.profile-image {
+  width: 100%;
+  height: 100%;
+}
+
+/* 用户信息容器 */
+.user-info {
+  flex: 1;
+  overflow: hidden;
+}
+
+/* 用户名称 */
+.user-name {
+  font-size: 28rpx;
+  color: #333;
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ========== 输入区域 ========== */
+/* 输入区域包装器 */
+.input-wrapper {
+  position: fixed;
+  left: 0;
+  right: 0;
+  padding: 20rpx 30rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 100;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* 居中输入区域 */
+.input-wrapper.center {
+  top: 65%;
+  transform: translateY(-50%);
+  background: transparent;
+  padding: 40rpx 30rpx;
+}
+
+/* 底部输入区域 */
+.input-wrapper.bottom {
+  bottom: 0;
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 -2rpx 10rpx rgba(0, 0, 0, 0.05);
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+/* 输入容器 */
+.input-container {
+  width: 100%;
+  max-width: 1200rpx;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 20rpx;
+  padding: 0 10rpx;
+  box-sizing: border-box;
+}
+
+/* 居中输入容器样式 */
+.center .input-container {
+  background: #ffffff;
+  padding: 20rpx;
+  border-radius: 20rpx;
+  box-shadow: 0 8rpx 24rpx rgba(0, 0, 0, 0.1);
+}
+
+/* 消息输入框 */
+.message-input {
+  flex: 1;
+  height: 80rpx;
+  background-color: #f5f5f7;
+  border-radius: 40rpx;
+  padding: 0 30rpx;
+  font-size: 28rpx;
+  color: #333;
+  border: none;
+  box-shadow: inset 0 2rpx 6rpx rgba(0, 0, 0, 0.05);
+  transition: all 0.3s ease;
+}
+
+/* 居中输入框样式 */
+.center .message-input {
+  background-color: #f5f5f7;
+  height: 88rpx;
+  font-size: 32rpx;
+}
+
+/* 输入框焦点状态 */
+.message-input:focus {
+  background-color: #ffffff;
+  box-shadow: inset 0 2rpx 6rpx rgba(0, 0, 0, 0.05), 0 0 0 2rpx rgba(0, 122, 255, 0.3);
+}
+
+/* 发送按钮 */
+.send-button {
+  width: 80rpx;
+  height: 80rpx;
+  border-radius: 40rpx;
+  background: linear-gradient(135deg, #007AFF, #5856D6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4rpx 12rpx rgba(0, 122, 255, 0.3);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  border: none;
+  padding: 0;
+  line-height: 1;
+}
+
+/* 居中发送按钮样式 */
+.center .send-button {
+  width: 88rpx;
+  height: 88rpx;
+  border-radius: 44rpx;
+}
+
+/* 发送按钮点击效果 */
+.send-button:active {
+  transform: scale(0.95);
+  box-shadow: 0 2rpx 8rpx rgba(0, 122, 255, 0.2);
+}
+
+/* 发送按钮文本 */
+.send-button text {
+  color: #ffffff;
+  font-size: 32rpx;
+}
+
+/* AI免责声明 */
+.ai-disclaimer {
+  font-size: 24rpx;
+  color: #999;
+  margin-top: 12rpx;
+  text-align: center;
+}
+
+/* ========== 勋章展示 ========== */
+/* 勋章展示架 */
+.medal-display {
+  position: fixed;
+  width: 120rpx;
+  height: 120rpx;
+  border-radius: 60rpx;
+  background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.15);
+  z-index: 1000;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  cursor: pointer;
+  touch-action: none;
+  will-change: transform;
+  -webkit-user-select: none;
+  user-select: none;
+  max-width: 120rpx;
+  max-height: 120rpx;
+  box-sizing: border-box;
+}
+
+/* 勋章展示架拖动状态 */
+.medal-display.dragging {
+  transform: scale(1.1);
+  box-shadow: 0 6rpx 16rpx rgba(0, 0, 0, 0.2);
+  transition: none;
+}
+
+/* 勋章容器 */
+.medal-container {
+  width: 100rpx;
+  height: 100rpx;
+  border-radius: 50rpx;
+  background: linear-gradient(135deg, #ffd700, #ffa500);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+  border: 3rpx solid #ffffff;
+  animation: rotate 10s linear infinite;
+}
+
+/* 勋章容器发光效果 */
+.medal-container:before {
+  content: '';
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle, rgba(255,255,255,0.8) 0%, rgba(255,255,255,0) 70%);
+  opacity: 0.6;
+  z-index: 1;
+  animation: glow 2s infinite;
+}
+
+/* 勋章样式 */
+.medal {
+  width: 60rpx;
+  height: 60rpx;
+  margin: 0 -10rpx;
+  position: relative;
+  z-index: 2;
+  animation: float 3s ease-in-out infinite;
+}
+
+/* 勋章动画延迟 */
+.medal:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.medal:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+/* 勋章图片 */
+.medal-image {
+  width: 100%;
+  height: 100%;
+  filter: drop-shadow(0 2rpx 4rpx rgba(0, 0, 0, 0.2));
+}
+
+/* ========== 欢迎界面 ========== */
+/* 欢迎界面容器 */
+.welcome-container {
+  width: 100%;
+  max-width: 1200rpx;
+  margin: 0 auto;
+  padding: 0 30rpx;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  animation: fadeIn 0.5s ease-out;
+  margin-top: -240rpx; /* 将欢迎界面容器向上偏移增加到240rpx */
+  min-height: 60vh; /* 确保容器有足够的高度 */
+}
+
+/* 欢迎界面图标 */
+.welcome-icon {
+  width: 160rpx;
+  height: 160rpx;
+  margin-bottom: 60rpx;
+  border-radius: 80rpx;
+  overflow: hidden;
+  box-shadow: 0 8rpx 24rpx rgba(0, 122, 255, 0.2);
+  background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 4rpx solid #ffffff;
+  transition: transform 0.3s ease; /* 添加过渡效果 */
+}
+
+/* 欢迎界面图标悬停效果 */
+.welcome-icon:hover {
+  transform: scale(1.05);
+}
+
+/* 欢迎界面图标图片 */
+.welcome-icon image {
+  width: 100rpx;
+  height: 100rpx;
+  object-fit: contain; /* 确保图片不变形 */
+}
+
+/* 欢迎界面标题 */
+.welcome-title {
+  font-size: 48rpx;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 40rpx;
+  text-align: center;
+  letter-spacing: 1rpx; /* 增加字间距提高可读性 */
+}
+
+/* 欢迎界面副标题 */
+.welcome-subtitle {
+  font-size: 32rpx;
+  color: #666;
+  text-align: center;
+  max-width: 600rpx;
+  margin: 0 auto;
+  line-height: 1.6;
+  letter-spacing: 0.5rpx; /* 增加字间距提高可读性 */
+}
+
+/* ========== 动画 ========== */
+/* 消息淡入动画 */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20rpx);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* 加载动画关键帧 */
+@keyframes bounce {
+  0%, 80%, 100% {
+    transform: scale(0);
+  }
+  40% {
+    transform: scale(1);
+  }
+}
+
+/* 勋章旋转动画 */
+@keyframes rotate {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* 勋章浮动动画 */
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-5rpx);
+  }
+}
+
+/* 发光动画 */
+@keyframes glow {
+  0% {
+    opacity: 0.3;
+    transform: scale(0.8);
+  }
+  50% {
+    opacity: 0.6;
+    transform: scale(1.2);
+  }
+  100% {
+    opacity: 0.3;
+    transform: scale(0.8);
+  }
+}
