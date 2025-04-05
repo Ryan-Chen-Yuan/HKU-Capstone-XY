@@ -9,6 +9,24 @@ Page({
     // 不再自动检查登录状态
   },
 
+  // 处理返回按钮点击
+  handleBack() {
+    // 获取当前页面栈
+    const pages = getCurrentPages();
+    
+    // 如果页面栈中有多个页面，则返回上一页
+    if (pages.length > 1) {
+      wx.navigateBack({
+        delta: 1
+      });
+    } else {
+      // 如果没有上一页，则跳转到首页
+      wx.redirectTo({
+        url: '/pages/index/index'
+      });
+    }
+  },
+
   async handleLogin() {
     if (this.data.isLoading) return;
     
