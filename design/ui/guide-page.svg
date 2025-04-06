@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="430" height="932" viewBox="0 0 430 932" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+  <!-- 引入主SVG中的样式定义 -->
+  <defs>
+    <!-- 主色调：温暖绿 -->
+    <linearGradient id="primaryGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#7ABD7E" />
+      <stop offset="100%" stop-color="#5A9D5E" />
+    </linearGradient>
+    
+    <!-- 辅助色：浅蓝 -->
+    <linearGradient id="secondaryGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#7AC8E0" />
+      <stop offset="100%" stop-color="#5AA8C0" />
+    </linearGradient>
+    
+    <!-- 中性色：浅灰 -->
+    <linearGradient id="neutralGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#F5F5F5" />
+      <stop offset="100%" stop-color="#E0E0E0" />
+    </linearGradient>
+    
+    <!-- 卡片阴影效果 -->
+    <filter id="cardShadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="2" stdDeviation="3" flood-opacity="0.2"/>
+    </filter>
+    
+    <!-- 悬浮效果 -->
+    <filter id="hoverEffect" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="4" stdDeviation="5" flood-opacity="0.3"/>
+    </filter>
+  </defs>
+  
+  <!-- 手机边框 -->
+  <rect x="0" y="0" width="430" height="932" fill="none" stroke="#333" stroke-width="1"/>
+  
+  <!-- 引导页面1：欢迎页面 -->
+  <g id="guide-page-1" visibility="visible">
+    <rect x="0" y="0" width="430" height="932" fill="url(#primaryGradient)"/>
+    
+    <!-- 插图 -->
+    <!-- <image x="65" y="200" width="300" height="300" xlink:href="https://images.unsplash.com/photo-1579546929518-9e396f3cc809?w=300&h=300&fit=crop" preserveAspectRatio="xMidYMid slice"/> -->
+    
+    <!-- 标题 -->
+    <text x="215" y="580" font-family="PingFang SC, sans-serif" font-size="24" font-weight="bold" fill="white" text-anchor="middle">欢迎使用心理对话</text>
+    
+    <!-- 描述 -->
+    <text x="215" y="620" font-family="PingFang SC, sans-serif" font-size="16" fill="white" text-anchor="middle">你的AI倾诉师，随时倾听你的心声</text>
+    
+    <!-- 指示点 -->
+    <circle cx="185" cy="800" r="6" fill="white"/>
+    <circle cx="215" cy="800" r="6" fill="rgba(255,255,255,0.5)"/>
+    <circle cx="245" cy="800" r="6" fill="rgba(255,255,255,0.5)"/>
+  </g>
+  
+  <!-- 引导页面2：功能介绍 -->
+  <g id="guide-page-2" visibility="hidden">
+    <rect x="0" y="0" width="430" height="932" fill="url(#secondaryGradient)"/>
+    
+    <!-- 插图 -->
+    <!-- <image x="65" y="200" width="300" height="300" xlink:href="https://images.unsplash.com/photo-1579546929662-711aa81148cf?w=300&h=300&fit=crop" preserveAspectRatio="xMidYMid slice"/> -->
+    
+    <!-- 标题 -->
+    <text x="215" y="580" font-family="PingFang SC, sans-serif" font-size="24" font-weight="bold" fill="white" text-anchor="middle">智能情绪分析</text>
+    
+    <!-- 描述 -->
+    <text x="215" y="620" font-family="PingFang SC, sans-serif" font-size="16" fill="white" text-anchor="middle">AI会分析你的情绪状态，提供专业的情绪洞察</text>
+    
+    <!-- 指示点 -->
+    <circle cx="185" cy="800" r="6" fill="rgba(255,255,255,0.5)"/>
+    <circle cx="215" cy="800" r="6" fill="white"/>
+    <circle cx="245" cy="800" r="6" fill="rgba(255,255,255,0.5)"/>
+  </g>
+  
+  <!-- 引导页面3：开始使用 -->
+  <g id="guide-page-3" visibility="hidden">
+    <rect x="0" y="0" width="430" height="932" fill="url(#primaryGradient)"/>
+    
+    <!-- 插图 -->
+    <!-- <image x="65" y="200" width="300" height="300" xlink:href="https://images.unsplash.com/photo-1579546929518-9e396f3cc809?w=300&h=300&fit=crop" preserveAspectRatio="xMidYMid slice"/> -->
+    
+    <!-- 标题 -->
+    <text x="215" y="580" font-family="PingFang SC, sans-serif" font-size="24" font-weight="bold" fill="white" text-anchor="middle">开始你的心理成长之旅</text>
+    
+    <!-- 描述 -->
+    <text x="215" y="620" font-family="PingFang SC, sans-serif" font-size="16" fill="white" text-anchor="middle">记录你的认知成长，获得专属勋章</text>
+    
+    <!-- 开始按钮 -->
+    <rect x="115" y="700" width="200" height="50" rx="25" ry="25" fill="white" filter="url(#hoverEffect)"/>
+    <text x="215" y="735" font-family="PingFang SC, sans-serif" font-size="18" font-weight="bold" fill="url(#primaryGradient)" text-anchor="middle">开始对话</text>
+    
+    <!-- 指示点 -->
+    <circle cx="185" cy="800" r="6" fill="rgba(255,255,255,0.5)"/>
+    <circle cx="215" cy="800" r="6" fill="rgba(255,255,255,0.5)"/>
+    <circle cx="245" cy="800" r="6" fill="white"/>
+  </g>
+</svg> 

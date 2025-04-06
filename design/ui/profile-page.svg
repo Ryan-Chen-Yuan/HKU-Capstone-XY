@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="430" height="932" viewBox="0 0 430 932" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+  <!-- 引入主SVG中的样式定义 -->
+  <defs>
+    <!-- 主色调：温暖绿 -->
+    <linearGradient id="primaryGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#7ABD7E" />
+      <stop offset="100%" stop-color="#5A9D5E" />
+    </linearGradient>
+    
+    <!-- 辅助色：浅蓝 -->
+    <linearGradient id="secondaryGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#7AC8E0" />
+      <stop offset="100%" stop-color="#5AA8C0" />
+    </linearGradient>
+    
+    <!-- 中性色：浅灰 -->
+    <linearGradient id="neutralGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#F5F5F5" />
+      <stop offset="100%" stop-color="#E0E0E0" />
+    </linearGradient>
+    
+    <!-- 卡片阴影效果 -->
+    <filter id="cardShadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="2" stdDeviation="3" flood-opacity="0.2"/>
+    </filter>
+    
+    <!-- 悬浮效果 -->
+    <filter id="hoverEffect" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="4" stdDeviation="5" flood-opacity="0.3"/>
+    </filter>
+    
+    <!-- 图标系统 -->
+    <symbol id="icon-profile" viewBox="0 0 24 24">
+      <path d="M12,4A4,4 0 0,1 16,8A4,4 0 0,1 12,12A4,4 0 0,1 8,8A4,4 0 0,1 12,4M12,14C16.42,14 20,15.79 20,18V20H4V18C4,15.79 7.58,14 12,14Z" fill="currentColor"/>
+    </symbol>
+    
+    <symbol id="icon-medal" viewBox="0 0 24 24">
+      <path d="M20,2H4V4L9.81,8.36C9.6,8.74 9.5,9.15 9.5,9.5C9.5,10.88 10.62,12 12,12C13.38,12 14.5,10.88 14.5,9.5C14.5,9.15 14.4,8.74 14.19,8.36L20,4V2M4,4V22L12,18L20,22V4L12,7.5L4,4M12,10C10.34,10 9,11.34 9,13C9,14.66 10.34,16 12,16C13.66,16 15,14.66 15,13C15,11.34 13.66,10 12,10Z" fill="currentColor"/>
+    </symbol>
+    
+    <symbol id="icon-chart" viewBox="0 0 24 24">
+      <path d="M3,13H7V23H3V13M10,9H14V23H10V9M17,5H21V23H17V5" fill="currentColor"/>
+    </symbol>
+    
+    <symbol id="icon-calendar" viewBox="0 0 24 24">
+      <path d="M19,19H5V8H19M16,1V3H8V1H6V3H5C3.89,3 3,3.89 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V5C21,3.89 20.1,3 19,3H18V1M17,12H12V17H17V12Z" fill="currentColor"/>
+    </symbol>
+    
+    <!-- 头像裁剪路径 -->
+    <clipPath id="avatarClip">
+      <circle cx="215" cy="80" r="50"/>
+    </clipPath>
+  </defs>
+  
+  <!-- 手机边框 -->
+  <rect x="0" y="0" width="430" height="932" fill="none" stroke="#333" stroke-width="1"/>
+  
+  <!-- 个人主页 -->
+  <g id="profile-screen">
+    <!-- 顶部个人信息 -->
+    <rect x="0" y="0" width="430" height="200" fill="url(#primaryGradient)"/>
+    
+    <!-- 用户头像 -->
+    <!-- <circle cx="215" cy="80" r="50" fill="white"/> -->
+    <!-- <image x="165" y="30" width="100" height="100" xlink:href="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100&h=100&fit=crop" preserveAspectRatio="xMidYMid slice" clip-path="url(#avatarClip)"/> -->
+    
+    <!-- 用户名称 -->
+    <text x="215" y="150" font-family="PingFang SC, sans-serif" font-size="20" font-weight="bold" fill="white" text-anchor="middle">小明</text>
+    
+    <!-- 用户ID -->
+    <text x="215" y="180" font-family="PingFang SC, sans-serif" font-size="14" fill="rgba(255,255,255,0.8)" text-anchor="middle">ID: 10086</text>
+    
+    <!-- 内容区域 -->
+    <g transform="translate(0, 200)">
+      <rect x="0" y="0" width="430" height="732" fill="#F9F9F9"/>
+      
+      <!-- 数据概览卡片 -->
+      <g transform="translate(20, 20)">
+        <rect x="0" y="0" width="390" height="120" rx="8" ry="8" fill="white" filter="url(#cardShadow)"/>
+        
+        <!-- 对话次数 -->
+        <g transform="translate(30, 30)">
+          <text x="0" y="0" font-family="PingFang SC, sans-serif" font-size="24" font-weight="bold" fill="url(#primaryGradient)">12</text>
+          <text x="0" y="30" font-family="PingFang SC, sans-serif" font-size="14" fill="#666">对话次数</text>
+        </g>
+        
+        <!-- 分析结果 -->
+        <g transform="translate(150, 30)">
+          <text x="0" y="0" font-family="PingFang SC, sans-serif" font-size="24" font-weight="bold" fill="url(#secondaryGradient)">8</text>
+          <text x="0" y="30" font-family="PingFang SC, sans-serif" font-size="14" fill="#666">分析结果</text>
+        </g>
+        
+        <!-- 勋章数量 -->
+        <g transform="translate(270, 30)">
+          <text x="0" y="0" font-family="PingFang SC, sans-serif" font-size="24" font-weight="bold" fill="#FFD700">3</text>
+          <text x="0" y="30" font-family="PingFang SC, sans-serif" font-size="14" fill="#666">勋章数量</text>
+        </g>
+      </g>
+      
+      <!-- 情绪趋势图 -->
+      <g transform="translate(20, 160)">
+        <rect x="0" y="0" width="390" height="200" rx="8" ry="8" fill="white" filter="url(#cardShadow)"/>
+        <text x="20" y="30" font-family="PingFang SC, sans-serif" font-size="16" font-weight="bold" fill="#333">情绪趋势</text>
+        
+        <!-- 折线图 -->
+        <g transform="translate(20, 60)">
+          <!-- 坐标轴 -->
+          <line x1="0" y1="120" x2="350" y2="120" stroke="#E0E0E0" stroke-width="1"/>
+          <line x1="0" y1="0" x2="0" y2="120" stroke="#E0E0E0" stroke-width="1"/>
+          
+          <!-- 折线 -->
+          <polyline points="0,100 50,80 100,60 150,90 200,40 250,70 300,50 350,30" 
+                    fill="none" 
+                    stroke="url(#primaryGradient)" 
+                    stroke-width="2"
+                    stroke-dasharray="5,5"/>
+          
+          <!-- 数据点 -->
+          <circle cx="0" cy="100" r="4" fill="url(#primaryGradient)"/>
+          <circle cx="50" cy="80" r="4" fill="url(#primaryGradient)"/>
+          <circle cx="100" cy="60" r="4" fill="url(#primaryGradient)"/>
+          <circle cx="150" cy="90" r="4" fill="url(#primaryGradient)"/>
+          <circle cx="200" cy="40" r="4" fill="url(#primaryGradient)"/>
+          <circle cx="250" cy="70" r="4" fill="url(#primaryGradient)"/>
+          <circle cx="300" cy="50" r="4" fill="url(#primaryGradient)"/>
+          <circle cx="350" cy="30" r="4" fill="url(#primaryGradient)"/>
+          
+          <!-- 月份标签 -->
+          <text x="0" y="140" font-family="PingFang SC, sans-serif" font-size="12" fill="#999" text-anchor="middle">1月</text>
+          <text x="50" y="140" font-family="PingFang SC, sans-serif" font-size="12" fill="#999" text-anchor="middle">2月</text>
+          <text x="100" y="140" font-family="PingFang SC, sans-serif" font-size="12" fill="#999" text-anchor="middle">3月</text>
+          <text x="150" y="140" font-family="PingFang SC, sans-serif" font-size="12" fill="#999" text-anchor="middle">4月</text>
+          <text x="200" y="140" font-family="PingFang SC, sans-serif" font-size="12" fill="#999" text-anchor="middle">5月</text>
+          <text x="250" y="140" font-family="PingFang SC, sans-serif" font-size="12" fill="#999" text-anchor="middle">6月</text>
+          <text x="300" y="140" font-family="PingFang SC, sans-serif" font-size="12" fill="#999" text-anchor="middle">7月</text>
+          <text x="350" y="140" font-family="PingFang SC, sans-serif" font-size="12" fill="#999" text-anchor="middle">8月</text>
+        </g>
+      </g>
+      
+      <!-- 勋章展示 -->
+      <g transform="translate(20, 380)">
+        <rect x="0" y="0" width="390" height="200" rx="8" ry="8" fill="white" filter="url(#cardShadow)"/>
+        <text x="20" y="30" font-family="PingFang SC, sans-serif" font-size="16" font-weight="bold" fill="#333">我的勋章</text>
+        
+        <!-- 勋章1 -->
+        <g transform="translate(30, 60)">
+          <circle cx="40" cy="40" r="35" fill="url(#primaryGradient)"/>
+          <use xlink:href="#icon-medal" x="20" y="20" width="40" height="40" fill="white"/>
+          <text x="40" y="100" font-family="PingFang SC, sans-serif" font-size="14" fill="#333" text-anchor="middle">新视角</text>
+        </g>
+        
+        <!-- 勋章2 -->
+        <g transform="translate(130, 60)">
+          <circle cx="40" cy="40" r="35" fill="url(#secondaryGradient)"/>
+          <use xlink:href="#icon-medal" x="20" y="20" width="40" height="40" fill="white"/>
+          <text x="40" y="100" font-family="PingFang SC, sans-serif" font-size="14" fill="#333" text-anchor="middle">情绪智慧</text>
+        </g>
+        
+        <!-- 勋章3 -->
+        <g transform="translate(230, 60)">
+          <circle cx="40" cy="40" r="35" fill="#FFD700"/>
+          <use xlink:href="#icon-medal" x="20" y="20" width="40" height="40" fill="white"/>
+          <text x="40" y="100" font-family="PingFang SC, sans-serif" font-size="14" fill="#333" text-anchor="middle">成长思维</text>
+        </g>
+      </g>
+      
+      <!-- 成长记录 -->
+      <g transform="translate(20, 600)">
+        <rect x="0" y="0" width="390" height="120" rx="8" ry="8" fill="white" filter="url(#cardShadow)"/>
+        <text x="20" y="30" font-family="PingFang SC, sans-serif" font-size="16" font-weight="bold" fill="#333">成长记录</text>
+        
+        <!-- 成长记录1 -->
+        <g transform="translate(20, 50)">
+          <text x="0" y="0" font-family="PingFang SC, sans-serif" font-size="14" fill="#333">发现了新的思考角度</text>
+          <text x="0" y="25" font-family="PingFang SC, sans-serif" font-size="12" fill="#999">2023-04-15</text>
+        </g>
+        
+        <!-- 成长记录2 -->
+        <g transform="translate(20, 90)">
+          <text x="0" y="0" font-family="PingFang SC, sans-serif" font-size="14" fill="#333">提升了情绪觉察能力</text>
+          <text x="0" y="25" font-family="PingFang SC, sans-serif" font-size="12" fill="#999">2023-04-10</text>
+        </g>
+      </g>
+    </g>
+  </g>
+</svg> 
