@@ -81,16 +81,16 @@ Current Progress
 
 ### Agent GUI & Emotion Monster
 
-<img src="/Users/hallymxu/Desktop/Final_project/Progress/docs/progress1_hanlin/image-20250406150523175.png" alt="image-20250406150523175" style="zoom: 33%;" />
+<img src="./image-20250406150523175.png" alt="image-20250406150523175" style="zoom: 33%;" />
 
 ### Navibar
 
-<img src="/Users/hallymxu/Desktop/Final_project/Progress/docs/progress1_hanlin/image-20250406150730040.png" alt="image-20250406150730040" style="zoom:33%;" />
+<img src="./image-20250406150730040.png" alt="image-20250406150730040" style="zoom:33%;" />
 
 ### Medals
 
-<img src="/Users/hallymxu/Desktop/Final_project/Progress/docs/progress1_hanlin/image-20250406150701478.png" alt="image-20250406150701478" style="zoom: 33%;" />
+<img src="./image-20250406150701478.png" alt="image-20250406150701478" style="zoom: 33%;" />
 
 ### Person Page
 
-<img src="/Users/hallymxu/Desktop/Final_project/Progress/docs/progress1_hanlin/image-20250406150902523.png" alt="image-20250406150902523" style="zoom:33%;" />
+<img src="./image-20250406150902523.png" alt="image-20250406150902523" style="zoom:33%;" />
