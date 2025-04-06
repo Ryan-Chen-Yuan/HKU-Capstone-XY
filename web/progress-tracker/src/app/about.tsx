@@ -23,12 +23,12 @@ export default function AboutPage() {
       avatar: '/avatars/member1.png',
       email: 'zhangsan@example.com',
       description: (
-        <>
+        
           <ul className="list-disc pl-5">
             <li>Develop Medal Feedback feature</li>
             <li>Overall project management</li>
           </ul>
-        </>
+        
       )
     },
     { 

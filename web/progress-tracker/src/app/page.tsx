@@ -60,14 +60,16 @@ export default function HomePage() {
           >
             Progress Update
           </button>
+          
           {/*
           <button 
             className={`px-4 py-2 rounded ${activeTab === 'schedule' ? 'bg-blue-600 text-white' : 'bg-gray-200'}`}
             onClick={() => setActiveTab('schedule')}
           >
             Schedule
-          </button> */}
-          {/* <button 
+          </button> 
+          
+           <button 
             className={`px-4 py-2 rounded ${activeTab === 'overall' ? 'bg-blue-600 text-white' : 'bg-gray-200'}`}
             onClick={() => setActiveTab('overall')}
           >

@@ -4,10 +4,10 @@ import getStatusBadge from "./global";
 
 const ProgressUpdate = () => {
   const projectProgress = {
-    overall: 25,
+    overall: 20,
     timeElapsed: 25,
     tasksCompleted: 70,
-    milestonesReached: 2
+    milestonesReached: 20
   };
 
   const teamMembers = [
@@ -18,17 +18,71 @@ const ProgressUpdate = () => {
     { id: 5, name: 'Su Yingcheng', role: 'Member', progress: 85, avatar: '/avatars/member5.png' }
   ];
 
-  const recentMilestones = [
-    { id: 1, title: 'Planning and Analysis ', status: 'completed', date: '2025-03-10' },
-    { id: 2, title: 'Prototype Design', status: 'in_progress', date: '2025-02-28' },
-    { id: 3, title: 'Frontend Development', status: 'in_progress', date: '2025-03-15' },
-    { id: 4, title: 'Backend Development', status: 'pending', date: '2025-03-30' }
+  // const milestones = [
+  //   { id: 1, title: 'Planning and Analysis ', status: 'completed', date: '2025-03-10' },
+  //   { id: 2, title: 'Prototype Design', status: 'in_progress', date: '2025-02-28' },
+  //   { id: 3, title: 'Frontend Development', status: 'in_progress', date: '2025-03-15' },
+  //   { id: 4, title: 'Backend Development', status: 'pending', date: '2025-03-30' }
+  // ];
+
+  const milestones = [
+    { 
+      id: 1, 
+      title: 'Planning phase', 
+      description: 'Define project objectives and outline development plan',
+      startDate: '2025-01-20', 
+      endDate: '2025-03-10', 
+      status: 'completed', 
+      progress: 100 
+    },
+    { 
+      id: 2, 
+      title: 'Prototype design', 
+      description: 'Draft UI design and define technical architecture',
+      startDate: '2025-03-10', 
+      endDate: '2025-04-07', 
+      status: 'in_progress', 
+      progress: 95 
+    },
+    { 
+      id: 3, 
+      title: 'Development phase', 
+      description: 'Implement frontend and backend core features',
+      startDate: '2025-04-7', 
+      endDate: '2025-07-7', 
+      status: 'pending', 
+      progress: 0 
+    },
+    { 
+      id: 4, 
+      title: 'Testing phase', 
+      description: 'Perform functional testing, performance testing and user testing to fix issues',
+      startDate: '2025-06-17', 
+      endDate: '2025-7-7', 
+      status: 'pending', 
+      progress: 0 
+    },
+    { 
+      id: 5, 
+      title: 'Deployment', 
+      description: 'Deploy the system to a production environment',
+      startDate: '2025-06-17', 
+      endDate: '2025-07-7', 
+      status: 'pending', 
+      progress: 0 
+    }
   ];
 
   const formatDate = (dateString) => {
     return new Date(dateString).toLocaleDateString('en');
   };
     
+  const getDaysBetween = (startDate, endDate) => {
+    const start = new Date(startDate);
+    const end = new Date(endDate);
+    return Math.round((end - start) / (1000 * 60 * 60 * 24));
+  };
+
   return (
     <>
   {/* Overall Project Progress */}
@@ -99,7 +153,7 @@ const ProgressUpdate = () => {
         </CardContent>
       </Card> */}
 
-      {/* <Card>
+      <Card>
         <CardHeader>
           <CardTitle>Milestones Reached</CardTitle>
         </CardHeader>
@@ -108,9 +162,9 @@ const ProgressUpdate = () => {
             <span>{projectProgress.milestonesReached}%</span>
           </div>
           <Progress value={projectProgress.milestonesReached} className="mb-4" />
-          <p className="text-sm text-gray-500">6/10 milestones achieved</p>
+          <p className="text-sm text-gray-500">1/5 milestones achieved</p>
         </CardContent>
-      </Card> */}
+      </Card>
     </div>
   </div>
 
@@ -118,7 +172,10 @@ const ProgressUpdate = () => {
   <div className="mb-12">
     <div className="flex justify-between items-center mb-6">
       <h2 className="text-2xl font-semibold text-gray-900">Team Member Progress</h2>
-      <Link href="https://github.com/Ryan-Chen-Yuan/HKU-Capstone-XY/blob/main/docs/progress1-plan.md" className="text-blue-600 hover:text-blue-800">
+      <Link 
+        href="https://github.com/Ryan-Chen-Yuan/HKU-Capstone-XY/tree/main/docs" 
+        target="_blank" 
+        className="text-blue-600 hover:text-blue-800">
         Details &rarr;
       </Link>
     </div>
@@ -154,21 +211,59 @@ const ProgressUpdate = () => {
         查看全部 &rarr;
       </Link> */}
     </div>
-    <Card>
-      <div className="divide-y divide-gray-200">
-        {recentMilestones.map(milestone => (
+    {/* <Card> */}
+      {/* <div className="divide-y divide-gray-200">
+        {milestones.map(milestone => (
           <div key={milestone.id} className="p-6 flex justify-between items-center">
             <div>
               <h3 className="font-medium text-gray-900">{milestone.title}</h3>
-              {/* <p className="text-sm text-gray-500">Date: {formatDate(milestone.date)}</p> */}
+              <p className="text-sm text-gray-500">Date: {formatDate(milestone.date)}</p>
             </div>
             <div>
               {getStatusBadge(milestone.status)}
             </div>
           </div>
         ))}
-      </div>
-    </Card>
+      </div> */}
+       <div className="space-y-6">
+            {milestones.map((milestone) => (
+              <Card key={milestone.id}>
+                <CardHeader>
+                  <div className="flex justify-between items-start">
+                    <div>
+                      <CardTitle>{milestone.title}</CardTitle>
+                      <p className="text-gray-500">{milestone.description}</p>
+                    </div>
+                    <div>
+                      {getStatusBadge(milestone.status)}
+                    </div>
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                      <p className="text-sm text-gray-500 mb-1">Time period</p>
+                      <p className="font-medium">
+                        {formatDate(milestone.startDate)} - {formatDate(milestone.endDate)}
+                      </p>
+                      <p className="text-sm text-gray-500 mt-1">
+                        last {getDaysBetween(milestone.startDate, milestone.endDate)} days
+                      </p>
+                    </div>
+                    <div>
+                      <p className="text-sm text-gray-500 mb-1">Progress</p>
+                      <div className="flex justify-between text-sm mb-1">
+                        {/* <span>progress</span> */}
+                        <span>{milestone.progress}%</span>
+                      </div>
+                      <Progress value={milestone.progress} />
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+    {/* </Card> */}
   </div>
 
   {/* 快速链接 */}
