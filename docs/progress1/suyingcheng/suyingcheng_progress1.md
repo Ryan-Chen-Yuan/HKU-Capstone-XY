@@ -11,24 +11,27 @@ For the event-analysis function, the UI and interaction design have been complet
 1. **Event Card Design**:
 
    - Key events are displayed as individual cards, ensuring a clear and structured layout.
+   
    - Each card includes the event details, along with interaction buttons.
-   - <img src="/Users/syccxdr/Data/HKU/Final Project/HKU-Capstone-XY/docs/progress1/suyingcheng/assets/image-20250407115604706.png" alt="image-20250407115604706" style="zoom:67%;" />
+   
+   <img src="./assets/image-20250407120713300.png" alt="image-20250407120713300" style="zoom:67%;" />
    
 2. **User Interaction Options**:
-
+  
    - Users can provide feedback on extracted events using the following actions:
-
+   
      - **"✓"**: To confirm the accuracy of the event.
-
-       <img src="/Users/syccxdr/Data/HKU/Final Project/HKU-Capstone-XY/docs/progress1/suyingcheng/assets/image-20250407115638702.png" alt="image-20250407115638702" style="zoom:67%;" />
-
+   
+       <img src="./assets/image-20250407120736292.png" alt="image-20250407120736292" style="zoom:67%;" />
+   
      - **"✗"**: To mark the event as incorrect.
-
-		<img src="/Users/syccxdr/Data/HKU/Final Project/HKU-Capstone-XY/docs/progress1/suyingcheng/assets/image-20250407115736418.png" alt="image-20250407115736418" style="zoom:67%;" />
+   
+   	<img src="./assets/image-20250407120755242.png" alt="image-20250407120755242" style="zoom:67%;" />
    	
-		* **"Edit"**: To allow users to modify the event details if necessary.
+   	* **"Edit"**: To allow users to modify the event details if necessary.
    	
-   	<img src="/Users/syccxdr/Data/HKU/Final Project/HKU-Capstone-XY/docs/progress1/suyingcheng/assets/image-20250407115959312.png" alt="image-20250407115959312" style="zoom:67%;" />
+   	<img src="./assets/image-20250407120835511.png" alt="image-20250407120835511" style="zoom:67%;" />
+   
 
 
 3. **Mock Data Integration**:
