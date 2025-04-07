@@ -12,24 +12,25 @@ For the event-analysis function, the UI and interaction design have been complet
 
    - Key events are displayed as individual cards, ensuring a clear and structured layout.
    - Each card includes the event details, along with interaction buttons.
-
-   ![event_card](event_card.png)
-
+   - <img src="/Users/syccxdr/Data/HKU/Final Project/HKU-Capstone-XY/docs/progress1/suyingcheng/assets/image-20250407115604706.png" alt="image-20250407115604706" style="zoom:67%;" />
+   
 2. **User Interaction Options**:
 
    - Users can provide feedback on extracted events using the following actions:
 
      - **"✓"**: To confirm the accuracy of the event.
 
-      ![accept_button](accept.png)
+       <img src="/Users/syccxdr/Data/HKU/Final Project/HKU-Capstone-XY/docs/progress1/suyingcheng/assets/image-20250407115638702.png" alt="image-20250407115638702" style="zoom:67%;" />
 
      - **"✗"**: To mark the event as incorrect.
 
-      ![refuse_button](refuse.png)
+		<img src="/Users/syccxdr/Data/HKU/Final Project/HKU-Capstone-XY/docs/progress1/suyingcheng/assets/image-20250407115736418.png" alt="image-20250407115736418" style="zoom:67%;" />
+   	
+		* **"Edit"**: To allow users to modify the event details if necessary.
+   	
+   	<img src="/Users/syccxdr/Data/HKU/Final Project/HKU-Capstone-XY/docs/progress1/suyingcheng/assets/image-20250407115959312.png" alt="image-20250407115959312" style="zoom:67%;" />
 
-     - **"Edit"**: To allow users to modify the event details if necessary.
 
-      ![card-edit](card_edit.png)
 3. **Mock Data Integration**:
 
    - The UI is integrated with mock data to simulate key event extraction, ensuring a functional demonstration of the feature.
