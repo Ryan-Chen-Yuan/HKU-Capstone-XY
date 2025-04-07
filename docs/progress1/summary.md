@@ -29,7 +29,7 @@ Progress 1阶段(3月10日 - 4月7日)团队协作完成了以下三项核心工
 详情参阅
 
 - [微信小程序原型开发](xuhanlin/progress1.md)
-- [事件功能开发](suyingcheng/progress1.md)
+- [事件功能开发](suyingcheng/suyingcheng_progress1.md)
 
 ### 项目网页 - 王雪瑶
 
