@@ -22,15 +22,15 @@ For the event-analysis function, the UI and interaction design have been complet
    
      - **"✓"**: To confirm the accuracy of the event.
    
-       <img src="./assets/image-20250407120736292.png" alt="image-20250407120736292" style="zoom:67%;" />
+		<img src="./assets/image-20250407120736292.png" alt="image-20250407120736292" style="zoom:67%;" />
    
      - **"✗"**: To mark the event as incorrect.
    
-   	<img src="./assets/image-20250407120755242.png" alt="image-20250407120755242" style="zoom:67%;" />
+		<img src="./assets/image-20250407120755242.png" alt="image-20250407120755242" style="zoom:67%;" />
    	
    	* **"Edit"**: To allow users to modify the event details if necessary.
    	
-   	<img src="./assets/image-20250407120835511.png" alt="image-20250407120835511" style="zoom:67%;" />
+		<img src="./assets/image-20250407120835511.png" alt="image-20250407120835511" style="zoom:67%;" />
    
 
 
