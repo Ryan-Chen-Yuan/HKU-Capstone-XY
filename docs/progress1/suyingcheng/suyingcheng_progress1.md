@@ -13,7 +13,7 @@ For the event-analysis function, the UI and interaction design have been complet
    - Key events are displayed as individual cards, ensuring a clear and structured layout.
    - Each card includes the event details, along with interaction buttons.
 
-   <img src="/Users/syccxdr/Library/Application Support/typora-user-images/image-20250406180502187.png" alt="image-20250406180502187" style="zoom:50%;" />
+   ![event_card](event_card.png)
 
 2. **User Interaction Options**:
 
@@ -21,16 +21,15 @@ For the event-analysis function, the UI and interaction design have been complet
 
      - **"✓"**: To confirm the accuracy of the event.
 
-     <img src="/Users/syccxdr/Library/Application Support/typora-user-images/image-20250406180559329.png" alt="image-20250406180559329" style="zoom:50%;" />
+      ![accept_button](accept.png)
 
      - **"✗"**: To mark the event as incorrect.
 
-     <img src="/Users/syccxdr/Library/Application Support/typora-user-images/image-20250406180613525.png" alt="image-20250406180613525" style="zoom:50%;" />
+      ![refuse_button](refuse.png)
 
      - **"Edit"**: To allow users to modify the event details if necessary.
 
-     <img src="/Users/syccxdr/Library/Application Support/typora-user-images/image-20250406180624744.png" alt="image-20250406180624744" style="zoom:50%;" />
-
+      ![card-edit](card_edit.png)
 3. **Mock Data Integration**:
 
    - The UI is integrated with mock data to simulate key event extraction, ensuring a functional demonstration of the feature.
