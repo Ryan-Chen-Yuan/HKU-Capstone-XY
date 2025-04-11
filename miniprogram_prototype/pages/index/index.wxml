@@ -1,0 +1,151 @@
+<view class="container">
+  <!-- 自定义导航栏 -->
+  <view class="custom-nav">
+    <view class="nav-content">
+      <view class="nav-left">
+        <view class="menu-button" bindtap="toggleSidebar">
+          <view class="menu-icon"></view>
+          <view class="menu-icon"></view>
+          <view class="menu-icon"></view>
+        </view>
+        <view class="new-chat-button-small" bindtap="startNewChat">
+          <text class="new-chat-icon">+</text>
+        </view>
+      </view>
+      <view class="nav-title">知己AI助手</view>
+    </view>
+  </view>
+
+  <!-- 侧边栏背景遮罩 -->
+  <view class="sidebar-backdrop {{showSidebar ? 'show' : ''}}" bindtap="closeSidebar"></view>
+
+  <!-- 侧边栏 -->
+  <view class="sidebar {{showSidebar ? 'open' : ''}}">
+    <view class="sidebar-header">
+      <view class="sidebar-title">历史对话</view>
+    </view>
+    
+    <view class="history-list">
+      <view class="history-item" 
+            wx:for="{{chatHistory}}" 
+            wx:key="id" 
+            bindtap="loadChat" 
+            bindlongpress="deleteChat"
+            data-id="{{item.id}}">
+        <view class="history-title">{{item.title}}</view>
+        <view class="history-time">{{item.time}}</view>
+      </view>
+      
+      <!-- 清除所有对话按钮 -->
+      <view class="clear-all-button" bindtap="clearAllChats" wx:if="{{chatHistory.length > 0}}">
+        <image class="clear-icon" src="/images/clear.png" mode="aspectFit"></image>
+        <text>清除所有对话</text>
+      </view>
+    </view>
+
+    <view class="sidebar-footer" bindtap="navigateToProfile">
+      <view class="profile-icon">
+        <image class="profile-image" src="/images/default-avatar.png" mode="aspectFill"></image>
+      </view>
+      <view class="user-info">
+        <text class="user-name">{{userInfo.nickName || '未登录'}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 主聊天区域 -->
+  <view class="main-content {{showSidebar ? 'with-sidebar' : ''}} {{isKeyboardVisible ? 'keyboard-visible' : ''}}" style="bottom: {{keyboardHeight}}px;">
+    <view class="chat-container">
+      <scroll-view 
+        class="chat-list {{messages.length > 0 ? 'has-messages' : ''}}" 
+        scroll-y="true"
+        scroll-x="false"
+        enhanced="true"
+        show-scrollbar="false"
+        scroll-into-view="{{scrollToMessage}}" 
+        scroll-with-animation>
+        <!-- 欢迎界面 -->
+        <view class="welcome-container" wx:if="{{messages.length === 0}}">
+          <view class="welcome-icon">
+            <image src="/images/default-avatar.png" mode="aspectFill"></image>
+          </view>
+          <view class="welcome-title">欢迎使用知己AI助手</view>
+          <view class="welcome-subtitle">人生知己，知己知彼。\n 我是您的智能助手，欢迎向我抒发您的情绪！</view>
+        </view>
+        
+        <!-- 消息列表 -->
+        <block wx:for="{{messages}}" wx:key="id">
+          <view class="message {{item.type}}-message" id="msg-{{item.id}}">
+            <view class="message-content">{{item.content}}</view>
+          </view>
+        </block>
+        
+        <!-- 加载动画 -->
+        <view class="loading-container" wx:if="{{isLoading}}">
+          <view class="loading-dots">
+            <view class="dot"></view>
+            <view class="dot"></view>
+            <view class="dot"></view>
+          </view>
+        </view>
+      </scroll-view>
+    </view>
+  </view>
+
+  <!-- 输入区域 -->
+  <view class="input-wrapper {{messages.length > 0 ? 'bottom' : 'center'}} {{isKeyboardVisible ? 'keyboard-visible' : ''}}" style="bottom: {{keyboardHeight}}px;">
+    <view class="input-container">
+      <input class="message-input" 
+             type="text" 
+             value="{{inputMessage}}" 
+             bindinput="onInputChange" 
+             placeholder="给知己AI助手发送消息" 
+             confirm-type="send"
+             bindconfirm="sendMessage"
+             adjust-position="{{false}}"
+             cursor-spacing="20"/>
+      <view class="send-button" bindtap="sendMessage">
+        <text>发送</text>
+      </view>
+    </view>
+    <view class="ai-disclaimer" wx:if="{{messages.length > 0}}">内容由 AI 生成，仅供参考</view>
+  </view>
+
+  <!-- 小怪兽 -->
+  <view class="monster {{isDragging ? 'dragging' : ''}} {{currentEmotion}} {{currentAnimation}} {{isKeyboardVisible ? 'keyboard-visible' : ''}}" 
+        bindtap="navigateToMedals" 
+        bindtouchstart="touchStart"
+        bindtouchmove="touchMove"
+        bindtouchend="touchEnd"
+        style="left: {{monsterPosition.x}}px; top: {{monsterPosition.y}}px;">
+    <view class="monster-body">
+      <view class="monster-face">
+        <view class="monster-eyes">
+          <view class="monster-eye left"></view>
+          <view class="monster-eye right"></view>
+        </view>
+        <view class="monster-mouth"></view>
+      </view>
+      <!-- 情绪点指示器 -->
+      <view class="emotion-indicator">
+        <view class="emotion-bar happy" style="width: {{emotionPoints.happy / emotionThreshold * 100}}%"></view>
+        <view class="emotion-bar sad" style="width: {{emotionPoints.sad / emotionThreshold * 100}}%"></view>
+        <view class="emotion-bar angry" style="width: {{emotionPoints.angry / emotionThreshold * 100}}%"></view>
+        <view class="emotion-bar sleepy" style="width: {{emotionPoints.sleepy / emotionThreshold * 100}}%"></view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 勋章奖励提示 -->
+  <view class="medal-reward {{showMedalReward ? 'show' : ''}} {{isKeyboardVisible ? 'keyboard-visible' : ''}}" wx:if="{{lastRewardMedal}}">
+    <view class="reward-content">
+      <view class="reward-icon">
+        <image src="{{lastRewardMedal.icon}}" mode="aspectFit"></image>
+      </view>
+      <view class="reward-text">
+        <view class="reward-title">恭喜获得勋章！</view>
+        <view class="reward-name">{{lastRewardMedal.name}}</view>
+      </view>
+    </view>
+  </view>
+</view> 
