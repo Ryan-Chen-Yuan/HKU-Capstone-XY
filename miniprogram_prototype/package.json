@@ -1,0 +1,13 @@
+{
+  "name": "agent_ui",
+  "version": "1.0.0",
+  "description": "微信小程序图片压缩工具",
+  "main": "compress-images.js",
+  "scripts": {
+    "compress": "node compress-images.js",
+    "create-icons": "node create-icons.js"
+  },
+  "dependencies": {
+    "sharp": "^0.32.1"
+  }
+} 
