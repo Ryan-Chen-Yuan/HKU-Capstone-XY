@@ -74,8 +74,8 @@ Page({
   onLoad: function() {
     this.loadChatHistory()
     this.loadMedals()
-    this.startMonsterMovement()
-    this.startMonsterAnimation()
+    // this.startMonsterMovement()
+    // this.startMonsterAnimation()
     this.loadEarnedMedals()
     
     // 监听键盘高度变化
