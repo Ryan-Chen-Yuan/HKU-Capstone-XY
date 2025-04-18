@@ -347,6 +347,7 @@ Page({
     this.scrollToBottom()
 
     // 模拟AI回复
+    // TODO(Hanlin, Yitao): 改为调用后端API获取真实的AI响应。
     setTimeout(() => {
       const aiResponse = {
         id: Date.now(),
