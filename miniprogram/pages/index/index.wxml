@@ -112,7 +112,7 @@
   </view>
 
   <!-- 小怪兽 -->
-  <view class="monster {{isDragging ? 'dragging' : ''}} {{currentEmotion}} {{currentAnimation}} {{isKeyboardVisible ? 'keyboard-visible' : ''}}" 
+  <view wx:if="{{view == 'MONSTER'}}" class="monster {{isDragging ? 'dragging' : ''}} {{currentEmotion}} {{currentAnimation}} {{isKeyboardVisible ? 'keyboard-visible' : ''}}" 
         bindtap="navigateToMedals" 
         bindtouchstart="touchStart"
         bindtouchmove="touchMove"
