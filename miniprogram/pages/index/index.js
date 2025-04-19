@@ -34,6 +34,14 @@ Page({
       x: wx.getWindowInfo().windowWidth - 120,
       y: 120
     },
+    medalBubblePosition: {
+      x: wx.getWindowInfo().windowWidth - 100,
+      y: 140
+    },
+    medalBubbleSize: 80,
+    medalBubbleDragging: false,
+    medalBubbleStartX: 0,
+    medalBubbleStartY: 0,
     monsterSize: 120,
     moveInterval: null,
     isMoving: false,
@@ -881,5 +889,96 @@ Page({
         });
       }
     });
+  },
+
+  // 勋章气泡触摸开始
+  medalBubbleTouchStart: function(e) {
+    if (e && e.type === 'touchstart') {
+      e.preventDefault && e.preventDefault()
+    }
+
+    const windowWidth = wx.getWindowInfo().windowWidth
+    const windowHeight = wx.getWindowInfo().windowHeight
+    const { medalBubbleSize, keyboardHeight } = this.data
+    const margin = 10 // 边距
+    const visibleHeight = windowHeight - keyboardHeight
+
+    // 获取当前位置
+    let currentX = this.data.medalBubblePosition.x
+    let currentY = this.data.medalBubblePosition.y
+
+    // 边界检查
+    currentX = Math.max(margin, Math.min(windowWidth - medalBubbleSize - margin, currentX))
+    currentY = Math.max(margin, Math.min(visibleHeight - medalBubbleSize - margin, currentY))
+
+    this.setData({
+      medalBubbleDragging: true,
+      medalBubblePosition: {
+        x: currentX,
+        y: currentY
+      },
+      medalBubbleStartX: e.touches[0].clientX - currentX,
+      medalBubbleStartY: e.touches[0].clientY - currentY
+    })
+  },
+
+  // 勋章气泡触摸移动
+  medalBubbleTouchMove: function(e) {
+    if (e && e.type === 'touchmove') {
+      e.preventDefault && e.preventDefault()
+    }
+
+    if (this.data.medalBubbleDragging) {
+      const windowWidth = wx.getWindowInfo().windowWidth
+      const windowHeight = wx.getWindowInfo().windowHeight
+      const { medalBubbleSize, keyboardHeight } = this.data
+      const margin = 10 // 边距
+      const visibleHeight = windowHeight - keyboardHeight
+
+      // 计算新位置
+      let newX = e.touches[0].clientX - this.data.medalBubbleStartX
+      let newY = e.touches[0].clientY - this.data.medalBubbleStartY
+
+      // 边界检查
+      newX = Math.max(margin, Math.min(windowWidth - medalBubbleSize - margin, newX))
+      newY = Math.max(margin, Math.min(visibleHeight - medalBubbleSize - margin, newY))
+      
+      this.setData({
+        medalBubblePosition: {
+          x: newX,
+          y: newY
+        }
+      })
+    }
+  },
+
+  // 勋章气泡触摸结束
+  medalBubbleTouchEnd: function(e) {
+    if (e && e.type === 'touchend') {
+      e.preventDefault && e.preventDefault()
+    }
+
+    this.setData({
+      medalBubbleDragging: false
+    })
+  },
+
+  // 点击勋章气泡
+  onMedalBubbleTap: function() {
+    if (!this.data.medalBubbleDragging) {
+      wx.navigateTo({
+        url: '/pages/medals/index',
+        success: function() {
+          console.log('成功跳转到勋章页面');
+        },
+        fail: function(error) {
+          console.error('跳转到勋章页面失败:', error);
+          wx.showToast({
+            title: '跳转失败，请重试',
+            icon: 'none'
+          });
+        }
+      });
+    }
   },
 }) 
