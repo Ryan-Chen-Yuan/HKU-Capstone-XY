@@ -36,7 +36,7 @@ Page({
     },
     medalBubblePosition: {
       x: wx.getWindowInfo().windowWidth - 100,
-      y: 80
+      y: 140
     },
     medalBubbleSize: 80,
     medalBubbleDragging: false,
