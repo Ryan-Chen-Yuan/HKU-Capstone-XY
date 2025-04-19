@@ -148,4 +148,16 @@
       </view>
     </view>
   </view>
+
+  <!-- 勋章气泡 -->
+  <view class="medal-bubble {{medalBubbleDragging ? 'dragging' : ''}} {{isKeyboardVisible ? 'keyboard-visible' : ''}}"
+        style="left: {{medalBubblePosition.x}}px; top: {{medalBubblePosition.y}}px;"
+        bindtap="onMedalBubbleTap"
+        bindtouchstart="medalBubbleTouchStart"
+        bindtouchmove="medalBubbleTouchMove"
+        bindtouchend="medalBubbleTouchEnd">
+    <view class="medal-bubble-inner">
+      <image class="medal-bubble-icon" src="/images/medal-icon.png" mode="aspectFit"></image>
+    </view>
+  </view>
 </view> 
