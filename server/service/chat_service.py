@@ -26,7 +26,7 @@ class ChatService:
 
     def _load_prompt_template(self):
         """加载咨询师Prompt模板"""
-        prompt_dir = os.path.join(os.path.dirname(__file__), "prompt")
+        prompt_dir = os.path.join(os.path.dirname(__file__), "../prompt")
         os.makedirs(prompt_dir, exist_ok=True)
 
         prompt_file = os.path.join(prompt_dir, "counselor_prompt.txt")
@@ -42,11 +42,10 @@ class ChatService:
 4. 当用户需要专业医疗帮助时，建议他们寻求专业医生的帮助
 5. 回复要简洁、清晰，易于用户理解
 6. 适当使用开放式问题鼓励用户表达
-7. 在回复结束时，可以包含一个建议的情绪状态 (#happy, #sad, #angry, #sleepy 或 #neutral)
 
 示例回复格式：
 "我理解你现在的感受。这种情况下，你可以尝试...
-希望这些建议对你有所帮助！ #happy"
+希望这些建议对你有所帮助！"
 """
             with open(prompt_file, "w", encoding="utf-8") as f:
                 f.write(default_prompt)

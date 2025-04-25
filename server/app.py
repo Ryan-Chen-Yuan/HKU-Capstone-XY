@@ -13,8 +13,8 @@ from load_env import load_environment
 
 load_environment()
 
-from chat_service import ChatService
-from database import Database
+from service.chat_service import ChatService
+from dao.database import Database
 
 app = Flask(__name__)
 CORS(app)  # 允许跨域请求
