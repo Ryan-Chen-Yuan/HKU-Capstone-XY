@@ -1,6 +1,9 @@
 // 获取应用实例
 const app = getApp()
 
+// 添加后端API基础URL
+const API_BASE_URL = 'http://localhost:5858/api'
+
 Page({
   data: {
     showSidebar: false,
@@ -77,6 +80,8 @@ Page({
     windowHeight: wx.getWindowInfo().windowHeight, // 窗口高度
     windowWidth: wx.getWindowInfo().windowWidth,   // 窗口宽度
     isKeyboardVisible: false,  // 键盘是否可见
+    session_id: '',
+    user_id: '',
   },
 
   onLoad: function() {
@@ -90,6 +95,9 @@ Page({
     wx.onKeyboardHeightChange(res => {
       this.handleKeyboardHeightChange(res.height)
     })
+
+    // 生成唯一用户ID（如果没有）
+    this.initUserID()
   },
 
   onShow: function() {
@@ -339,11 +347,12 @@ Page({
     const content = this.data.inputMessage.trim()
     if (!content) return
 
+    const timestamp = new Date().toISOString()
     const newMessage = {
       id: Date.now(),
       type: 'user',
       content: content,
-      timestamp: new Date().toISOString()
+      timestamp: timestamp
     }
 
     this.setData({
@@ -354,24 +363,121 @@ Page({
 
     this.scrollToBottom()
 
-    // 模拟AI回复
-    // TODO(Hanlin, Yitao): 改为调用后端API获取真实的AI响应。
-    setTimeout(() => {
-      const aiResponse = {
-        id: Date.now(),
-        type: 'agent',
-        content: '这是一个模拟的AI回复消息。在实际应用中，这里应该调用后端API获取真实的AI响应。',
-        timestamp: new Date().toISOString()
+    // 准备历史消息记录，用于提供上下文
+    const history = this.data.messages.map(msg => ({
+      role: msg.type === 'user' ? 'user' : 'agent',
+      content: msg.content,
+      timestamp: msg.timestamp
+    }))
+
+    // 调用后端API获取AI响应
+    wx.request({
+      url: `${API_BASE_URL}/chat`,
+      method: 'POST',
+      data: {
+        user_id: this.data.user_id,
+        session_id: this.data.session_id,
+        message: content,
+        timestamp: timestamp,
+        history: history
+      },
+      header: {
+        'content-type': 'application/json'
+      },
+      success: (res) => {
+        if (res.statusCode === 200) {
+          // 保存会话ID，用于维持上下文
+          if (res.data.session_id && !this.data.session_id) {
+            this.setData({
+              session_id: res.data.session_id
+            })
+          }
+
+          const aiResponse = {
+            id: Date.now(),
+            type: 'agent',
+            content: res.data.content,
+            timestamp: res.data.timestamp
+          }
+
+          this.setData({
+            messages: [...this.data.messages, aiResponse],
+            isLoading: false
+          })
+
+          // 如果AI响应包含情绪信息，更新小怪物的情绪
+          if (res.data.emotion) {
+            this.updateMonsterEmotionState(res.data.emotion)
+          }
+
+          this.scrollToBottom()
+          this.saveChatHistory()
+        } else {
+          // 处理错误情况
+          this.handleApiError(res)
+        }
+      },
+      fail: (error) => {
+        console.error('API请求失败:', error)
+        this.handleApiError()
       }
+    })
+  },
 
+  // 处理API错误
+  handleApiError: function(res) {
+    let errorMsg = '网络连接错误，请稍后再试'
+    
+    if (res && res.data && res.data.error_message) {
+      errorMsg = res.data.error_message
+    }
+
+    const aiResponse = {
+      id: Date.now(),
+      type: 'agent',
+      content: `抱歉，我遇到了一些问题：${errorMsg}`,
+      timestamp: new Date().toISOString()
+    }
+
+    this.setData({
+      messages: [...this.data.messages, aiResponse],
+      isLoading: false
+    })
+
+    this.scrollToBottom()
+    this.saveChatHistory()
+
+    wx.showToast({
+      title: '连接失败',
+      icon: 'none'
+    })
+  },
+
+  // 更新小怪物情绪状态（基于API返回的情绪）
+  updateMonsterEmotionState: function(emotion) {
+    if (['happy', 'sad', 'angry', 'sleepy', 'neutral'].includes(emotion)) {
       this.setData({
-        messages: [...this.data.messages, aiResponse],
-        isLoading: false
+        currentEmotion: emotion
       })
-
-      this.scrollToBottom()
-      this.saveChatHistory()
-    }, 1000)
+      
+      // 根据情绪触发相应的动画
+      switch(emotion) {
+        case 'happy':
+          this.playAnimation('bounce')
+          break
+        case 'sad':
+          this.playAnimation('shake')
+          break
+        case 'angry':
+          this.playAnimation('pulse')
+          break
+        case 'sleepy':
+          this.playAnimation('wobble')
+          break
+        default:
+          this.playAnimation('idle')
+      }
+    }
   },
 
   // 滚动到底部
@@ -980,5 +1086,15 @@ Page({
         }
       });
     }
+  },
+
+  // 初始化用户ID
+  initUserID: function() {
+    let userId = wx.getStorageSync('user_id')
+    if (!userId) {
+      userId = 'user_' + Date.now() + Math.floor(Math.random() * 1000)
+      wx.setStorageSync('user_id', userId)
+    }
+    this.setData({ user_id: userId })
   },
 }) 
