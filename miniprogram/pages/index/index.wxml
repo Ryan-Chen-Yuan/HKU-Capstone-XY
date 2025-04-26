@@ -41,6 +41,12 @@
         <image class="clear-icon" src="/images/clear.png" mode="aspectFit"></image>
         <text>清除所有对话</text>
       </view>
+
+      <!-- 事件分析入口 -->
+      <view class="events-button" bindtap="navigateToEvents">
+        <image class="events-icon" src="/images/events.png" mode="aspectFit"></image>
+        <text>事件分析</text>
+      </view>
     </view>
 
     <view class="sidebar-footer" bindtap="navigateToProfile">
