@@ -7,7 +7,7 @@
           <text class="back-icon">←</text>
         </view>
       </view>
-      <view class="nav-title">事件分析</view>
+      <view class="nav-title">事件卡片</view>
     </view>
   </view>
 

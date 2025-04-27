@@ -17,11 +17,11 @@ const mockEvents = [
   {
     id: '2',
     primaryType: 'cognitive',
-    subType: 'negativeThinking',
-    title: '消极思考',
-    content: '反复思考过去的失败经历，认为自己不够好',
+    subType: 'positiveThinking',
+    title: '积极思考',
+    content: '回顾过去的成功经历，增强自信心',
     time: '2024-04-05 14:20',
-    dialogContent: '我总是想起去年那次面试失败的经历，觉得自己永远也比不上别人，无论多努力都是徒劳。',
+    dialogContent: '我回想起去年那次成功的面试经历，这让我意识到只要努力准备，我完全有能力达成目标。这次经历给了我很大的信心。',
     sourceDialogId: 'dialog_002',
     status: 'pending',
     tagColor: '#9C27B0',
@@ -92,12 +92,9 @@ const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 // 事件服务类
 class EventService {
   constructor() {
-    // 初始化本地存储
+    // 强制初始化本地存储
     try {
-      const events = wx.getStorageSync('events');
-      if (!events) {
-        wx.setStorageSync('events', mockEvents);
-      }
+      wx.setStorageSync('events', mockEvents);
     } catch (e) {
       console.error('初始化事件存储失败:', e);
     }

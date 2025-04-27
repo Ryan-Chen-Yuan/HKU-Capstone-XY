@@ -1,29 +1,5 @@
 import EventService from '../../services/event';
 
-// 模拟数据
-const mockEvents = [
-  {
-    id: 1,
-    primaryType: 'emotional',
-    subType: 'emotionalLow',
-    title: '情绪低落',
-    content: '感到特别焦虑和沮丧，无法控制自己的情绪波动',
-    time: '2024-04-05 10:30',
-    dialogContent: '最近我经常感到莫名的焦虑，特别是晚上一个人的时候，有时候会突然很沮丧，控制不住情绪。',
-    tagColor: '#4192FF'
-  },
-  {
-    id: 2,
-    primaryType: 'cognitive',
-    subType: 'negativeThinking',
-    title: '消极思考',
-    content: '反复思考过去的失败经历，认为自己不够好',
-    time: '2024-04-05 14:20',
-    dialogContent: '我总是想起去年那次面试失败的经历，觉得自己永远也比不上别人，无论多努力都是徒劳。',
-    tagColor: '#9C27B0'
-  }
-];
-
 Page({
   data: {
     events: [],
@@ -38,12 +14,6 @@ Page({
   },
 
   onLoad() {
-    // 强制初始化mock数据
-    try {
-      wx.setStorageSync('events', mockEvents);
-    } catch (e) {
-      console.error('初始化事件存储失败:', e);
-    }
     this.loadEvents();
   },
 

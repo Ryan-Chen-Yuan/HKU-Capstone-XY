@@ -9,10 +9,10 @@
 
 .events-list {
   padding-bottom: 24rpx;
-  width: 100%;
+  width: 92%;
   max-width: 960rpx;
   margin: 0 auto;
-  padding: 160rpx 30rpx 0 30rpx;
+  padding: 200rpx 20rpx 20rpx 20rpx;
 }
 
 /* 加载状态 */
@@ -148,4 +148,6 @@
   max-width: 60%;
   padding: 0;
   pointer-events: none;
-} 
+}
+
+
