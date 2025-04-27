@@ -1,0 +1,183 @@
+.container {
+  min-height: 100vh;
+  background-color: #f8f9fa;
+  padding: 20px;
+  position: relative;
+}
+
+/* 返回按钮样式 */
+.back-button {
+  position: absolute;
+  top: 95rpx;
+  left: 30rpx;
+  width: 70rpx;
+  height: 70rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+  background-color: rgba(255, 255, 255, 0.8);
+  border-radius: 50%;
+  box-shadow: 0 2rpx 10rpx rgba(0, 0, 0, 0.1);
+}
+
+.back-icon {
+  width: 24rpx;
+  height: 24rpx;
+  border-left: 4rpx solid #333;
+  border-bottom: 4rpx solid #333;
+  transform: rotate(45deg);
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 20px;
+  padding: 80rpx 0 40rpx;
+  position: relative;
+}
+
+.title {
+  font-size: 24px;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 10px;
+  text-shadow: 0 2rpx 4rpx rgba(0, 0, 0, 0.1);
+  letter-spacing: 2rpx;
+  line-height: 70rpx;
+}
+
+.subtitle {
+  font-size: 16px;
+  color: #888888;
+  letter-spacing: 1rpx;
+}
+
+.sentiment-result {
+  margin-bottom: 20px;
+}
+
+.sentiment-category {
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 8px;
+}
+
+.intensity-chart text {
+  display: block;
+  margin: 4px 0;
+}
+
+.mood-score-section {
+  margin-bottom: 20px;
+}
+
+.chart-container {
+  margin-bottom: 15px;
+}
+
+.modal-content {
+  padding: 16px;
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.modal-content input {
+  width: 100%;
+  padding: 8px;
+  margin-bottom: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.card {
+  background-color: #ffffff;
+  border-radius: 10px;
+  padding: 15px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.score-display {
+  text-align: center;
+  margin: 20px 0;
+}
+
+.score {
+  font-size: 48px;
+  font-weight: bold;
+  color: #4caf50; /* Green for positive mood */
+}
+
+.category {
+  font-size: 24px;
+  color: #555555;
+}
+
+.suggestions-section {
+  margin-bottom: 20px;
+}
+
+.suggestions-title {
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.home-button {
+  width: 100%;
+  background-color: #4caf50;
+  color: #ffffff;
+  padding: 10px;
+  border-radius: 5px;
+  text-align: center;
+}
+
+.feedback-options {
+  margin-top: 20px;
+  text-align: center;
+}
+
+.feedback-title {
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.feedback-button {
+  display: inline-block;
+  width: 120px;
+  padding: 10px 15px;
+  margin: 5px;
+  border: none;
+  border-radius: 25px;
+  font-size: 16px;
+  font-weight: bold;
+  text-align: center;
+  color: #ffffff;
+  background-color: #4caf50; /* Default green color */
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.feedback-button.not-satisfied {
+  background-color: #f44336; /* Red for "Not Satisfied" */
+}
+
+.feedback-button.provide-feedback {
+  background-color: #ff9800; /* Orange for "Provide Feedback" */
+}
+
+.feedback-button:hover {
+  transform: scale(1.05);
+  background-color: #388e3c; /* Darker green on hover */
+}
+
+.feedback-button.not-satisfied:hover {
+  background-color: #d32f2f; /* Darker red on hover */
+}
+
+.feedback-button.provide-feedback:hover {
+  background-color: #e65100; /* Darker orange on hover */
+}
+
+

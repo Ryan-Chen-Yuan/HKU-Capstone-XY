@@ -1,0 +1,46 @@
+<view class="container">
+  <!-- Back Button -->
+  <view class="back-button" bindtap="navigateBack">
+    <view class="back-icon"></view>
+  </view>
+
+  <!-- Header -->
+  <view class="header">
+    <view class="title">情绪评分</view>
+    <view class="subtitle">觉察你的情绪变化</view>
+  </view>
+
+  <!-- Mood Score Section -->
+  <view class="mood-score-section">
+    <view class="chart-container">
+      <ec-canvas id="moodScoreChart" canvas-id="moodScoreChart" ec="{{ec}}"></ec-canvas>
+    </view>
+    <view class="score-display">
+      <text class="score">{{moodScore}}</text>
+      <text class="category">{{moodCategory}}</text>
+    </view>
+  </view>
+
+  <!-- Suggestions Section -->
+  <view class="suggestions-section">
+    <view class="suggestions-title">建议</view>
+    <text class="suggestions-text">{{suggestions}}</text>
+  </view>
+
+  <!-- Feedback Options -->
+  <view class="feedback-options">
+    <view class="feedback-title">反馈</view>
+    <button class="feedback-button satisfied" data-feedback="Satisfied" bindtap="handleFeedback">满意</button>
+    <button class="feedback-button not-satisfied" data-feedback="Not Satisfied" bindtap="handleFeedback">不满意</button>
+    <button class="feedback-button provide-feedback" data-feedback="Provide Feedback" bindtap="handleFeedback">提供反馈</button>
+  </view>
+
+  <!-- Feedback Modal -->
+  <modal wx:if="{{showFeedbackModal}}" bindtap="hideFeedbackModal">
+    <view class="modal-content">
+      <input placeholder="Enter your feedback" bindinput="submitEditedFeedback" />
+      <button bindtap="hideFeedbackModal">取消</button>
+    </view>
+  </modal>
+
+</view>

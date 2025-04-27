@@ -42,6 +42,28 @@ Page({
     medalBubbleDragging: false,
     medalBubbleStartX: 0,
     medalBubbleStartY: 0,
+
+    thermometerIcon: '/images/thermometer-icon.jpg', // Path to the thermometer icon
+    thermometerBubblePosition: {
+      x: wx.getWindowInfo().windowWidth - 80, // Initial X position
+      y: 200, // Initial Y position
+    },
+    thermometerBubbleSize: 60, // Icon size
+    thermometerBubbleDragging: false, // Dragging state
+    thermometerBubbleStartX: 0, // Start X position for dragging
+    thermometerBubbleStartY: 0, // Start Y position for dragging
+  
+
+    thermometerIcon: '/images/thermometer-icon.jpg', // Path to the thermometer icon
+    thermometerBubblePosition: {
+      x: wx.getWindowInfo().windowWidth - 80, // Initial X position
+      y: 200, // Initial Y position
+    },
+    thermometerBubbleSize: 60, // Icon size
+    thermometerBubbleDragging: false, // Dragging state
+    thermometerBubbleStartX: 0, // Start X position for dragging
+    thermometerBubbleStartY: 0, // Start Y position for dragging
+  
     monsterSize: 120,
     moveInterval: null,
     isMoving: false,
@@ -428,7 +450,26 @@ Page({
       });
     }
   },
-  
+
+  // Navigate to Mood Score page
+  navigateToMoodScore: function () {
+    if (!this.data.thermometerIconDragging) {
+      wx.navigateTo({
+        url: '/pages/mood_score/index', // Replace with the actual path to the Mood Score page
+        success: function () {
+          console.log('Successfully navigated to Mood Score page');
+        },
+        fail: function (error) {
+          console.error('Failed to navigate to Mood Score page:', error);
+          wx.showToast({
+            title: 'Navigation failed, please try again',
+            icon: 'none',
+          });
+        },
+      });
+    }
+  },
+ 
   // 开始怪物随机移动
   startMonsterMovement: function() {
     // 清除现有的移动间隔
@@ -981,4 +1022,64 @@ Page({
       });
     }
   },
-}) 
+
+    // 点击温度计
+    onThermometerBubbleTap: function() {
+      if (!this.data.thermometerBubbleDragging) {
+        wx.navigateTo({
+          url: '/pages/mood_score/index',
+          success: function() {
+            console.log('成功跳转到勋章页面');
+          },
+          fail: function(error) {
+            console.error('跳转到勋章页面失败:', error);
+            wx.showToast({
+              title: '跳转失败，请重试',
+              icon: 'none'
+            });
+          }
+        });
+      }
+    },
+
+  // Touch start for thermometer icon
+  thermometerIconTouchStart: function (e) {
+    const { thermometerIconPosition } = this.data;
+
+    this.setData({
+      thermometerIconDragging: true,
+      thermometerIconStartX: e.touches[0].clientX - thermometerIconPosition.x,
+      thermometerIconStartY: e.touches[0].clientY - thermometerIconPosition.y,
+    });
+  },
+
+  // Touch move for thermometer icon
+  thermometerIconTouchMove: function (e) {
+    if (this.data.thermometerIconDragging) {
+      const windowWidth = wx.getWindowInfo().windowWidth;
+      const windowHeight = wx.getWindowInfo().windowHeight;
+      const { thermometerIconSize } = this.data;
+
+      let newX = e.touches[0].clientX - this.data.thermometerIconStartX;
+      let newY = e.touches[0].clientY - this.data.thermometerIconStartY;
+
+      // Boundary checks
+      newX = Math.max(0, Math.min(windowWidth - thermometerIconSize, newX));
+      newY = Math.max(0, Math.min(windowHeight - thermometerIconSize, newY));
+
+      this.setData({
+        thermometerIconPosition: {
+          x: newX,
+          y: newY,
+        },
+      });
+    }
+  },
+
+  // Touch end for thermometer icon
+  thermometerIconTouchEnd: function () {
+    this.setData({
+      thermometerIconDragging: false,
+    });
+  },
+})
