@@ -160,4 +160,17 @@
       <image class="medal-bubble-icon" src="/images/medal-icon.png" mode="aspectFit"></image>
     </view>
   </view>
+
+  <!-- 温度计 -->
+  <view class="medal-bubble {{medalBubbleDragging ? 'dragging' : ''}} {{isKeyboardVisible ? 'keyboard-visible' : ''}}"
+        style="left: {{thermometerBubblePosition.x}}px; top: {{thermometerBubblePosition.y}}px;"
+        bindtap="onThermometerBubbleTap"
+        bindtouchstart="thermometerIconTouchStart"
+        bindtouchmove="thermometerIconTouchMove"
+        bindtouchend="thermometerIconTouchEnd">
+    <view class="medal-bubble-inner">
+      <image class="medal-bubble-icon" src="/images/thermometer-icon.jpg" mode="aspectFit"></image>
+    </view>
+  </view>
+
 </view> 

@@ -1,0 +1,6 @@
+{
+  "navigationBarTitleText": "Mood Score",
+  "usingComponents": {
+    "ec-canvas": "../../utils/ec-canvas/ec-canvas"
+  }
+}

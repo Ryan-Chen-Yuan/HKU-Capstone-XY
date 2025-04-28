@@ -2,7 +2,8 @@
   "pages": [
     "pages/index/index",
     "pages/profile/profile",
-    "pages/login/login"
+    "pages/login/login",
+    "pages/mood_score/index" 
   ],
   "subpackages": [
     {
