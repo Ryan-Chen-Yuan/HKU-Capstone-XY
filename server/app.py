@@ -105,6 +105,55 @@ def get_history():
             500,
         )
 
+@app.route("/api/sentiment", methods=["POST"])
+def analyze_sentiment():
+    """Analyze sentiment of messages and provide score, mood, and suggestions"""
+    try:
+        # Get request data
+        data = request.json
+
+        # Validate required parameters
+        if not data or "user_id" not in data or "session_id" not in data or "messages" not in data:
+            return jsonify({"error_code": 400, "error_message": "缺少必要参数"}), 400
+
+        user_id = data["user_id"]
+        session_id = data["session_id"]
+        messages = data["messages"]
+
+        # Validate messages
+        if not isinstance(messages, list) or not messages:
+            return jsonify({"error_code": 400, "error_message": "消息内容无效"}), 400
+
+        # Perform sentiment analysis
+        sentiment_result = SentimentService.analyze_sentiment(messages)
+        score = sentiment_result["score"]
+        mood = sentiment_result["mood"]
+        suggestions = sentiment_result["suggestions"]
+
+        # Generate a unique message ID and timestamp
+        message_id = f"msg_{uuid.uuid4().hex[:8]}"
+        response_time = datetime.now().isoformat()
+
+        # Save sentiment analysis result to the database
+        db.save_sentiment_analysis(session_id, user_id, score, mood, suggestions)
+
+        # Return sentiment analysis results
+        return jsonify(
+            {
+                "message_id": message_id,
+                "score": score,
+                "mood": mood,
+                "suggestions": suggestions,
+                "timestamp": response_time,
+                "session_id": session_id,
+            }
+        )
+
+    except Exception as e:
+        print(f"Error in sentiment analysis endpoint: {str(e)}")
+        return (
+            jsonify({"error_code": 500, "error_message": f"服务器内部错误: {str(e)}"}), 500
+        )
 
 if __name__ == "__main__":
     # 确保数据目录存在
