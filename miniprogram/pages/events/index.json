@@ -1,0 +1,7 @@
+{
+  "navigationBarTitleText": "事件卡片",
+  "enablePullDownRefresh": true,
+  "usingComponents": {
+    "event-card": "/components/event-card/event-card"
+  }
+} 

@@ -1,0 +1,92 @@
+<!-- 事件卡片组件 -->
+<view class="component-container">
+  <movable-area class="movable-area">
+    <movable-view class="movable-view" direction="horizontal" x="{{x}}" damping="50" bindchange="onChange">
+      <view class="event-card {{editing ? 'editing' : ''}} {{confirmed ? 'confirmed' : ''}} {{rejected ? 'rejected' : ''}}">
+        <!-- 卡片头部 -->
+        <view class="event-header" bindtap="onCardTap">
+          <view class="event-tag" style="background: {{tagColor}}">{{getDisplayType()}}</view>
+          <view class="event-title">{{title}}</view>
+          <view class="event-time">{{time}}</view>
+        </view>
+        
+        <!-- 事件内容 -->
+        <view class="event-content" bindtap="onCardTap">{{content}}</view>
+        
+        <!-- 相关对话 -->
+        <view class="related-dialog" bindtap="onCardTap">
+          <text>相关对话：</text>
+          <view class="dialog-content">{{dialogContent}}</view>
+        </view>
+        
+        <!-- 操作按钮组 -->
+        <view class="action-group">
+          <button class="weui-btn weui-btn_mini {{confirmed ? 'weui-btn_confirmed' : 'weui-btn_primary'}}" 
+                  bindtap="onConfirm">
+            <text class="btn-icon">✓</text>
+          </button>
+          <button class="weui-btn weui-btn_mini {{rejected ? 'weui-btn_rejected' : 'weui-btn_warn'}}" 
+                  bindtap="onReject">
+            <text class="btn-icon">✗</text>
+          </button>
+          <button class="weui-btn weui-btn_mini" 
+                  bindtap="onEdit">
+            <text class="btn-icon">✎</text>
+          </button>
+        </view>
+      </view>
+    </movable-view>
+    <!-- 滑动删除区域 -->
+    <view class="delete-area" bindtap="onDelete">删除</view>
+  </movable-area>
+
+  <!-- 遮罩层 -->
+  <view class="weui-mask {{showEditDialog ? 'weui-mask_show' : ''}}" bindtap="onEditCancel"></view>
+
+  <!-- 编辑弹窗 -->
+  <view class="weui-dialog {{showEditDialog ? 'weui-dialog_show' : ''}}">
+    <view class="weui-dialog__hd">
+      <view class="weui-dialog__title">编辑事件</view>
+    </view>
+    <view class="weui-dialog__bd">
+      <view class="weui-cells weui-cells_form">
+        <!-- 事件类型选择 -->
+        <view class="weui-cell">
+          <view class="weui-cell__hd">
+            <view class="weui-label">事件类型</view>
+          </view>
+          <view class="weui-cell__bd">
+            <picker bindchange="onTypeChange" value="{{typeIndex}}" range="{{eventTypes}}">
+              <view class="weui-input">{{eventTypes[typeIndex]}}</view>
+            </picker>
+          </view>
+        </view>
+        <!-- 事件标题 -->
+        <view class="weui-cell">
+          <view class="weui-cell__bd">
+            <input class="weui-input" 
+                   placeholder="事件标题" 
+                   value="{{editTitle}}"
+                   bindinput="onTitleInput"/>
+          </view>
+        </view>
+        <!-- 事件内容 -->
+        <view class="weui-cell">
+          <view class="weui-cell__bd">
+            <textarea class="weui-textarea" 
+                      placeholder="事件内容" 
+                      value="{{editContent}}"
+                      bindinput="onContentInput"
+                      style="height: 4.5em"/>
+          </view>
+        </view>
+      </view>
+    </view>
+    <view class="weui-dialog__ft">
+      <view class="weui-dialog__btn weui-dialog__btn_default" 
+            bindtap="onEditCancel">取消</view>
+      <view class="weui-dialog__btn weui-dialog__btn_primary" 
+            bindtap="onEditConfirm">确定</view>
+    </view>
+  </view>
+</view> 

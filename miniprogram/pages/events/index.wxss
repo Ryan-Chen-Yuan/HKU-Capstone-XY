@@ -1,0 +1,153 @@
+.container {
+  padding: 24rpx;
+  padding-bottom: 120rpx; /* 为底部导航留出空间 */
+  background: #F7F7F7;
+  min-height: 100vh;
+  box-sizing: border-box;
+  width: 100%;
+}
+
+.events-list {
+  padding-bottom: 24rpx;
+  width: 92%;
+  max-width: 960rpx;
+  margin: 0 auto;
+  padding: 200rpx 20rpx 20rpx 20rpx;
+}
+
+/* 加载状态 */
+.loading-more {
+  text-align: center;
+  padding: 24rpx 0;
+  color: #999999;
+  font-size: 28rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12rpx;
+}
+
+.weui-loading {
+  width: 40rpx;
+  height: 40rpx;
+  display: inline-block;
+  vertical-align: middle;
+  animation: loading 1s steps(12, end) infinite;
+  background: transparent url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 100 100'%3E%3Cpath fill='none' d='M0 0h100v100H0z'/%3E%3Crect width='7' height='20' x='46.5' y='40' fill='%23E9E9E9' rx='5' ry='5' transform='translate(0 -30)'/%3E%3Crect width='7' height='20' x='46.5' y='40' fill='%23989697' rx='5' ry='5' transform='rotate(30 105.98 65)'/%3E%3Crect width='7' height='20' x='46.5' y='40' fill='%239B999A' rx='5' ry='5' transform='rotate(60 75.98 65)'/%3E%3Crect width='7' height='20' x='46.5' y='40' fill='%23A3A1A2' rx='5' ry='5' transform='rotate(90 65 65)'/%3E%3Crect width='7' height='20' x='46.5' y='40' fill='%23ABA9AA' rx='5' ry='5' transform='rotate(120 58.66 65)'/%3E%3Crect width='7' height='20' x='46.5' y='40' fill='%23B2B2B2' rx='5' ry='5' transform='rotate(150 54.02 65)'/%3E%3Crect width='7' height='20' x='46.5' y='40' fill='%23BAB8B9' rx='5' ry='5' transform='rotate(180 50 65)'/%3E%3Crect width='7' height='20' x='46.5' y='40' fill='%23C2C0C1' rx='5' ry='5' transform='rotate(-150 45.98 65)'/%3E%3Crect width='7' height='20' x='46.5' y='40' fill='%23CBCBCB' rx='5' ry='5' transform='rotate(-120 41.34 65)'/%3E%3Crect width='7' height='20' x='46.5' y='40' fill='%23D2D2D2' rx='5' ry='5' transform='rotate(-90 35 65)'/%3E%3Crect width='7' height='20' x='46.5' y='40' fill='%23DADADA' rx='5' ry='5' transform='rotate(-60 24.02 65)'/%3E%3Crect width='7' height='20' x='46.5' y='40' fill='%23E2E2E2' rx='5' ry='5' transform='rotate(-30 -5.98 65)'/%3E%3C/svg%3E") no-repeat;
+  background-size: 100%;
+}
+
+@keyframes loading {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* 无数据提示 */
+.no-data {
+  text-align: center;
+  padding: 48rpx 0;
+  color: #999999;
+  font-size: 28rpx;
+}
+
+/* 底部导航 */
+.bottom-nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: #FFFFFF;
+  padding: 16rpx 24rpx;
+  box-shadow: 0 -2rpx 8rpx rgba(0, 0, 0, 0.1);
+  display: flex;
+  justify-content: center;
+  z-index: 100;
+}
+
+.nav-button {
+  background: #07C160;
+  color: #FFFFFF;
+  font-size: 28rpx;
+  padding: 16rpx 32rpx;
+  border-radius: 8rpx;
+  min-width: 240rpx;
+  text-align: center;
+  transition: opacity 0.3s;
+}
+
+.nav-button:active {
+  opacity: 0.8;
+}
+
+/* 自定义导航栏 */
+.custom-nav {
+  padding: calc(88rpx + env(safe-area-inset-top)) 0 20rpx;
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(10px);
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  box-shadow: 0 2rpx 10rpx rgba(0, 0, 0, 0.05);
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.nav-content {
+  max-width: 1200rpx;
+  margin: 0 auto;
+  padding: 0 30rpx;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 88rpx;
+}
+
+.nav-left {
+  display: flex;
+  align-items: center;
+  position: absolute;
+  left: 30rpx;
+  z-index: 1;
+}
+
+.back-button {
+  width: 70rpx;
+  height: 70rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 35rpx;
+  background: rgba(0, 0, 0, 0.05);
+  transition: background-color 0.2s ease;
+}
+
+.back-button:active {
+  background: rgba(0, 0, 0, 0.1);
+}
+
+.back-icon {
+  font-size: 36rpx;
+  color: #333;
+}
+
+.nav-title {
+  font-size: 40rpx;
+  font-weight: 600;
+  color: #333;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 60%;
+  padding: 0;
+  pointer-events: none;
+}
+
+

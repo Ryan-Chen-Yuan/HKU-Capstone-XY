@@ -1,0 +1,42 @@
+<view class="container">
+  <!-- 自定义导航栏 -->
+  <view class="custom-nav">
+    <view class="nav-content">
+      <view class="nav-left">
+        <view class="back-button" bindtap="navigateBack">
+          <text class="back-icon">←</text>
+        </view>
+      </view>
+      <view class="nav-title">事件卡片</view>
+    </view>
+  </view>
+
+  <view class="events-list">
+    <block wx:for="{{events}}" wx:key="id">
+      <event-card
+        primaryType="{{item.primaryType}}"
+        title="{{item.title}}"
+        content="{{item.content}}"
+        time="{{item.time}}"
+        dialogContent="{{item.dialogContent}}"
+        tagColor="{{item.tagColor}}"
+        data-event-id="{{item.id}}"
+        bind:confirm="handleEventConfirm"
+        bind:reject="handleEventReject"
+        bind:edit="handleEventEdit"
+        bind:delete="handleEventDelete"
+      />
+    </block>
+  </view>
+  
+  <!-- 加载状态 -->
+  <view class="loading-more" wx:if="{{loading}}">
+    <view class="weui-loading"></view>
+    <text>加载中...</text>
+  </view>
+  
+  <!-- 无数据提示 -->
+  <view class="no-data" wx:if="{{!loading && events.length === 0}}">
+    <text>暂无事件</text>
+  </view>
+</view> 
