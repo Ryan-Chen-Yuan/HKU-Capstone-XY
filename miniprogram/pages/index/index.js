@@ -1088,14 +1088,6 @@ Page({
     }
   },
 
- 
-  // 跳转到事件分析页面
-  navigateToEvents() {
-    wx.navigateTo({
-      url: '/pages/events/index'
-    })
-
-    
   // 初始化用户ID
   initUserID: function() {
     let userId = wx.getStorageSync('user_id')
@@ -1105,4 +1097,15 @@ Page({
     }
     this.setData({ user_id: userId })
   },
+
+ 
+  // 跳转到事件分析页面
+  navigateToEvents() {
+    wx.navigateTo({
+      url: '/pages/events/index'
+    })
+  },
+
+    
+  
 }) 
