@@ -1198,4 +1198,11 @@ Page({
       thermometerIconDragging: false,
     });
   },
+
+  // 跳转到事件分析页面
+  navigateToEvents() {
+    wx.navigateTo({
+      url: '/pages/events/index'
+    })
+  },
 })

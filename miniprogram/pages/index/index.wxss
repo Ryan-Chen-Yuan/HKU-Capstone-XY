@@ -420,31 +420,34 @@
 
 /* 清除所有对话按钮 */
 .clear-all-button {
-  margin: 30rpx;
-  padding: 20rpx;
-  background: rgba(255, 59, 48, 0.1);
-  border-radius: 15rpx;
   display: flex;
   align-items: center;
-  justify-content: center;
-  gap: 10rpx;
-  transition: all 0.2s ease;
-}
-
-.clear-all-button:active {
-  background: rgba(255, 59, 48, 0.2);
-  transform: scale(0.98);
+  padding: 20rpx;
+  color: #666;
+  font-size: 28rpx;
+  border-top: 1rpx solid #eee;
 }
 
 .clear-icon {
   width: 32rpx;
   height: 32rpx;
+  margin-right: 10rpx;
 }
 
-.clear-all-button text {
-  color: #FF3B30;
+/* 事件分析按钮样式 */
+.events-button {
+  display: flex;
+  align-items: center;
+  padding: 20rpx;
+  color: #666;
   font-size: 28rpx;
-  font-weight: 500;
+  border-top: 1rpx solid #eee;
+}
+
+.events-icon {
+  width: 32rpx;
+  height: 32rpx;
+  margin-right: 10rpx;
 }
 
 /* ========== 个人信息 ========== */
