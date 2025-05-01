@@ -1205,4 +1205,7 @@ Page({
       url: '/pages/events/index'
     })
   },
+
+    
+  
 })

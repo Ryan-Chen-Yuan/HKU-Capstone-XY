@@ -19,6 +19,8 @@
     "ignoreDevUnusedFiles": true,
     "bigPackageSizeSupport": false,
     "useIsolateContext": true
+    "urlCheck": false
+
   },
   "libVersion": "3.8.0",
   "condition": {}
