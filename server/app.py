@@ -13,6 +13,7 @@ from load_env import load_environment
 
 load_environment()
 
+from server.service.sentiment_service import SentimentService
 from service.chat_service import ChatService
 from dao.database import Database
 
@@ -107,7 +108,7 @@ def get_history():
 
 @app.route("/api/sentiment", methods=["POST"])
 def analyze_sentiment():
-    """Analyze sentiment of messages and provide score, mood, and suggestions"""
+    """Analyze sentiment of messages and provide mood intensity, category, thinking, and scene."""
     try:
         # Get request data
         data = request.json
@@ -125,25 +126,30 @@ def analyze_sentiment():
             return jsonify({"error_code": 400, "error_message": "消息内容无效"}), 400
 
         # Perform sentiment analysis
-        sentiment_result = SentimentService.analyze_sentiment(messages)
-        score = sentiment_result["score"]
-        mood = sentiment_result["mood"]
-        suggestions = sentiment_result["suggestions"]
+        sentiment_service = SentimentService()
+        sentiment_result = sentiment_service.analyze_sentiment(messages)
+
+        # Extract results
+        mood_intensity = sentiment_result["moodIntensity"]
+        mood_category = sentiment_result["moodCategory"]
+        thinking = sentiment_result["thinking"]
+        scene = sentiment_result["scene"]
 
         # Generate a unique message ID and timestamp
         message_id = f"msg_{uuid.uuid4().hex[:8]}"
         response_time = datetime.now().isoformat()
 
         # Save sentiment analysis result to the database
-        db.save_sentiment_analysis(session_id, user_id, score, mood, suggestions)
+        db.save_sentiment_analysis(session_id, user_id, mood_intensity, mood_category, thinking, scene)
 
         # Return sentiment analysis results
         return jsonify(
             {
                 "message_id": message_id,
-                "score": score,
-                "mood": mood,
-                "suggestions": suggestions,
+                "moodIntensity": mood_intensity,
+                "moodCategory": mood_category,
+                "thinking": thinking,
+                "scene": scene,
                 "timestamp": response_time,
                 "session_id": session_id,
             }
@@ -154,7 +160,7 @@ def analyze_sentiment():
         return (
             jsonify({"error_code": 500, "error_message": f"服务器内部错误: {str(e)}"}), 500
         )
-
+    
 if __name__ == "__main__":
     # 确保数据目录存在
     os.makedirs("data", exist_ok=True)

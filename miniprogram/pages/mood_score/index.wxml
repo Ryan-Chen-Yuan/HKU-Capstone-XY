@@ -6,41 +6,65 @@
 
   <!-- Header -->
   <view class="header">
-    <view class="title">情绪评分</view>
+    <view class="title">情绪记录</view>
     <view class="subtitle">觉察你的情绪变化</view>
   </view>
 
-  <!-- Mood Score Section -->
-  <view class="mood-score-section">
-    <view class="chart-container">
-      <ec-canvas id="moodScoreChart" canvas-id="moodScoreChart" ec="{{ec}}"></ec-canvas>
+  <!-- Event Card -->
+  <view class="event-card">
+
+    <!-- 卡片头部 
+      <view class="event-header" bindtap="onCardTap">
+        <view class="event-title">情绪记录</view>
+        <view class="event-time">{{time}}</view>
+      </view>
+      -->
+    
+    <!-- Editable Table -->
+    <view class="editable-table">
+        <view class="table-row" style="margin-bottom: 10px; border-bottom: 1px solid #ccc;">
+            <view class="table-cell highlighted-emotion">情绪及强度</view>
+            <view class="table-cell" style="display: flex; align-items: center;">
+                <input class="editable-input" placeholder="情绪" value="{{moodIntensity}}" bindinput="onEmotionTextInput" />
+                <input class="editable-input" placeholder="分数" value="{{moodCategory}}" bindinput="onEmotionScoreInput" type="number" />
+                
+            </view>
+        </view>
+        <view class="table-row" style="margin-bottom: 10px; border-bottom: 1px solid #ccc;">
+            <view class="table-cell highlighted-thinking">思维</view>
+            <view class="table-cell">
+                <input class="editable-input" placeholder="请输入思维" value="{{thinking}}" bindinput="onThinkingInput" />
+            </view>
+        </view>
+        <view class="table-row" style="margin-bottom: 10px; border-bottom: 1px solid #ccc;">
+            <view class="table-cell highlighted-scene">场景</view>
+            <view class="table-cell">
+                <input class="editable-input" placeholder="请输入场景" value="{{scene}}" bindinput="onSceneInput" />
+            </view>
+        </view>
     </view>
-    <view class="score-display">
-      <text class="score">{{moodScore}}</text>
-      <text class="category">{{moodCategory}}</text>
+
+    <!-- 操作按钮组 -->
+    <view class="action-group">
+      <button class="weui-btn weui-btn_mini {{confirmed ? 'weui-btn_confirmed' : 'weui-btn_primary'}}" 
+              bindtap="onConfirm">
+        <text class="btn-icon">✓</text>
+      </button>
+      <button class="weui-btn weui-btn_mini {{rejected ? 'weui-btn_rejected' : 'weui-btn_warn'}}" 
+              bindtap="onReject">
+        <text class="btn-icon">✗</text>
+      </button>
+      <button class="weui-btn weui-btn_mini" 
+              bindtap="onEdit">
+        <text class="btn-icon">✎</text>
+      </button>
     </view>
   </view>
-
-  <!-- Suggestions Section -->
-  <view class="suggestions-section">
-    <view class="suggestions-title">建议</view>
-    <text class="suggestions-text">{{suggestions}}</text>
-  </view>
-
-  <!-- Feedback Options -->
-  <view class="feedback-options">
-    <view class="feedback-title">反馈</view>
-    <button class="feedback-button satisfied" data-feedback="Satisfied" bindtap="handleFeedback">满意</button>
-    <button class="feedback-button not-satisfied" data-feedback="Not Satisfied" bindtap="handleFeedback">不满意</button>
-    <button class="feedback-button provide-feedback" data-feedback="Provide Feedback" bindtap="handleFeedback">提供反馈</button>
-  </view>
-
-  <!-- Feedback Modal -->
-  <modal wx:if="{{showFeedbackModal}}" bindtap="hideFeedbackModal">
-    <view class="modal-content">
-      <input placeholder="Enter your feedback" bindinput="submitEditedFeedback" />
-      <button bindtap="hideFeedbackModal">取消</button>
-    </view>
-  </modal>
-
 </view>
+
+<style>
+    .highlighted-text {
+        font-weight: bold; /* Make text bold */
+        color: #007BFF; /* Change color to highlight */
+    }
+</style>
