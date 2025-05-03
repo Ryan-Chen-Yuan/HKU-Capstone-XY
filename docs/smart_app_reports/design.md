@@ -9,7 +9,7 @@ Zhiji AI Assistant is a WeChat Mini Program designed to provide non-clinical emo
 - Mobile Psychological Support Tool  
 - Lightweight Emotional Wellness Platform
 
----
+
 
 ## 2. Motivation
 
@@ -25,7 +25,7 @@ With the rapid development of large language models such as GPT-4 and DeepSeek, 
 - Timely, always-available empathetic interaction
 - Structured detection of emotional and cognitive cues
 
----
+
 
 ## 3. System Design
 
@@ -53,7 +53,7 @@ User input is processed through parallel LLM-based modules and then synthesized 
 
 <img src="./images/system_architecture.png" alt="System Architecture" style="zoom: 25%;" />
 
----
+
 
 ### 3.2 User Interface Layout
 
@@ -68,7 +68,7 @@ The design adopts an instant messaging style interface to maximize user familiar
 
 <img src="./images/ui_chat_screen.png" alt="Chat UI Mockup" style="zoom:50%;" />
 
----
+
 
 ## 4. Features
 
