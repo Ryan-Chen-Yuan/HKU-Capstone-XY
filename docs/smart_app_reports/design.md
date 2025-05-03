@@ -57,12 +57,11 @@ The design adopts an instant messaging style interface to maximize user familiar
 
 ### 4.1 Functional Modules
 
-| Module              | Description                                               |
-| ------------------- | --------------------------------------------------------- |
-| Emotion Recognition | Classifies emotion types and intensity from user messages |
-| Empathetic Response | Generates non-judgmental supportive feedback              |
-| Event Extraction    | Identifies psychologically significant event elements     |
-| Badge System        | Rewards users for positive cognitive reflection           |
+| Module              | Description                                           |
+| ------------------- | ----------------------------------------------------- |
+| Empathetic Response | Generates non-judgmental supportive feedback          |
+| Event Extraction    | Identifies psychologically significant event elements |
+| Badge System        | Rewards users for positive cognitive reflection       |
 
 *Figure 3: Badge system and Event system UI* 
 
