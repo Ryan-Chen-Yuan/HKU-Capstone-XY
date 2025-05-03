@@ -6,7 +6,7 @@
   },
   "miniprogramRoot": "",
   "compileType": "miniprogram",
-  "projectname": "agent_ui",
+  "projectname": "zhiji_ai_assistant",
   "setting": {
     "urlCheck": true,
     "es6": true,
