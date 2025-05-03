@@ -42,6 +42,14 @@ Page({
     medalBubbleDragging: false,
     medalBubbleStartX: 0,
     medalBubbleStartY: 0,
+    eventBubblePosition: {
+      x: wx.getWindowInfo().windowWidth - 100,
+      y: 240
+    },
+    eventBubbleSize: 80,
+    eventBubbleDragging: false,
+    eventBubbleStartX: 0,
+    eventBubbleStartY: 0,
     monsterSize: 120,
     moveInterval: null,
     isMoving: false,
@@ -891,6 +899,105 @@ Page({
     });
   },
 
+  // 跳转到事件卡片页面
+  navigateToEvents: function() {
+    // 关闭侧边栏
+    this.closeSidebar();
+    // 使用navigateTo跳转到事件页面
+    wx.navigateTo({
+      url: '/pages/events/index',
+      success: function() {
+        console.log('成功跳转到事件卡片页面');
+      },
+      fail: function(error) {
+        console.error('跳转到事件卡片页面失败:', error);
+        wx.showToast({
+          title: '跳转失败，请重试',
+          icon: 'none'
+        });
+      }
+    });
+  },
+
+  // 事件气泡触摸开始
+  eventBubbleTouchStart: function(e) {
+    if (e && e.type === 'touchstart') {
+      e.preventDefault && e.preventDefault()
+    }
+
+    const windowWidth = wx.getWindowInfo().windowWidth
+    const windowHeight = wx.getWindowInfo().windowHeight
+    const { eventBubbleSize, keyboardHeight } = this.data
+    const margin = 10 // 边距
+    const visibleHeight = windowHeight - keyboardHeight
+
+    // 获取当前位置
+    let currentX = this.data.eventBubblePosition.x
+    let currentY = this.data.eventBubblePosition.y
+
+    // 边界检查
+    currentX = Math.max(margin, Math.min(windowWidth - eventBubbleSize - margin, currentX))
+    currentY = Math.max(margin, Math.min(visibleHeight - eventBubbleSize - margin, currentY))
+
+    this.setData({
+      eventBubbleDragging: true,
+      eventBubblePosition: {
+        x: currentX,
+        y: currentY
+      },
+      eventBubbleStartX: e.touches[0].clientX - currentX,
+      eventBubbleStartY: e.touches[0].clientY - currentY
+    })
+  },
+
+  // 事件气泡触摸移动
+  eventBubbleTouchMove: function(e) {
+    if (e && e.type === 'touchmove') {
+      e.preventDefault && e.preventDefault()
+    }
+
+    if (this.data.eventBubbleDragging) {
+      const windowWidth = wx.getWindowInfo().windowWidth
+      const windowHeight = wx.getWindowInfo().windowHeight
+      const { eventBubbleSize, keyboardHeight } = this.data
+      const margin = 10 // 边距
+      const visibleHeight = windowHeight - keyboardHeight
+
+      // 计算新位置
+      let newX = e.touches[0].clientX - this.data.eventBubbleStartX
+      let newY = e.touches[0].clientY - this.data.eventBubbleStartY
+
+      // 边界检查
+      newX = Math.max(margin, Math.min(windowWidth - eventBubbleSize - margin, newX))
+      newY = Math.max(margin, Math.min(visibleHeight - eventBubbleSize - margin, newY))
+      
+      this.setData({
+        eventBubblePosition: {
+          x: newX,
+          y: newY
+        }
+      })
+    }
+  },
+
+  // 事件气泡触摸结束
+  eventBubbleTouchEnd: function(e) {
+    if (e && e.type === 'touchend') {
+      e.preventDefault && e.preventDefault()
+    }
+
+    this.setData({
+      eventBubbleDragging: false
+    })
+  },
+
+  // 点击事件气泡
+  onEventBubbleTap: function() {
+    if (!this.data.eventBubbleDragging) {
+      this.navigateToEvents();
+    }
+  },
+
   // 勋章气泡触摸开始
   medalBubbleTouchStart: function(e) {
     if (e && e.type === 'touchstart') {
@@ -980,12 +1087,5 @@ Page({
         }
       });
     }
-  },
-
-  // 跳转到事件分析页面
-  navigateToEvents() {
-    wx.navigateTo({
-      url: '/pages/events/index'
-    })
   },
 }) 
