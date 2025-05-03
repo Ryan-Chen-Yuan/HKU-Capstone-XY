@@ -4,9 +4,7 @@
 
 Zhiji AI Assistant is a WeChat Mini Program designed to provide non-clinical emotional support through natural language interaction. It leverages large language models (LLMs) to serve adolescent users in managing and reflecting on their emotions. This application falls under the following categories:
 
-- Affective Computing Application  
-- Conversational AI System  
-- Mobile Psychological Support Tool  
+- Mental Health Chatbot
 - Lightweight Emotional Wellness Platform
 
 ## 2. Motivation
@@ -32,18 +30,14 @@ User input is processed through parallel LLM-based modules and then synthesized 
 ```
 [ User Input ]
 ↓
-[ Emotion Recognition ] ←→ [ Event Extraction ]
-↓                      ↓
-[ Cognitive Shift Detection ]
-↓
-[ Empathetic Response Generation ]
+[ Empathetic Response Generation ] ←→ [ Event Extraction ]
 ↓
 [ UI Output + Achievement Feedback (Badges) ]
 ↓
 [ Feedback Logging and History Update ]
 ```
 
- *Figure 1: System architecture diagram (image placeholder)* 
+ *Figure 1: System architecture diagram*
 
 <img src="./images/system_architecture.png" alt="System Architecture" style="zoom: 25%;" />
 
@@ -53,10 +47,9 @@ The design adopts an instant messaging style interface to maximize user familiar
 
 - **Top navigation bar**: Access to history, emotion review, and badge panel
 - **Main conversation area**: User and AI messages
-- **Emotional thermometer**: Displays real-time emotion classification and intensity
 - **Input box**: For free-text message composition
 
- *Figure 2: UI sketch placeholder* 
+ *Figure 2: UI sketch * 
 
 <img src="./images/ui_chat_screen.png" alt="Chat UI Mockup" style="zoom:50%;" />
 
@@ -64,13 +57,12 @@ The design adopts an instant messaging style interface to maximize user familiar
 
 ### 4.1 Functional Modules
 
-| Module                    | Description                                               |
-| ------------------------- | --------------------------------------------------------- |
-| Emotion Recognition       | Classifies emotion types and intensity from user messages |
-| Event Extraction          | Identifies psychologically significant event elements     |
-| Cognitive Shift Detection | Compares current and historical input to identify growth  |
-| Empathetic Response       | Generates non-judgmental supportive feedback              |
-| Badge System              | Rewards users for positive cognitive reflection           |
+| Module              | Description                                               |
+| ------------------- | --------------------------------------------------------- |
+| Emotion Recognition | Classifies emotion types and intensity from user messages |
+| Empathetic Response | Generates non-judgmental supportive feedback              |
+| Event Extraction    | Identifies psychologically significant event elements     |
+| Badge System        | Rewards users for positive cognitive reflection           |
 
 *Figure 3: Badge system and Event system UI* 
 
