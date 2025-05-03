@@ -1,5 +1,5 @@
 {
-  "name": "agent_ui",
+  "name": "zhiji_ai_assistant",
   "version": "1.0.0",
   "description": "微信小程序图片压缩工具",
   "main": "compress-images.js",
