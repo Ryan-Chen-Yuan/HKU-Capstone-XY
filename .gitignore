@@ -6,6 +6,7 @@ DS_Store
 .env
 *.pyc
 sessions.json
+server/data/*
 .json
 *.log
 *.sqlite3

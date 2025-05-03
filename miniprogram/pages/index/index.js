@@ -259,40 +259,144 @@ Page({
   startNewChat: function() {
     this.setData({
       messages: [],
-      inputMessage: ''
+      inputMessage: '',
+      session_id: '' // 清空会话ID，重新开始对话
     })
     this.closeSidebar()
   },
 
   // 加载历史对话
   loadChat: function(e) {
-    const chatId = e.currentTarget.dataset.id
-    const chat = this.data.chatHistory.find(item => item.id === chatId)
-    if (chat) {
+    const sessionId = e.currentTarget.dataset.id
+    // 先从本地缓存加载对话
+    const localChat = this.data.chatHistory.find(item => item.id === sessionId)
+    
+    if (localChat) {
       this.setData({
-        messages: chat.messages,
-        inputMessage: ''
+        messages: localChat.messages,
+        inputMessage: '',
+        session_id: sessionId // 设置当前会话ID
+      })
+      
+      // 尝试从服务器获取最新对话记录
+      this.fetchChatHistoryFromServer(sessionId)
+    } else {
+      // 如果本地没有缓存，直接从服务器获取
+      this.fetchChatHistoryFromServer(sessionId, true)
+    }
+    
+    this.closeSidebar()
+  },
+
+  // 从服务器获取聊天历史记录
+  fetchChatHistoryFromServer: function(sessionId, showLoading = false) {
+    // 如果需要显示加载中提示
+    if (showLoading) {
+      wx.showLoading({
+        title: '加载中...',
       })
     }
-    this.closeSidebar()
+    
+    // 调用后端API获取聊天历史
+    wx.request({
+      url: `${API_BASE_URL}/chat/history`,
+      method: 'GET',
+      data: {
+        user_id: this.data.user_id,
+        session_id: sessionId
+      },
+      header: {
+        'content-type': 'application/json'
+      },
+      success: (res) => {
+        if (res.statusCode === 200 && res.data.messages && res.data.messages.length > 0) {
+          // 将服务器返回的消息格式转换为本地格式
+          const formattedMessages = this.formatServerMessages(res.data.messages, sessionId)
+          
+          this.setData({
+            messages: formattedMessages,
+            session_id: sessionId
+          })
+          
+          // 滚动到底部显示最新消息
+          this.scrollToBottom()
+          
+          // 更新本地缓存
+          this.updateLocalChatHistory(sessionId, formattedMessages)
+        }
+      },
+      fail: (error) => {
+        console.error('获取历史记录失败:', error)
+        // 失败时不做特殊处理，继续使用本地缓存
+      },
+      complete: () => {
+        if (showLoading) {
+          wx.hideLoading()
+        }
+      }
+    })
+  },
+  
+  // 格式化服务器返回的消息
+  formatServerMessages: function(serverMessages, sessionId) {
+    return serverMessages.map((msg, index) => ({
+      id: Date.now() + index, // 生成唯一ID
+      type: msg.role === 'user' ? 'user' : 'agent',
+      content: msg.content,
+      timestamp: msg.timestamp,
+      sessionId: sessionId // 添加sessionId到消息中
+    }))
+  },
+  
+  // 更新本地聊天历史缓存
+  updateLocalChatHistory: function(sessionId, messages) {
+    const chatHistory = this.data.chatHistory
+    const existingIndex = chatHistory.findIndex(item => item.id === sessionId)
+    
+    // 创建更新后的聊天对象
+    const updatedChat = {
+      id: sessionId,
+      title: messages.find(msg => msg.type === 'user')?.content.slice(0, 20) + 
+             (messages.find(msg => msg.type === 'user')?.content.length > 20 ? '...' : ''),
+      time: new Date().toLocaleString(),
+      messages: messages,
+      lastUpdateTime: new Date().toISOString(),
+      messageCount: messages.length,
+      user_id: this.data.user_id
+    }
+    
+    if (existingIndex !== -1) {
+      // 更新已存在的聊天
+      chatHistory[existingIndex] = updatedChat
+    } else {
+      // 添加新的聊天到列表最前面
+      chatHistory.unshift(updatedChat)
+    }
+    
+    // 更新本地存储和状态
+    wx.setStorageSync('chatHistory', chatHistory)
+    this.setData({ chatHistory })
   },
 
   // 删除单个对话
   deleteChat: function(e) {
-    const chatId = e.currentTarget.dataset.id
+    const sessionId = e.currentTarget.dataset.id
     wx.showModal({
       title: '确认删除',
       content: '确定要删除这条对话记录吗？',
       success: (res) => {
         if (res.confirm) {
           // 从聊天历史中过滤掉要删除的对话
-          const chatHistory = this.data.chatHistory.filter(item => item.id !== chatId)
+          const chatHistory = this.data.chatHistory.filter(item => item.id !== sessionId)
           wx.setStorageSync('chatHistory', chatHistory)
           this.setData({ chatHistory })
           
-          // 如果删除的是当前对话，清空消息
-          if (this.data.messages.length > 0 && this.data.messages[0].chatId === chatId) {
-            this.setData({ messages: [] })
+          // 如果删除的是当前对话，清空消息和会话ID
+          if (this.data.session_id === sessionId) {
+            this.setData({ 
+              messages: [],
+              session_id: '' // 清空当前会话ID
+            })
           }
           
           wx.showToast({
@@ -319,7 +423,8 @@ Page({
           this.setData({
             chatHistory: [],
             messages: [], // 同时清除当前对话
-            inputMessage: ''
+            inputMessage: '',
+            session_id: '' // 清空当前会话ID
           })
           
           // 显示成功提示
@@ -352,7 +457,8 @@ Page({
       id: Date.now(),
       type: 'user',
       content: content,
-      timestamp: timestamp
+      timestamp: timestamp,
+      sessionId: this.data.session_id || null // 添加会话ID，可能为空
     }
 
     this.setData({
@@ -376,7 +482,7 @@ Page({
       method: 'POST',
       data: {
         user_id: this.data.user_id,
-        session_id: this.data.session_id,
+        session_id: this.data.session_id, // 如果是新对话，可能为空
         message: content,
         timestamp: timestamp,
         history: history
@@ -387,30 +493,54 @@ Page({
       success: (res) => {
         if (res.statusCode === 200) {
           // 保存会话ID，用于维持上下文
-          if (res.data.session_id && !this.data.session_id) {
+          const responseSessionId = res.data.session_id
+          console.log('Response session ID:', responseSessionId)
+          if (responseSessionId) {
             this.setData({
-              session_id: res.data.session_id
+              session_id: responseSessionId
+            })
+            
+            // 更新所有消息的sessionId
+            const updatedMessages = this.data.messages.map(msg => ({
+              ...msg,
+              sessionId: responseSessionId
+            }))
+            
+            const aiResponse = {
+              id: Date.now(),
+              type: 'agent',
+              content: res.data.content,
+              timestamp: res.data.timestamp,
+              sessionId: responseSessionId
+            }
+
+            this.setData({
+              messages: [...updatedMessages, aiResponse],
+              isLoading: false
+            })
+          } else {
+            // 如果服务器没有返回sessionId，使用响应数据添加消息
+            const aiResponse = {
+              id: Date.now(),
+              type: 'agent',
+              content: res.data.content,
+              timestamp: res.data.timestamp,
+              sessionId: this.data.session_id
+            }
+
+            this.setData({
+              messages: [...this.data.messages, aiResponse],
+              isLoading: false
             })
           }
 
-          const aiResponse = {
-            id: Date.now(),
-            type: 'agent',
-            content: res.data.content,
-            timestamp: res.data.timestamp
-          }
-
-          this.setData({
-            messages: [...this.data.messages, aiResponse],
-            isLoading: false
-          })
-
           // 如果AI响应包含情绪信息，更新小怪物的情绪
-          if (res.data.emotion) {
-            this.updateMonsterEmotionState(res.data.emotion)
-          }
+          // if (res.data.emotion) {
+          //   this.updateMonsterEmotionState(res.data.emotion)
+          // }
 
           this.scrollToBottom()
+          // 保存聊天历史
           this.saveChatHistory()
         } else {
           // 处理错误情况
@@ -436,7 +566,8 @@ Page({
       id: Date.now(),
       type: 'agent',
       content: `抱歉，我遇到了一些问题：${errorMsg}`,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
+      sessionId: this.data.session_id // 添加当前会话ID
     }
 
     this.setData({
@@ -494,25 +625,40 @@ Page({
   saveChatHistory: function() {
     const messages = this.data.messages
     if (messages.length > 0) {
-      const chatId = messages[0].chatId || Date.now()
+      // 使用服务器返回的 session_id，如果没有则使用本地生成的ID
+      const sessionId = this.data.session_id || Date.now().toString()
+      
+      // 创建聊天记录对象
       const chat = {
-        id: chatId,
-        title: messages[0].content.slice(0, 20) + (messages[0].content.length > 20 ? '...' : ''),
+        id: sessionId,
+        // 使用第一条用户消息作为标题，截取前20个字符
+        title: messages.find(msg => msg.type === 'user')?.content.slice(0, 20) + 
+               (messages.find(msg => msg.type === 'user')?.content.length > 20 ? '...' : ''),
         time: new Date().toLocaleString(),
-        messages: messages
+        messages: messages,
+        // 添加更多有用信息
+        lastUpdateTime: new Date().toISOString(),
+        messageCount: messages.length,
+        user_id: this.data.user_id
       }
 
       let chatHistory = this.data.chatHistory
-      const existingIndex = chatHistory.findIndex(item => item.id === chatId)
+      const existingIndex = chatHistory.findIndex(item => item.id === sessionId)
       
       if (existingIndex !== -1) {
+        // 更新已存在的聊天记录
         chatHistory[existingIndex] = chat
       } else {
+        // 添加新的聊天记录到列表最前面
         chatHistory = [chat, ...chatHistory]
       }
 
+      // 保存到本地缓存
       wx.setStorageSync('chatHistory', chatHistory)
-      this.setData({ chatHistory })
+      this.setData({ 
+        chatHistory,
+        session_id: sessionId  // 确保session_id被设置
+      })
     }
   },
 
