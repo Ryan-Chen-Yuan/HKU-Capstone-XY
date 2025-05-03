@@ -11,7 +11,7 @@ import re
 class ChatService:
     """聊天服务，负责调用OpenAI API获取AI回复"""
 
-    def __init__(self, model="Meta-Llama-3.1-8B-Instruct"):
+    def __init__(self, model="DeepSeek-V3-0324"):
         """初始化聊天服务
 
         Args:
