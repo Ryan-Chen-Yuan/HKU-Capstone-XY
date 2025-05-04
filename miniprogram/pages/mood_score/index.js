@@ -1,6 +1,6 @@
 Page({
   data: {
-    moodIntensity: 8/10, // Mood intensity (0-10)
+    moodIntensity: 3, // Mood intensity (0-10)
     moodCategory: '沮丧', // Detected mood category
     thinking: '我真是一事无成', // Current thinking
     scene: '在朋友圈看到朋友的分享', // Current scene or context
