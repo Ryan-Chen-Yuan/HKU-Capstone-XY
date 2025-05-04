@@ -73,7 +73,7 @@
         <!-- 欢迎界面 -->
         <view class="welcome-container" wx:if="{{messages.length === 0}}">
           <view class="welcome-icon">
-            <image src="/images/default-avatar.png" mode="aspectFill"></image>
+            <image src="/images/default_avatar_copy.png" mode="aspectFill"></image>
           </view>
           <view class="welcome-title">欢迎使用知己AI助手</view>
           <view class="welcome-subtitle">人生知己，知己知彼。\n 我是您的智能助手，欢迎向我抒发您的情绪！</view>
