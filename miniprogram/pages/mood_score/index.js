@@ -10,42 +10,16 @@ Page({
   },
 
   onLoad(options) {
-    this.loadMoodAnalysis();
-    this.initChart();
-  },
-
-  /**
-   * Load mood analysis result from the API
-   */
-  loadMoodAnalysis: function () {
-    // wx.request({
-    //   url: `${API_BASE_URL}/sentiment`, // Replace with your API URL
-    //   method: 'POST',
-    //   data: {
-    //     user_id: 'YOUR_USER_ID', // Replace with actual user ID
-    //     session_id: 'YOUR_SESSION_ID', // Replace with actual session ID
-    //     messages: ['Your message here'], // Replace with actual messages
-    //   },
-    //   success: (res) => {
-    //     if (res.statusCode === 200) {
-    //       const { moodIntensity, moodCategory, thinking, scene } = res.data;
-    //       this.setData({ moodIntensity, moodCategory, thinking, scene });
-    //     } else {
-    //       wx.showToast({
-    //         title: 'Error fetching data',
-    //         icon: 'none'
-    //       });
-    //     }
-    //   },
-    //   fail: (err) => {
-    //     console.error(err);
-    //     wx.showToast({
-    //       title: 'Request failed',
-    //       icon: 'none'
-    //     });
-    //   }
-    // });
-  },
+    if (options.data) {
+        const moodData = JSON.parse(decodeURIComponent(options.data));
+        this.setData({
+            moodIntensity: moodData.moodIntensity,
+            moodCategory: moodData.moodCategory,
+            thinking: moodData.thinking,
+            scene: moodData.scene
+        });
+    }
+},
 
   /**
    * Handle user feedback

@@ -13,6 +13,7 @@ Page({
     scrollToMessage: '',
     chatHistory: [],
     userInfo: {},
+    moodData: null, 
     medals: [
       {
         id: 1,
@@ -47,6 +48,7 @@ Page({
     medalBubbleStartY: 0,
 
     thermometerIcon: '/images/thermometer-icon.jpg', // Path to the thermometer icon
+    // TODO: thermometerIconFlicker: false, 
     thermometerBubblePosition: {
       x: wx.getWindowInfo().windowWidth - 80, // Initial X position
       y: 200, // Initial Y position
@@ -366,85 +368,138 @@ Page({
 
   // 发送消息
   sendMessage: function() {
-    const content = this.data.inputMessage.trim()
-    if (!content) return
+    const content = this.data.inputMessage.trim();
+    if (!content) return;
 
-    const timestamp = new Date().toISOString()
+    const timestamp = new Date().toISOString();
     const newMessage = {
-      id: Date.now(),
-      type: 'user',
-      content: content,
-      timestamp: timestamp
-    }
+        id: Date.now(),
+        type: 'user',
+        content: content,
+        timestamp: timestamp
+    };
 
     this.setData({
-      messages: [...this.data.messages, newMessage],
-      inputMessage: '',
-      isLoading: true
-    })
+        messages: [...this.data.messages, newMessage],
+        inputMessage: '',
+        isLoading: true
+    });
 
-    this.scrollToBottom()
+    this.scrollToBottom();
 
-    // 准备历史消息记录，用于提供上下文
+    // Prepare history for context
     const history = this.data.messages.map(msg => ({
-      role: msg.type === 'user' ? 'user' : 'agent',
-      content: msg.content,
-      timestamp: msg.timestamp
-    }))
+        role: msg.type === 'user' ? 'user' : 'agent',
+        content: msg.content,
+        timestamp: msg.timestamp
+    }));
 
-    // 调用后端API获取AI响应
+    // Call /chat API
     wx.request({
-      url: `${API_BASE_URL}/chat`,
-      method: 'POST',
-      data: {
-        user_id: this.data.user_id,
-        session_id: this.data.session_id,
-        message: content,
-        timestamp: timestamp,
-        history: history
-      },
-      header: {
-        'content-type': 'application/json'
-      },
-      success: (res) => {
-        if (res.statusCode === 200) {
-          // 保存会话ID，用于维持上下文
-          if (res.data.session_id && !this.data.session_id) {
-            this.setData({
-              session_id: res.data.session_id
-            })
-          }
+        url: `${API_BASE_URL}/chat`,
+        method: 'POST',
+        data: {
+            user_id: this.data.user_id,
+            session_id: this.data.session_id,
+            message: content,
+            timestamp: timestamp,
+            history: history
+        },
+        header: {
+            'content-type': 'application/json'
+        },
+        success: (res) => {
+            if (res.statusCode === 200) {
+                // Save session ID if provided
+                if (res.data.session_id && !this.data.session_id) {
+                    this.setData({
+                        session_id: res.data.session_id
+                    });
+                }
 
-          const aiResponse = {
-            id: Date.now(),
-            type: 'agent',
-            content: res.data.content,
-            timestamp: res.data.timestamp
-          }
+                const aiResponse = {
+                    id: Date.now(),
+                    type: 'agent',
+                    content: res.data.content,
+                    timestamp: res.data.timestamp
+                };
 
-          this.setData({
-            messages: [...this.data.messages, aiResponse],
-            isLoading: false
-          })
+                this.setData({
+                    messages: [...this.data.messages, aiResponse],
+                    isLoading: false
+                });
 
-          // 如果AI响应包含情绪信息，更新小怪物的情绪
-          if (res.data.emotion) {
-            this.updateMonsterEmotionState(res.data.emotion)
-          }
+                // Call /mood API
+                this.fetchMoodAnalysis(content);
 
-          this.scrollToBottom()
-          this.saveChatHistory()
-        } else {
-          // 处理错误情况
-          this.handleApiError(res)
+                this.scrollToBottom();
+                
+            } else {
+                this.handleApiError(res);
+            }
+        },
+        fail: (error) => {
+            console.error('API request failed:', error);
+            this.handleApiError();
         }
-      },
-      fail: (error) => {
-        console.error('API请求失败:', error)
-        this.handleApiError()
-      }
-    })
-  },
+    });
+},
+
+// Fetch mood analysis and make the thermometer icon flicker
+fetchMoodAnalysis: function(message) {
+    wx.request({
+        url: `${API_BASE_URL}/mood`,
+        method: 'POST',
+        data: {
+            user_id: this.data.user_id,
+            session_id: this.data.session_id,
+            messages: [message]
+        },
+        header: {
+            'content-type': 'application/json'
+        },
+        success: (res) => {
+            if (res.statusCode === 200) {
+                // Save mood data for navigation
+                this.setData({
+                    moodData: res.data
+                });
+                // TODO: Flicker the thermometer icon 
+            } else {
+                wx.showToast({
+                    title: 'Failed to fetch mood data',
+                    icon: 'none'
+                });
+            }
+        },
+        fail: (error) => {
+            console.error('Mood API request failed:', error);
+            wx.showToast({
+                title: 'Request failed',
+                icon: 'none'
+            });
+        }
+    });
+},
+
+// Navigate to Mood Score page with data
+onThermometerBubbleTap: function() {
+    if (!this.data.thermometerBubbleDragging) {
+        wx.navigateTo({
+            url: `/pages/mood_score/index?data=${encodeURIComponent(JSON.stringify(this.data.moodData))}`,
+            success: function() {
+                console.log('Successfully navigated to Mood Score page');
+            },
+            fail: function(error) {
+                console.error('Failed to navigate to Mood Score page:', error);
+                wx.showToast({
+                    title: 'Navigation failed, please try again',
+                    icon: 'none'
+                });
+            }
+        });
+    }
+},
 
   // 处理API错误
   handleApiError: function(res) {
@@ -1110,7 +1165,7 @@ Page({
     })
   },
 
-  // 点击勋章气泡
+  // 勋章气泡点击
   onMedalBubbleTap: function() {
     if (!this.data.medalBubbleDragging) {
       wx.navigateTo({
@@ -1139,24 +1194,24 @@ Page({
     this.setData({ user_id: userId })
   },
 
-    // 点击温度计
-    onThermometerBubbleTap: function() {
-      if (!this.data.thermometerBubbleDragging) {
+  // 点击温度计
+  onThermometerBubbleTap: function() {
+    if (!this.data.thermometerBubbleDragging) {
         wx.navigateTo({
-          url: '/pages/mood_score/index',
-          success: function() {
-            console.log('成功跳转到勋章页面');
-          },
-          fail: function(error) {
-            console.error('跳转到勋章页面失败:', error);
-            wx.showToast({
-              title: '跳转失败，请重试',
-              icon: 'none'
-            });
-          }
+            url: `/pages/mood_score/index?data=${encodeURIComponent(JSON.stringify(this.data.moodData))}`,
+            success: function() {
+                console.log('Successfully navigated to Mood Score page');
+            },
+            fail: function(error) {
+                console.error('Failed to navigate to Mood Score page:', error);
+                wx.showToast({
+                    title: 'Navigation failed, please try again',
+                    icon: 'none'
+                });
+            }
         });
-      }
-    },
+    }
+},
 
   // Touch start for thermometer icon
   thermometerIconTouchStart: function (e) {

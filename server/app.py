@@ -106,9 +106,9 @@ def get_history():
             500,
         )
 
-@app.route("/api/sentiment", methods=["POST"])
-def analyze_sentiment():
-    """Analyze sentiment of messages and provide mood intensity, category, thinking, and scene."""
+@app.route("/api/mood", methods=["POST"])
+def analyze_mood():
+    """Analyze mood of messages and provide mood intensity, category, thinking, and scene."""
     try:
         # Get request data
         data = request.json
@@ -125,24 +125,24 @@ def analyze_sentiment():
         if not isinstance(messages, list) or not messages:
             return jsonify({"error_code": 400, "error_message": "消息内容无效"}), 400
 
-        # Perform sentiment analysis
+        # Perform mood analysis
         mood_service = MoodService()
-        sentiment_result = mood_service.analyze_sentiment(messages)
+        mood_result = mood_service.analyze_mood(messages)
 
         # Extract results
-        mood_intensity = sentiment_result["moodIntensity"]
-        mood_category = sentiment_result["moodCategory"]
-        thinking = sentiment_result["thinking"]
-        scene = sentiment_result["scene"]
+        mood_intensity = mood_result["moodIntensity"]
+        mood_category = mood_result["moodCategory"]
+        thinking = mood_result["thinking"]
+        scene = mood_result["scene"]
 
         # Generate a unique message ID and timestamp
         message_id = f"msg_{uuid.uuid4().hex[:8]}"
         response_time = datetime.now().isoformat()
 
-        # Save sentiment analysis result to the database
-        db.save_sentiment_analysis(session_id, user_id, mood_intensity, mood_category, thinking, scene)
+        # Save mood analysis result to the database
+        # db.save_sentiment_analysis(session_id, user_id, mood_intensity, mood_category, thinking, scene)
 
-        # Return sentiment analysis results
+        # Return mood analysis results
         return jsonify(
             {
                 "message_id": message_id,
@@ -156,7 +156,7 @@ def analyze_sentiment():
         )
 
     except Exception as e:
-        print(f"Error in sentiment analysis endpoint: {str(e)}")
+        print(f"Error in mood analysis endpoint: {str(e)}")
         return (
             jsonify({"error_code": 500, "error_message": f"服务器内部错误: {str(e)}"}), 500
         )

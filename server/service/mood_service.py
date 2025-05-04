@@ -4,10 +4,10 @@ import json
 from openai import OpenAI
 
 class MoodService:
-    """Sentiment analysis service to analyze message content and provide sentiment scores, mood, and suggestions."""
+    """Mood analysis service to analyze message content and provide mood scores, mood, and suggestions."""
 
     def __init__(self, model="Meta-Llama-3.1-8B-Instruct"):
-        """Initialize the sentiment analysis service.
+        """Initialize the mood analysis service.
 
         Args:
             model: OpenAI model name
@@ -20,12 +20,12 @@ class MoodService:
         self.prompt_template = self._create_prompt_template()
 
     def _create_prompt_template(self):
-        """Create the sentiment analysis prompt directly."""
-        return """You are a sentiment analysis expert. Your task is to analyze the sentiment of the given messages and provide:
+        """Create the mood analysis prompt directly."""
+        return """You are a mood analysis expert. Your task is to analyze the mood of the given messages and provide in Chinese:
 1. A mood intensity score (range: 0 to 10).
-2. A mood category (e.g., happy, sad, angry, neutral).
-3. The thinking (e.g., balanced, anxious, optimistic).
-4. The scene related to the mood (e.g., work, home, social).
+2. A mood category (e.g., 开心, 悲伤, 生气，中性).
+3. The thinking (e.g., 我真是一事无成).
+4. The scene related to the mood (e.g., 在朋友圈看到朋友的分享).
 
 Respond in the following JSON format:
 {
@@ -36,14 +36,14 @@ Respond in the following JSON format:
 }
 """
 
-    def analyze_sentiment(self, messages):
-        """Analyze the sentiment of the given messages.
+    def analyze_mood(self, messages):
+        """Analyze the mood of the given messages.
 
         Args:
             messages: List of messages to analyze.
 
         Returns:
-            dict: Sentiment analysis results including moodIntensity, moodCategory, thinking, and scene.
+            dict: Mood analysis results including moodIntensity, moodCategory, thinking, and scene.
         """
         try:
             # Format the input for the OpenAI API
@@ -64,7 +64,7 @@ Respond in the following JSON format:
             return json.loads(result)
 
         except Exception as e:
-            print(f"Error analyzing sentiment: {str(e)}")
+            print(f"Error analyzing mood: {str(e)}")
             return {
                 "moodIntensity": 0.0,
                 "moodCategory": "neutral",

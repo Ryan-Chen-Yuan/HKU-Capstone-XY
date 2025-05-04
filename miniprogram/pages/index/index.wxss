@@ -1427,6 +1427,16 @@
   display: block;
 }
 
+.thermometer-icon {
+    transition: opacity 0.3s;
+}
+
+/* TODO
+.thermometer-icon.flicker {
+    opacity: 0.5;
+}
+*/
+
 /* 键盘显示时的位置调整 */
 .medal-bubble.keyboard-visible {
   margin-bottom: 220rpx;
