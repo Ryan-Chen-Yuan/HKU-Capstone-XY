@@ -48,18 +48,7 @@ Page({
     medalBubbleStartY: 0,
 
     thermometerIcon: '/images/thermometer-icon.jpg', // Path to the thermometer icon
-    // TODO: thermometerIconFlicker: false, 
-    thermometerBubblePosition: {
-      x: wx.getWindowInfo().windowWidth - 80, // Initial X position
-      y: 200, // Initial Y position
-    },
-    thermometerBubbleSize: 60, // Icon size
-    thermometerBubbleDragging: false, // Dragging state
-    thermometerBubbleStartX: 0, // Start X position for dragging
-    thermometerBubbleStartY: 0, // Start Y position for dragging
-  
-
-    thermometerIcon: '/images/thermometer-icon.jpg', // Path to the thermometer icon
+    thermometerIconAnimation: true, 
     thermometerBubblePosition: {
       x: wx.getWindowInfo().windowWidth - 80, // Initial X position
       y: 200, // Initial Y position

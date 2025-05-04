@@ -175,7 +175,7 @@
         bindtouchmove="thermometerIconTouchMove"
         bindtouchend="thermometerIconTouchEnd">
     <view class="medal-bubble-inner">
-      <image class= "thermometer-icon {{thermometerIconFlicker ? 'flicker' : ''}}" image src="/images/thermometer-icon.jpg" mode="aspectFit"></image>
+      <image class= "thermometer-icon {{thermometerIconAnimation ? 'animation' : ''}}" image src="/images/thermometer-icon.jpg" mode="aspectFit"></image>
     </view>
   </view>
 
