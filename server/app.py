@@ -13,7 +13,7 @@ from load_env import load_environment
 
 load_environment()
 
-from server.service.sentiment_service import SentimentService
+from service.mood_service import MoodService
 from service.chat_service import ChatService
 from dao.database import Database
 
@@ -126,8 +126,8 @@ def analyze_sentiment():
             return jsonify({"error_code": 400, "error_message": "消息内容无效"}), 400
 
         # Perform sentiment analysis
-        sentiment_service = SentimentService()
-        sentiment_result = sentiment_service.analyze_sentiment(messages)
+        mood_service = MoodService()
+        sentiment_result = mood_service.analyze_sentiment(messages)
 
         # Extract results
         mood_intensity = sentiment_result["moodIntensity"]

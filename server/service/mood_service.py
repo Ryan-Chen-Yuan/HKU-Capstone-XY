@@ -3,7 +3,7 @@ import os
 import json
 from openai import OpenAI
 
-class SentimentService:
+class MoodService:
     """Sentiment analysis service to analyze message content and provide sentiment scores, mood, and suggestions."""
 
     def __init__(self, model="Meta-Llama-3.1-8B-Instruct"):
