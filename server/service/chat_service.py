@@ -11,13 +11,13 @@ import re
 class ChatService:
     """聊天服务，负责调用OpenAI API获取AI回复"""
 
-    def __init__(self, model="Meta-Llama-3.1-8B-Instruct"):
+    def __init__(self):
         """初始化聊天服务
 
         Args:
             model: OpenAI模型名称
         """
-        self.model = model
+        self.model = os.environ.get("MODEL_NAME")
         self.client = OpenAI(
             api_key=os.environ.get("OPENAI_API_KEY"),
             base_url=os.environ.get("BASE_URL"),

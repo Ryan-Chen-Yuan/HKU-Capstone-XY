@@ -43,7 +43,11 @@ def chat():
 
         user_id = data["user_id"]
         message = data["message"]
-        session_id = data.get("session_id", str(uuid.uuid4()))
+        session_id = data["session_id"]
+        if not session_id or session_id == "":
+            # 如果没有提供session_id，则生成一个新的
+            session_id = str(uuid.uuid4())
+        # print(f"session_id: {session_id}")
         timestamp = data.get("timestamp", datetime.now().isoformat())
         history = data.get("history", [])
 

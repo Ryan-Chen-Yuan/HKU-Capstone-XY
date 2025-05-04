@@ -45,7 +45,7 @@
       <!-- 事件分析入口 -->
       <view class="events-button" bindtap="navigateToEvents">
         <image class="events-icon" src="/images/events.png" mode="aspectFit"></image>
-        <text>事件卡片</text>
+        <text>事件回顾</text>
       </view>
     </view>
 
