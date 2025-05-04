@@ -1,0 +1,534 @@
+.container {
+  min-height: 100vh;
+  background-color: #f8f9fa;
+  padding: 20px;
+  position: relative;
+}
+
+/* 返回按钮样式 */
+.back-button {
+  position: absolute;
+  top: 95rpx;
+  left: 30rpx;
+  width: 70rpx;
+  height: 70rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+  background-color: rgba(255, 255, 255, 0.8);
+  border-radius: 50%;
+  box-shadow: 0 2rpx 10rpx rgba(0, 0, 0, 0.1);
+}
+
+.back-icon {
+  width: 24rpx;
+  height: 24rpx;
+  border-left: 4rpx solid #333;
+  border-bottom: 4rpx solid #333;
+  transform: rotate(45deg);
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 20px;
+  padding: 80rpx 0 40rpx;
+  position: relative;
+}
+
+.title {
+  font-size: 24px;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 10px;
+  text-shadow: 0 2rpx 4rpx rgba(0, 0, 0, 0.1);
+  letter-spacing: 2rpx;
+  line-height: 70rpx;
+}
+
+.subtitle {
+  font-size: 16px;
+  color: #888888;
+  letter-spacing: 1rpx;
+}
+
+.sentiment-result {
+  margin-bottom: 20px;
+}
+
+.sentiment-category {
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 8px;
+}
+
+.intensity-chart text {
+  display: block;
+  margin: 4px 0;
+}
+
+.mood-score-section {
+  margin-bottom: 20px;
+}
+
+.chart-container {
+  margin-bottom: 15px;
+}
+
+.modal-content {
+  padding: 16px;
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.modal-content input {
+  width: 100%;
+  padding: 8px;
+  margin-bottom: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.card {
+  background-color: #ffffff;
+  border-radius: 10px;
+  padding: 15px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.score-display {
+  text-align: center;
+  margin: 20px 0;
+}
+
+.score {
+  font-size: 48px;
+  font-weight: bold;
+  color: #4caf50; /* Green for positive mood */
+  height:40px;
+}
+
+.category {
+  font-size: 24px;
+  color: #555555;
+}
+
+.suggestions-section {
+  margin-bottom: 20px;
+}
+
+.suggestions-title {
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.home-button {
+  width: 100%;
+  background-color: #4caf50;
+  color: #ffffff;
+  padding: 10px;
+  border-radius: 5px;
+  text-align: center;
+}
+
+/* 卡片容器 */
+.event-card {
+  background: #FFFFFF;
+  border-radius: 16rpx;
+  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.1);
+  padding: 32rpx;
+  transition: all 0.3s ease;
+  transform: translateX(0);
+  width: auto;
+  box-sizing: border-box;
+  margin: 0;
+}
+
+/* 组件容器 */
+.component-container {
+  width: 100%;
+  position: relative;
+  margin-bottom: 24rpx;
+}
+
+/* 滑动区域 */
+.movable-area {
+  width: 100%;
+  height: fit-content;
+  min-height: 200rpx;
+  position: relative;
+  overflow: hidden;
+}
+
+.movable-view {
+  width: 100%;
+  height: fit-content;
+  min-height: 200rpx;
+  z-index: 2;
+  position: relative;
+}
+
+.delete-area {
+  position: absolute;
+  right: 0;
+  top: 0;
+  height: 100%;
+  width: 150rpx;
+  background: #FA5151;
+  color: #FFFFFF;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0 16rpx 16rpx 0;
+  z-index: 1;
+}
+
+.highlighted-emotion {
+    font-weight: bold;
+    color: #33C1FF; /* Color for 情绪 */
+}
+
+.highlighted-thinking {
+    font-weight: bold;
+    color: #FFC300; /* Color for 思维 */
+}
+
+.highlighted-scene {
+    font-weight: bold;
+    color: #75FF33; /* Color for 场景 */
+}
+
+/* 卡片容器 */
+.event-card {
+  background: #FFFFFF;
+  border-radius: 16rpx;
+  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.1);
+  padding: 32rpx;
+  transition: all 0.3s ease;
+  transform: translateX(0);
+  width: auto;
+  box-sizing: border-box;
+  margin: 0;
+}
+
+/* 卡片头部 */
+.event-header {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  margin-bottom: 16rpx;
+  flex-wrap: wrap;
+  gap: 12rpx;
+}
+
+/* 事件标签 */
+.event-tag {
+  font-size: 24rpx;
+  padding: 4rpx 12rpx;
+  border-radius: 4rpx;
+  color: #FFFFFF;
+  transition: transform 0.2s ease;
+  flex-shrink: 0;
+}
+
+.event-tag:active {
+  transform: scale(0.95);
+}
+
+/* 事件标题 */
+.event-title {
+  font-size: 32rpx;
+  font-weight: 500;
+  color: #333333;
+  flex: 1;
+  min-width: 200rpx;
+  margin-right: auto;
+}
+
+/* 时间显示 */
+.event-time {
+  font-size: 24rpx;
+  color: #999999;
+  flex-shrink: 0;
+}
+
+/* 事件内容 */
+.event-content {
+  font-size: 28rpx;
+  color: #666666;
+  line-height: 1.5;
+  margin: 16rpx 0;
+  word-break: break-all;
+  white-space: pre-wrap;
+}
+
+/* 相关对话区域 */
+.related-dialog {
+  background: #F7F7F7;
+  padding: 16rpx;
+  border-radius: 8rpx;
+  font-size: 26rpx;
+  color: #666666;
+  margin: 16rpx 0;
+  transition: background-color 0.3s ease;
+  word-break: break-all;
+  white-space: pre-wrap;
+}
+
+.related-dialog:active {
+  background-color: #EFEFEF;
+}
+
+/* 操作按钮组 */
+.action-group {
+  display: flex;
+  justify-content: flex-end;
+  gap: 16rpx;
+  margin-top: 24rpx;
+}
+
+/* 按钮样式 */
+.weui-btn_mini {
+  margin: 0;
+  padding: 0;
+  width: 64rpx;
+  height: 64rpx;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-icon {
+  font-size: 32rpx;
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* 按钮状态 */
+.weui-btn_confirmed {
+  background: #07C160;
+  opacity: 0.8;
+}
+
+.weui-btn_rejected {
+  background: #FA5151;
+  opacity: 0.8;
+}
+
+/* 按钮点击效果 */
+.weui-btn_mini:active {
+  transform: scale(0.95);
+}
+
+.weui-btn_mini:active .btn-icon {
+  transform: scale(1.2);
+}
+
+/* 按钮波纹效果 */
+.weui-btn_mini::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  transform: scale(0);
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.weui-btn_mini:active::after {
+  transform: scale(1.5);
+  opacity: 0;
+}
+
+/* 卡片状态动画 */
+.event-card.confirmed {
+  border-left: 8rpx solid #07C160;
+  animation: cardConfirmed 0.5s ease;
+}
+
+.event-card.rejected {
+  border-left: 8rpx solid #FA5151;
+  animation: cardRejected 0.5s ease;
+}
+
+@keyframes cardConfirmed {
+  0% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(10rpx);
+  }
+  50% {
+    transform: translateX(-5rpx);
+  }
+  75% {
+    transform: translateX(5rpx);
+  }
+  100% {
+    transform: translateX(0);
+  }
+}
+
+@keyframes cardRejected {
+  0% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(-10rpx);
+  }
+  50% {
+    transform: translateX(5rpx);
+  }
+  75% {
+    transform: translateX(-5rpx);
+  }
+  100% {
+    transform: translateX(0);
+  }
+}
+
+/* 卡片状态 */
+.event-card.editing {
+  border: 2rpx solid #10AEFF;
+  transform: scale(1.01);
+}
+
+/* 弹窗样式 */
+.weui-dialog {
+  opacity: 0;
+  visibility: hidden;
+  transform: scale(0.9);
+  transition: all 0.3s ease;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0.9);
+  width: 80%;
+  max-width: 600rpx;
+  background: #FFFFFF;
+  border-radius: 12rpx;
+  z-index: 9999;
+}
+
+/* 遮罩层 */
+.weui-mask {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.6);
+  z-index: 9998;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s ease;
+}
+
+/* 显示状态 */
+.weui-dialog_show {
+  opacity: 1;
+  visibility: visible;
+  transform: translate(-50%, -50%) scale(1);
+}
+
+.weui-mask_show {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* 编辑表单样式 */
+.weui-cells {
+  margin-top: 16rpx;
+  position: relative;
+  z-index: 10000;
+}
+
+.weui-cell {
+  padding: 16rpx;
+  background: #FFFFFF;
+}
+
+.weui-dialog__hd {
+  padding: 32rpx 32rpx 16rpx;
+  text-align: center;
+}
+
+.weui-dialog__title {
+  font-weight: 500;
+  font-size: 34rpx;
+  color: #333333;
+}
+
+.weui-dialog__bd {
+  padding: 0 32rpx 32rpx;
+}
+
+.weui-dialog__ft {
+  position: relative;
+  display: flex;
+  line-height: 88rpx;
+  border-top: 1rpx solid #E5E5E5;
+}
+
+.weui-dialog__btn {
+  flex: 1;
+  text-align: center;
+  font-size: 32rpx;
+  position: relative;
+}
+
+.weui-dialog__btn:active {
+  background: #F7F7F7;
+}
+
+.weui-dialog__btn_default {
+  color: #666666;
+}
+
+.weui-dialog__btn_primary {
+  color: #07C160;
+}
+
+/* 分隔线 */
+.weui-dialog__btn:not(:first-child)::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 1rpx;
+  background: #E5E5E5;
+}
+
+/* 响应式布局调整 */
+@media screen and (max-width: 320px) {
+  .event-card {
+    padding: 24rpx;
+  }
+  
+  .event-title {
+    font-size: 28rpx;
+  }
+  
+  .event-content {
+    font-size: 26rpx;
+  }
+  
+  .weui-btn_mini {
+    width: 56rpx;
+    height: 56rpx;
+  }
+  
+  .btn-icon {
+    font-size: 28rpx;
+  }
+} 

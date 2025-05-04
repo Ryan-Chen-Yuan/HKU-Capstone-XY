@@ -94,7 +94,7 @@ class EventService {
   constructor() {
     // 强制初始化本地存储
     try {
-      wx.setStorageSync('events', mockEvents);
+        wx.setStorageSync('events', mockEvents);
     } catch (e) {
       console.error('初始化事件存储失败:', e);
     }

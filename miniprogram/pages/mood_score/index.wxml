@@ -1,0 +1,57 @@
+<view class="container">
+  <!-- Back Button -->
+  <view class="back-button" bindtap="navigateBack">
+    <view class="back-icon"></view>
+  </view>
+
+  <!-- Header -->
+  <view class="header">
+    <view class="title">情绪记录</view>
+    <view class="subtitle">觉察你的情绪变化</view>
+  </view>
+
+  <!-- Event Card -->
+  <view class="event-card">
+    <view class="score-display">
+      <input class="score" value="{{moodIntensity}}" bindinput="onMoodScoreInput" />
+    </view>
+
+    <!-- Editable Table -->
+    <view class="editable-table">
+        <view class="table-row" style="margin-bottom: 10px; border-bottom: 1px solid #ccc;">
+            <view class="table-cell highlighted-emotion">情绪</view>
+            <view class="table-cell" style="display: flex; align-items: center;">
+                <input class="editable-input" placeholder="情绪" value="{{moodCategory}}" bindinput="onMoodTextInput" />                
+            </view>
+        </view>
+        <view class="table-row" style="margin-bottom: 10px; border-bottom: 1px solid #ccc;">
+            <view class="table-cell highlighted-thinking">思维</view>
+            <view class="table-cell">
+                <input class="editable-input" placeholder="请输入思维" value="{{thinking}}" bindinput="onThinkingInput" />
+            </view>
+        </view>
+        <view class="table-row" style="margin-bottom: 10px; border-bottom: 1px solid #ccc;">
+            <view class="table-cell highlighted-scene">场景</view>
+            <view class="table-cell">
+                <input class="editable-input" placeholder="请输入场景" value="{{scene}}" bindinput="onSceneInput" />
+            </view>
+        </view>
+    </view>
+
+    <!-- 操作按钮组 -->
+    <view class="action-group">
+      <button class="weui-btn weui-btn_mini {{confirmed ? 'weui-btn_confirmed' : 'weui-btn_primary'}}" 
+              bindtap="onConfirm">
+        <text class="btn-icon">✓</text>
+      </button>
+      <button class="weui-btn weui-btn_mini {{rejected ? 'weui-btn_rejected' : 'weui-btn_warn'}}" 
+              bindtap="onReject">
+        <text class="btn-icon">✗</text>
+      </button>
+      <button class="weui-btn weui-btn_mini" 
+              bindtap="onEdit">
+        <text class="btn-icon">✎</text>
+      </button>
+    </view>
+  </view>
+</view>
