@@ -55,10 +55,3 @@
     </view>
   </view>
 </view>
-
-<style>
-    .highlighted-text {
-        font-weight: bold; /* Make text bold */
-        color: #007BFF; /* Change color to highlight */
-    }
-</style>
