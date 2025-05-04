@@ -107,6 +107,7 @@
   font-size: 48px;
   font-weight: bold;
   color: #4caf50; /* Green for positive mood */
+  height:40px;
 }
 
 .category {

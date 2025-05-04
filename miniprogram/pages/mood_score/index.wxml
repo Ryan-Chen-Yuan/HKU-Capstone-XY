@@ -12,22 +12,16 @@
 
   <!-- Event Card -->
   <view class="event-card">
+    <view class="score-display">
+      <input class="score" value="{{moodIntensity}}" bindinput="onMoodScoreInput" />
+    </view>
 
-    <!-- 卡片头部 
-      <view class="event-header" bindtap="onCardTap">
-        <view class="event-title">情绪记录</view>
-        <view class="event-time">{{time}}</view>
-      </view>
-      -->
-    
     <!-- Editable Table -->
     <view class="editable-table">
         <view class="table-row" style="margin-bottom: 10px; border-bottom: 1px solid #ccc;">
-            <view class="table-cell highlighted-emotion">情绪及强度</view>
+            <view class="table-cell highlighted-emotion">情绪</view>
             <view class="table-cell" style="display: flex; align-items: center;">
-                <input class="editable-input" placeholder="情绪" value="{{moodIntensity}}" bindinput="onEmotionTextInput" />
-                <input class="editable-input" placeholder="分数" value="{{moodCategory}}" bindinput="onEmotionScoreInput" type="number" />
-                
+                <input class="editable-input" placeholder="情绪" value="{{moodCategory}}" bindinput="onMoodTextInput" />                
             </view>
         </view>
         <view class="table-row" style="margin-bottom: 10px; border-bottom: 1px solid #ccc;">
