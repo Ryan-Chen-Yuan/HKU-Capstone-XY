@@ -565,6 +565,46 @@ Page({
         this.handleApiError()
       }
     })
+
+    // Call /mood API
+    this.fetchMoodAnalysis(content);
+  },
+
+  // Fetch mood analysis and make the thermometer icon flicker
+  fetchMoodAnalysis: function(message) {
+    wx.request({
+        url: `${API_BASE_URL}/mood`,
+        method: 'POST',
+        data: {
+            user_id: this.data.user_id,
+            session_id: this.data.session_id,
+            messages: [message]
+        },
+        header: {
+            'content-type': 'application/json'
+        },
+        success: (res) => {
+            if (res.statusCode === 200) {
+                // Save mood data for navigation
+                this.setData({
+                    moodData: res.data
+                });
+                // TODO: Flicker the thermometer icon 
+            } else {
+                wx.showToast({
+                    title: 'Failed to fetch mood data',
+                    icon: 'none'
+                });
+            }
+        },
+        fail: (error) => {
+            console.error('Mood API request failed:', error);
+            wx.showToast({
+                title: 'Request failed',
+                icon: 'none'
+            });
+        }
+    });
   },
 
   // 处理API错误
@@ -1276,7 +1316,7 @@ Page({
     this.setData({ user_id: userId })
   },
 
-  // 点击温度计
+  // Navigate to Mood Score page with data
   onThermometerBubbleTap: function() {
     if (!this.data.thermometerBubbleDragging) {
         wx.navigateTo({
@@ -1293,7 +1333,7 @@ Page({
             }
         });
     }
-},
+  },
 
   // Touch start for thermometer icon
   thermometerIconTouchStart: function (e) {
