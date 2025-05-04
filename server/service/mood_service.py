@@ -6,13 +6,13 @@ from openai import OpenAI
 class MoodService:
     """Mood analysis service to analyze message content and provide mood scores, mood, and suggestions."""
 
-    def __init__(self, model="Meta-Llama-3.1-8B-Instruct"):
+    def __init__(self):
         """Initialize the mood analysis service.
 
         Args:
             model: OpenAI model name
         """
-        self.model = model
+        self.model = os.environ.get("MODEL_NAME")
         self.client = OpenAI(
             api_key=os.environ.get("OPENAI_API_KEY"),
             base_url=os.environ.get("BASE_URL"),
