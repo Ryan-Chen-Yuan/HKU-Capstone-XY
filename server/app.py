@@ -13,6 +13,7 @@ from load_env import load_environment
 
 load_environment()
 
+from service.mood_service import MoodService
 from service.chat_service import ChatService
 from dao.database import Database
 
@@ -109,7 +110,61 @@ def get_history():
             500,
         )
 
+@app.route("/api/mood", methods=["POST"])
+def analyze_mood():
+    """Analyze mood of messages and provide mood intensity, category, thinking, and scene."""
+    try:
+        # Get request data
+        data = request.json
 
+        # Validate required parameters
+        if not data or "user_id" not in data or "session_id" not in data or "messages" not in data:
+            return jsonify({"error_code": 400, "error_message": "缺少必要参数"}), 400
+
+        user_id = data["user_id"]
+        session_id = data["session_id"]
+        messages = data["messages"]
+
+        # Validate messages
+        if not isinstance(messages, list) or not messages:
+            return jsonify({"error_code": 400, "error_message": "消息内容无效"}), 400
+
+        # Perform mood analysis
+        mood_service = MoodService()
+        mood_result = mood_service.analyze_mood(messages)
+
+        # Extract results
+        mood_intensity = mood_result["moodIntensity"]
+        mood_category = mood_result["moodCategory"]
+        thinking = mood_result["thinking"]
+        scene = mood_result["scene"]
+
+        # Generate a unique message ID and timestamp
+        message_id = f"msg_{uuid.uuid4().hex[:8]}"
+        response_time = datetime.now().isoformat()
+
+        # Save mood analysis result to the database
+        # db.save_sentiment_analysis(session_id, user_id, mood_intensity, mood_category, thinking, scene)
+
+        # Return mood analysis results
+        return jsonify(
+            {
+                "message_id": message_id,
+                "moodIntensity": mood_intensity,
+                "moodCategory": mood_category,
+                "thinking": thinking,
+                "scene": scene,
+                "timestamp": response_time,
+                "session_id": session_id,
+            }
+        )
+
+    except Exception as e:
+        print(f"Error in mood analysis endpoint: {str(e)}")
+        return (
+            jsonify({"error_code": 500, "error_message": f"服务器内部错误: {str(e)}"}), 500
+        )
+    
 if __name__ == "__main__":
     # 确保数据目录存在
     os.makedirs("data", exist_ok=True)

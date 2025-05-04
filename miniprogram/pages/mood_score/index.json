@@ -1,0 +1,6 @@
+{
+  "navigationBarTitleText": "Mood Score",
+  "usingComponents": {
+    "event-card": "/components/event-card/event-card"
+  }
+}

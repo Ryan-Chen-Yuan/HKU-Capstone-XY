@@ -13,6 +13,7 @@ Page({
     scrollToMessage: '',
     chatHistory: [],
     userInfo: {},
+    moodData: null, 
     medals: [
       {
         id: 1,
@@ -45,6 +46,18 @@ Page({
     medalBubbleDragging: false,
     medalBubbleStartX: 0,
     medalBubbleStartY: 0,
+
+    thermometerIcon: '/images/thermometer-icon.jpg', // Path to the thermometer icon
+    thermometerIconAnimation: true, 
+    thermometerBubblePosition: {
+      x: wx.getWindowInfo().windowWidth - 80, // Initial X position
+      y: 200, // Initial Y position
+    },
+    thermometerBubbleSize: 60, // Icon size
+    thermometerBubbleDragging: false, // Dragging state
+    thermometerBubbleStartX: 0, // Start X position for dragging
+    thermometerBubbleStartY: 0, // Start Y position for dragging
+  
     monsterSize: 120,
     moveInterval: null,
     isMoving: false,
@@ -449,10 +462,10 @@ Page({
 
   // 发送消息
   sendMessage: function() {
-    const content = this.data.inputMessage.trim()
-    if (!content) return
+    const content = this.data.inputMessage.trim();
+    if (!content) return;
 
-    const timestamp = new Date().toISOString()
+    const timestamp = new Date().toISOString();
     const newMessage = {
       id: Date.now(),
       type: 'user',
@@ -462,21 +475,21 @@ Page({
     }
 
     this.setData({
-      messages: [...this.data.messages, newMessage],
-      inputMessage: '',
-      isLoading: true
-    })
+        messages: [...this.data.messages, newMessage],
+        inputMessage: '',
+        isLoading: true
+    });
 
-    this.scrollToBottom()
+    this.scrollToBottom();
 
-    // 准备历史消息记录，用于提供上下文
+    // Prepare history for context
     const history = this.data.messages.map(msg => ({
-      role: msg.type === 'user' ? 'user' : 'agent',
-      content: msg.content,
-      timestamp: msg.timestamp
-    }))
+        role: msg.type === 'user' ? 'user' : 'agent',
+        content: msg.content,
+        timestamp: msg.timestamp
+    }));
 
-    // 调用后端API获取AI响应
+    // Call /chat API
     wx.request({
       url: `${API_BASE_URL}/chat`,
       method: 'POST',
@@ -552,6 +565,46 @@ Page({
         this.handleApiError()
       }
     })
+
+    // Call /mood API
+    this.fetchMoodAnalysis(content);
+  },
+
+  // Fetch mood analysis and make the thermometer icon flicker
+  fetchMoodAnalysis: function(message) {
+    wx.request({
+        url: `${API_BASE_URL}/mood`,
+        method: 'POST',
+        data: {
+            user_id: this.data.user_id,
+            session_id: this.data.session_id,
+            messages: [message]
+        },
+        header: {
+            'content-type': 'application/json'
+        },
+        success: (res) => {
+            if (res.statusCode === 200) {
+                // Save mood data for navigation
+                this.setData({
+                    moodData: res.data
+                });
+                // TODO: Flicker the thermometer icon 
+            } else {
+                wx.showToast({
+                    title: 'Failed to fetch mood data',
+                    icon: 'none'
+                });
+            }
+        },
+        fail: (error) => {
+            console.error('Mood API request failed:', error);
+            wx.showToast({
+                title: 'Request failed',
+                icon: 'none'
+            });
+        }
+    });
   },
 
   // 处理API错误
@@ -680,7 +733,26 @@ Page({
       });
     }
   },
-  
+
+  // Navigate to Mood Score page
+  navigateToMoodScore: function () {
+    if (!this.data.thermometerIconDragging) {
+      wx.navigateTo({
+        url: '/pages/mood_score/index', // Replace with the actual path to the Mood Score page
+        success: function () {
+          console.log('Successfully navigated to Mood Score page');
+        },
+        fail: function (error) {
+          console.error('Failed to navigate to Mood Score page:', error);
+          wx.showToast({
+            title: 'Navigation failed, please try again',
+            icon: 'none',
+          });
+        },
+      });
+    }
+  },
+ 
   // 开始怪物随机移动
   startMonsterMovement: function() {
     // 清除现有的移动间隔
@@ -1215,7 +1287,7 @@ Page({
     })
   },
 
-  // 点击勋章气泡
+  // 勋章气泡点击
   onMedalBubbleTap: function() {
     if (!this.data.medalBubbleDragging) {
       wx.navigateTo({
@@ -1244,7 +1316,66 @@ Page({
     this.setData({ user_id: userId })
   },
 
- 
+  // Navigate to Mood Score page with data
+  onThermometerBubbleTap: function() {
+    if (!this.data.thermometerBubbleDragging) {
+        wx.navigateTo({
+            url: `/pages/mood_score/index?data=${encodeURIComponent(JSON.stringify(this.data.moodData))}`,
+            success: function() {
+                console.log('Successfully navigated to Mood Score page');
+            },
+            fail: function(error) {
+                console.error('Failed to navigate to Mood Score page:', error);
+                wx.showToast({
+                    title: 'Navigation failed, please try again',
+                    icon: 'none'
+                });
+            }
+        });
+    }
+  },
+
+  // Touch start for thermometer icon
+  thermometerIconTouchStart: function (e) {
+    const { thermometerIconPosition } = this.data;
+
+    this.setData({
+      thermometerIconDragging: true,
+      thermometerIconStartX: e.touches[0].clientX - thermometerIconPosition.x,
+      thermometerIconStartY: e.touches[0].clientY - thermometerIconPosition.y,
+    });
+  },
+
+  // Touch move for thermometer icon
+  thermometerIconTouchMove: function (e) {
+    if (this.data.thermometerIconDragging) {
+      const windowWidth = wx.getWindowInfo().windowWidth;
+      const windowHeight = wx.getWindowInfo().windowHeight;
+      const { thermometerIconSize } = this.data;
+
+      let newX = e.touches[0].clientX - this.data.thermometerIconStartX;
+      let newY = e.touches[0].clientY - this.data.thermometerIconStartY;
+
+      // Boundary checks
+      newX = Math.max(0, Math.min(windowWidth - thermometerIconSize, newX));
+      newY = Math.max(0, Math.min(windowHeight - thermometerIconSize, newY));
+
+      this.setData({
+        thermometerIconPosition: {
+          x: newX,
+          y: newY,
+        },
+      });
+    }
+  },
+
+  // Touch end for thermometer icon
+  thermometerIconTouchEnd: function () {
+    this.setData({
+      thermometerIconDragging: false,
+    });
+  },
+
   // 跳转到事件分析页面
   navigateToEvents() {
     wx.navigateTo({
@@ -1254,4 +1385,4 @@ Page({
 
     
   
-}) 
+})
