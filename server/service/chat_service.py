@@ -7,6 +7,8 @@ from datetime import datetime
 from openai import OpenAI
 import re
 
+from utils.extract_json import extract_json
+
 
 class ChatService:
     """聊天服务，负责调用OpenAI API获取AI回复"""
@@ -23,6 +25,9 @@ class ChatService:
             base_url=os.environ.get("BASE_URL"),
         )
         self.prompt_template = self._load_prompt_template()
+        self.planning_prompt = self._load_planning_prompt()
+        self.plans_dir = os.path.join(os.path.dirname(__file__), "../data/plans")
+        os.makedirs(self.plans_dir, exist_ok=True)
 
     def _load_prompt_template(self):
         """加载咨询师Prompt模板"""
@@ -55,6 +60,109 @@ class ChatService:
         # 读取模板文件
         with open(prompt_file, "r", encoding="utf-8") as f:
             return f.read()
+
+    def _load_planning_prompt(self):
+        """加载规划工具Prompt模板"""
+        prompt_dir = os.path.join(os.path.dirname(__file__), "../prompt")
+        prompt_file = os.path.join(prompt_dir, "planning_prompt.txt")
+
+        if not os.path.exists(prompt_file):
+            raise FileNotFoundError("Planning prompt file not found")
+
+        with open(prompt_file, "r", encoding="utf-8") as f:
+            return f.read()
+
+    def _get_plan(self, session_id):
+        """获取对话计划
+
+        Args:
+            session_id: 会话ID
+
+        Returns:
+            dict: 对话计划
+        """
+        plan_file = os.path.join(self.plans_dir, f"{session_id}.json")
+        if os.path.exists(plan_file):
+            with open(plan_file, "r", encoding="utf-8") as f:
+                return json.load(f)
+        return None
+
+    def _save_plan(self, session_id, plan):
+        """保存对话计划
+
+        Args:
+            session_id: 会话ID
+            plan: 对话计划
+        """
+        plan_file = os.path.join(self.plans_dir, f"{session_id}.json")
+        with open(plan_file, "w", encoding="utf-8") as f:
+            json.dump(plan, f, ensure_ascii=False, indent=2)
+
+    def _update_plan(self, session_id, message, history):
+        """更新对话计划
+
+        Args:
+            session_id: 会话ID
+            message: 当前用户消息
+            history: 历史消息列表
+
+        Returns:
+            dict: 更新后的对话计划
+        """
+        # 获取现有计划
+        plan = self._get_plan(session_id)
+        if not plan:
+            plan = {
+                "session_id": session_id,
+                "user_intent": {
+                    "type": "unknown",
+                    "description": "",
+                    "confidence": 0.0,
+                    "identified_at": datetime.now().isoformat(),
+                },
+                "current_state": {
+                    "stage": "intent_identification",
+                    "progress": 0.0,
+                    "last_updated": datetime.now().isoformat(),
+                },
+                "steps": [],
+                "context": {"key_points": [], "emotions": [], "concerns": []},
+            }
+
+        # 准备消息历史
+        messages = [
+            {"role": "system", "content": self.planning_prompt},
+            {
+                "role": "user",
+                "content": f"Current plan: {json.dumps(plan, ensure_ascii=False)}\n\nCurrent message: {message}\n\nHistory: {json.dumps(history, ensure_ascii=False)}",
+            },
+        ]
+
+        print(f"messages: {messages}")
+
+        # 调用OpenAI API更新计划
+        response = self.client.chat.completions.create(
+            model=self.model,
+            messages=messages,
+            max_tokens=1000,
+            temperature=0.7,
+        )
+
+        reply = response.choices[0].message.content.strip()
+        print(f"AI reply: {reply}")
+
+        # 解析响应
+        try:
+            updated_plan = extract_json(reply)
+            if updated_plan is None:
+                print(f"Failed to extract JSON from reply: {reply}")
+                return plan
+
+            self._save_plan(session_id, updated_plan)
+            return updated_plan
+        except Exception as e:
+            print(f"Error updating plan: {str(e)}")
+            return plan
 
     def _format_history(self, history):
         """将历史记录格式化为OpenAI API需要的格式
@@ -130,12 +238,13 @@ class ChatService:
         # 默认情绪
         return content, "neutral"
 
-    def get_response(self, message, history=None):
+    def get_response(self, message, history=None, session_id=None):
         """获取AI回复
 
         Args:
             message: 用户消息
             history: 历史消息列表
+            session_id: 会话ID（由app.py提供）
 
         Returns:
             dict: 包含回复内容的字典
@@ -144,11 +253,19 @@ class ChatService:
             history = []
 
         try:
+            # 更新对话计划
+            plan = self._update_plan(session_id, message, history)
+
             # 格式化历史记录
             messages = self._format_history(history)
 
             # 添加当前用户消息
             messages.append({"role": "user", "content": message})
+
+            # 添加计划信息到系统提示
+            messages[0][
+                "content"
+            ] += f"\n\n当前对话计划：{json.dumps(plan, ensure_ascii=False)}"
 
             # 调用OpenAI API
             response = self.client.chat.completions.create(
@@ -164,11 +281,12 @@ class ChatService:
             # 提取情绪
             clean_content, emotion = self._extract_emotion(reply)
 
-            return {"content": clean_content, "emotion": emotion}
+            return {"content": clean_content, "emotion": emotion, "plan": plan}
 
         except Exception as e:
             print(f"Error getting AI response: {str(e)}")
             return {
                 "content": f"抱歉，我现在无法回答。发生了错误: {str(e)}",
                 "emotion": "sad",
+                "plan": None,
             }
