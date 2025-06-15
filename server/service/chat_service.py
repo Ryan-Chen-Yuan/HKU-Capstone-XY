@@ -138,7 +138,7 @@ class ChatService:
             },
         ]
 
-        print(f"messages: {messages}")
+        # print(f"messages: {messages}")
 
         # 调用OpenAI API更新计划
         response = self.client.chat.completions.create(
@@ -149,7 +149,7 @@ class ChatService:
         )
 
         reply = response.choices[0].message.content.strip()
-        print(f"AI reply: {reply}")
+        # print(f"AI reply: {reply}")
 
         # 解析响应
         try:
