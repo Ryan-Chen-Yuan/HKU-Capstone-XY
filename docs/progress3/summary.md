@@ -65,7 +65,7 @@ Progress 3 阶段(6月1日 - 6月16日)团队协作完成了以下工作：
 开启工具后，对话策略会新增如下流程
 <img width="550" alt="image" src="https://github.com/user-attachments/assets/9acbf2b6-0a9d-46b3-b0e5-a87a4662fc45" />
 
-### 「事件提取」模块更新
+### 「事件提取」模块更新 - 粟英成
 1. 事件提取服务与异步机制实现
 
 - 开发事件提取服务（EventService），使用独立的模型，配置 response_format={"type": "json_object"} 确保稳定的json输出
