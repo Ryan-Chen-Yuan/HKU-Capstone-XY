@@ -168,14 +168,14 @@
   </view>
 
   <!-- 温度计 -->
-  <view class="medal-bubble {{medalBubbleDragging ? 'dragging' : ''}} {{isKeyboardVisible ? 'keyboard-visible' : ''}}"
+  <view class="thermometer-bubble {{medalBubbleDragging ? 'dragging' : ''}} {{isKeyboardVisible ? 'keyboard-visible' : ''}}"
         style="left: {{thermometerBubblePosition.x}}px; top: {{thermometerBubblePosition.y}}px;"
         bindtap="onThermometerBubbleTap"
         bindtouchstart="thermometerIconTouchStart"
         bindtouchmove="thermometerIconTouchMove"
         bindtouchend="thermometerIconTouchEnd">
-    <view class="medal-bubble-inner">
-      <image class= "thermometer-icon {{thermometerIconAnimation ? 'animation' : ''}}" image src="/images/thermometer-icon.jpg" mode="aspectFit"></image>
+    <view class="thermometer-bubble-inner">
+      <image class= "thermometer-icon {{thermometerIconAnimation ? 'shine' : ''}}" image src="/images/thermometer-icon.jpg" mode="aspectFit"></image>
     </view>
   </view>
 
