@@ -23,6 +23,13 @@ def load_environment():
         print("错误：未设置OPENAI_API_KEY环境变量。请在.env文件中设置。")
         return False
 
+    # 打印功能控制参数信息
+    guided_inquiry_enabled = os.environ.get("ENABLE_GUIDED_INQUIRY", "true").lower() == "true"
+    pattern_analysis_enabled = os.environ.get("ENABLE_PATTERN_ANALYSIS", "true").lower() == "true"
+    
+    print(f"引导性询问功能: {'启用' if guided_inquiry_enabled else '禁用'}")
+    print(f"行为模式分析功能: {'启用' if pattern_analysis_enabled else '禁用'}")
+
     return True
 
 
