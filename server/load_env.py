@@ -63,6 +63,13 @@ def load_environment():
     print(f"情绪评分日志: {'启用' if emotion_logging_enabled else '禁用'}")
     print(f"详细日志信息: {'启用' if detailed_logging_enabled else '禁用'}")
 
+    # 打印功能控制参数信息
+    guided_inquiry_enabled = os.environ.get("ENABLE_GUIDED_INQUIRY", "true").lower() == "true"
+    pattern_analysis_enabled = os.environ.get("ENABLE_PATTERN_ANALYSIS", "true").lower() == "true"
+    
+    print(f"引导性询问功能: {'启用' if guided_inquiry_enabled else '禁用'}")
+    print(f"行为模式分析功能: {'启用' if pattern_analysis_enabled else '禁用'}")
+
     return True
 
 
