@@ -65,16 +65,7 @@ Progress 3 阶段(6月1日 - 6月16日)团队协作完成了以下工作：
 开启工具后，对话策略会新增如下流程
 <img width="550" alt="image" src="https://github.com/user-attachments/assets/9acbf2b6-0a9d-46b3-b0e5-a87a4662fc45" />
 
-
 ## 三、后续计划
-
-### Interim Report & Presentation
-
-**时间**：6月1日
-
-由于5月中下旬进行期末考试，中期展示的主要内容就是上述 Progress 1 & 2的成果，后续计划见 Progress 3 规划。
-
-### Progress 4
 
 **时间**：6月17日-7月7日
 
