@@ -56,7 +56,7 @@ def chat():
             history = db.get_chat_history(session_id)
 
         # 获取AI回复
-        response = chat_service.get_response(message, history)
+        response = chat_service.get_response(message, history, session_id)
 
         # 构造响应消息
         message_id = f"msg_{uuid.uuid4().hex[:8]}"
@@ -110,6 +110,7 @@ def get_history():
             500,
         )
 
+
 @app.route("/api/mood", methods=["POST"])
 def analyze_mood():
     """Analyze mood of messages and provide mood intensity, category, thinking, and scene."""
@@ -118,7 +119,12 @@ def analyze_mood():
         data = request.json
 
         # Validate required parameters
-        if not data or "user_id" not in data or "session_id" not in data or "messages" not in data:
+        if (
+            not data
+            or "user_id" not in data
+            or "session_id" not in data
+            or "messages" not in data
+        ):
             return jsonify({"error_code": 400, "error_message": "缺少必要参数"}), 400
 
         user_id = data["user_id"]
@@ -162,9 +168,11 @@ def analyze_mood():
     except Exception as e:
         print(f"Error in mood analysis endpoint: {str(e)}")
         return (
-            jsonify({"error_code": 500, "error_message": f"服务器内部错误: {str(e)}"}), 500
+            jsonify({"error_code": 500, "error_message": f"服务器内部错误: {str(e)}"}),
+            500,
         )
-    
+
+
 if __name__ == "__main__":
     # 确保数据目录存在
     os.makedirs("data", exist_ok=True)
