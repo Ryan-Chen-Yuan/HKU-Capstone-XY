@@ -87,6 +87,10 @@ Progress 3 阶段(6月1日 - 6月16日)团队协作完成了以下工作：
 
 使用 langgraph 框架搭建一个简易的 心理咨询agent，验证长短期记忆库、联网检索、自动报警、外部工具调用能力。
 
+「langgraph」框架 demo 设计如下：
+![image](https://github.com/user-attachments/assets/71b03dc9-baec-4d28-a403-4b2da2f7e614)
+
+
 ## 三、后续计划
 
 **时间**：6月17日-7月7日
