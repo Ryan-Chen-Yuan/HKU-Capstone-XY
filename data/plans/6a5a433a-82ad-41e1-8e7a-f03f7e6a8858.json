@@ -1,0 +1,50 @@
+{
+  "user_intent": {
+    "type": "general_inquiry",
+    "description": "用户询问最近的新闻，可能是想闲聊或转移话题",
+    "confidence": 0.7,
+    "identified_at": "2025-07-05T20:05:50.495Z"
+  },
+  "current_state": {
+    "stage": "initial_response",
+    "progress": 0.3,
+    "last_updated": "2025-07-05T20:05:50.495Z"
+  },
+  "steps": [
+    {
+      "id": "step_1",
+      "type": "clarification",
+      "content": "我注意到您想了解新闻。作为心理咨询师，我更关注您的心理状态。您最近是否有什么想讨论的情绪或困扰？",
+      "status": "pending"
+    },
+    {
+      "id": "step_2",
+      "type": "assessment",
+      "content": "如果用户坚持讨论新闻，评估这是否是回避心理话题的策略",
+      "status": "pending"
+    },
+    {
+      "id": "step_3",
+      "type": "redirect",
+      "content": "根据评估结果，将对话引导回心理咨询主题",
+      "status": "pending"
+    }
+  ],
+  "context": {
+    "key_points": [
+      "用户以新闻话题开启对话"
+    ],
+    "emotions": [
+      "可能存在的回避情绪"
+    ],
+    "concerns": [
+      "用户可能不愿直接讨论心理问题"
+    ]
+  },
+  "inquiry_status": {
+    "stage": "初始阶段",
+    "information_completeness": 0,
+    "collected_info": {},
+    "pattern_analyzed": false
+  }
+}

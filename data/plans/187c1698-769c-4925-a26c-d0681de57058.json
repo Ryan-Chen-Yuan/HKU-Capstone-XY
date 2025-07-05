@@ -1,0 +1,76 @@
+{
+  "user_intent": {
+    "type": "topic_avoidance",
+    "description": "用户持续转移话题，从创业指导到稳定币、个人喜好再到中国航母新闻，显示出明显的回避核心议题的倾向",
+    "confidence": 0.9,
+    "identified_at": "2025-07-05T20:04:24.168Z"
+  },
+  "current_state": {
+    "stage": "resistance_handling",
+    "progress": 0.3,
+    "last_updated": "2025-07-05T20:04:24.168Z"
+  },
+  "steps": [
+    {
+      "id": "step_1",
+      "type": "pattern_highlighting",
+      "content": "指出观察到的多次话题转移模式",
+      "status": "active"
+    },
+    {
+      "id": "step_2",
+      "type": "safety_check",
+      "content": "评估当前咨询环境是否让用户感到不安",
+      "status": "pending"
+    },
+    {
+      "id": "step_3",
+      "type": "motivation_exploration",
+      "content": "探索用户最初寻求咨询的真实动机",
+      "status": "pending"
+    },
+    {
+      "id": "step_4",
+      "type": "contract_review",
+      "content": "必要时重新讨论咨询协议和期望",
+      "status": "pending"
+    },
+    {
+      "id": "step_5",
+      "type": "alternative_approach",
+      "content": "考虑改用更间接的评估方式（如投射技术）",
+      "status": "pending"
+    }
+  ],
+  "context": {
+    "key_points": [
+      "连续4次话题转移",
+      "回避创业相关讨论",
+      "需要建立安全但专业的咨询框架"
+    ],
+    "emotions": [
+      "防御性",
+      "可能的焦虑",
+      "试探性"
+    ],
+    "concerns": [
+      "咨询动机澄清",
+      "阻抗处理策略",
+      "治疗联盟建立"
+    ]
+  },
+  "inquiry_status": {
+    "stage": "初始阻抗处理阶段",
+    "information_completeness": 0.15,
+    "collected_info": {
+      "presenting_issue": "创业指导",
+      "topic_shifts": [
+        "稳定币新闻",
+        "个人喜好",
+        "中国航母新闻"
+      ],
+      "interaction_pattern": "连续回避行为"
+    },
+    "pattern_analyzed": true
+  }
+}

@@ -16,7 +16,7 @@ def load_environment():
         print("已加载环境变量配置文件：.env")
     else:
         print("警告：未找到.env文件。请创建该文件并设置必要的环境变量。")
-        print("可以复制.env.example文件作为模板：cp .env.example .env")
+        print("可以复制.env.example文件作为模板：cp .env .env")
 
     # 检查对话模型的必要环境变量
     if not os.environ.get("CHAT_API_KEY"):
@@ -53,6 +53,15 @@ def load_environment():
     
     print(f"引导性询问功能: {'启用' if guided_inquiry_enabled else '禁用'}")
     print(f"行为模式分析功能: {'启用' if pattern_analysis_enabled else '禁用'}")
+    
+    # 打印日志配置信息
+    chat_logging_enabled = os.environ.get("ENABLE_CHAT_LOGGING", "true").lower() == "true"
+    emotion_logging_enabled = os.environ.get("ENABLE_EMOTION_LOGGING", "true").lower() == "true"
+    detailed_logging_enabled = os.environ.get("ENABLE_DETAILED_LOGGING", "true").lower() == "true"
+    
+    print(f"聊天日志记录: {'启用' if chat_logging_enabled else '禁用'}")
+    print(f"情绪评分日志: {'启用' if emotion_logging_enabled else '禁用'}")
+    print(f"详细日志信息: {'启用' if detailed_logging_enabled else '禁用'}")
 
     return True
 
