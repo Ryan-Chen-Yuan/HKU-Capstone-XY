@@ -6,6 +6,7 @@ import uuid
 from datetime import datetime
 import json
 import os
+from threading import Thread
 
 # 加载环境变量
 from load_env import load_environment
@@ -14,6 +15,8 @@ load_environment()
 
 from service.mood_service import MoodService
 from service.chat_langgraph_optimized import optimized_chat  # 使用LangGraph优化版
+from service.event_service import EventService
+
 from dao.database import Database
 from utils.chat_logger import chat_logger
 
@@ -27,6 +30,8 @@ DEBUG = os.environ.get("FLASK_ENV", "production") == "development"
 
 # 初始化数据库
 db = Database()
+event_service = EventService()
+mood_service = MoodService()
 
 
 @app.route("/api/chat", methods=["POST"])
@@ -62,7 +67,7 @@ def chat():
             user_id=user_id,
             session_id=session_id,
             history=history,
-            enable_performance_monitoring=False
+            enable_performance_monitoring=False,
         )
 
         # 构造响应消息
@@ -75,13 +80,26 @@ def chat():
             session_id, user_id, "agent", response["response"], response_time
         )
 
+        # 检查用户消息数量，每3条消息进行一次事件提取
+        user_message_count = db.get_user_message_count(session_id)
+        if user_message_count > 0 and user_message_count % 3 == 0:
+            print(
+                f"触发事件提取：会话 {session_id} 已有 {user_message_count} 条用户消息"
+            )
+            Thread(
+                target=async_event_extraction,
+                args=(session_id, user_id, db, event_service),
+            ).start()
+
         # 记录AI回复日志
         chat_logger.log_chat_response(
-            user_id, session_id, response["response"], 
+            user_id,
+            session_id,
+            response["response"],
             response.get("emotion", "neutral"),
             response.get("crisis_detected", False),
             response.get("search_results", None),
-            response_time
+            response_time,
         )
 
         # 返回响应
@@ -115,11 +133,9 @@ def get_history():
 
         # 从数据库获取历史记录
         history = db.get_chat_history(session_id)
-        return jsonify({
-            "session_id": session_id,
-            "history": history,
-            "count": len(history)
-        })
+        return jsonify(
+            {"session_id": session_id, "history": history, "count": len(history)}
+        )
 
     except Exception as e:
         print(f"Error in get_history endpoint: {str(e)}")
@@ -127,6 +143,7 @@ def get_history():
             jsonify({"error_code": 500, "error_message": f"服务器内部错误: {str(e)}"}),
             500,
         )
+
 
 @app.route("/api/mood", methods=["POST"])
 def analyze_mood():
@@ -153,7 +170,7 @@ def analyze_mood():
             return jsonify({"error_code": 400, "error_message": "消息内容无效"}), 400
 
         # Perform mood analysis
-        mood_service = MoodService()
+
         mood_result = mood_service.analyze_mood(messages)
 
         # Extract results
@@ -167,7 +184,9 @@ def analyze_mood():
         response_time = datetime.now().isoformat()
 
         # 记录情绪分析日志
-        chat_logger.log_mood_analysis(user_id, session_id, messages, mood_result, response_time)
+        chat_logger.log_mood_analysis(
+            user_id, session_id, messages, mood_result, response_time
+        )
 
         # Save mood analysis result to the database
         # db.save_sentiment_analysis(session_id, user_id, mood_intensity, mood_category, thinking, scene)
@@ -187,6 +206,169 @@ def analyze_mood():
 
     except Exception as e:
         print(f"Error in mood analysis endpoint: {str(e)}")
+        return (
+            jsonify({"error_code": 500, "error_message": f"服务器内部错误: {str(e)}"}),
+            500,
+        )
+
+
+def async_event_extraction(session_id, user_id, db, event_service):
+    # 获取最近4条历史消息用于事件提取
+    conversation = db.get_chat_history(session_id, limit=4)
+    if conversation:
+        events = event_service.extract_events(conversation)
+        if events:
+            db.save_events(session_id, events)
+
+
+@app.route("/api/events/extract", methods=["POST"])
+def extract_events():
+    """从对话中提取事件"""
+    try:
+        # 获取请求数据
+        data = request.json
+
+        # 验证必要参数
+        if not data or "conversation" not in data:
+            return jsonify({"error_code": 400, "error_message": "缺少必要参数"}), 400
+
+        conversation = data["conversation"]
+        session_id = data.get("session_id", str(uuid.uuid4()))
+        user_id = data.get("user_id")
+        source_dialog_id = data.get(
+            "source_dialog_id", f"dialog_{uuid.uuid4().hex[:8]}"
+        )
+
+        # 校验会话是否存在
+        if not db.session_exists(session_id):
+            return (
+                jsonify(
+                    {
+                        "error_code": 404,
+                        "error_message": f"会话 {session_id} 不存在，无法进行事件提取。请先创建对话。",
+                    }
+                ),
+                404,
+            )
+
+        # 提取事件
+        events = event_service.extract_events(conversation)
+
+        # 添加对话来源ID
+        for event in events:
+            event["sourceDialogId"] = source_dialog_id
+
+        # 保存事件到数据库
+        if events:
+            db.save_events(session_id, events)
+
+        # 返回事件列表
+        return jsonify(
+            {
+                "session_id": session_id,
+                "events": events,
+                "timestamp": datetime.now().isoformat(),
+            }
+        )
+
+    except Exception as e:
+        print(f"Error in event extraction endpoint: {str(e)}")
+        return (
+            jsonify({"error_code": 500, "error_message": f"服务器内部错误: {str(e)}"}),
+            500,
+        )
+
+
+@app.route("/api/events", methods=["GET"])
+def get_events():
+    """获取事件列表"""
+    try:
+        session_id = request.args.get("session_id")
+        limit = request.args.get("limit")
+
+        if not session_id:
+            return jsonify({"error_code": 400, "error_message": "缺少必要参数"}), 400
+
+        # 从数据库获取事件列表
+        events = db.get_events(session_id, int(limit) if limit else None)
+
+        return jsonify(
+            {
+                "session_id": session_id,
+                "events": events,
+                "timestamp": datetime.now().isoformat(),
+            }
+        )
+
+    except Exception as e:
+        print(f"Error in get events endpoint: {str(e)}")
+        return (
+            jsonify({"error_code": 500, "error_message": f"服务器内部错误: {str(e)}"}),
+            500,
+        )
+
+
+@app.route("/api/events/<event_id>", methods=["PUT"])
+def update_event(event_id):
+    """更新事件"""
+    try:
+        session_id = request.args.get("session_id")
+        data = request.json
+
+        if not session_id:
+            return (
+                jsonify({"error_code": 400, "error_message": "缺少session_id参数"}),
+                400,
+            )
+
+        if not data:
+            return jsonify({"error_code": 400, "error_message": "缺少更新数据"}), 400
+
+        # 从数据库更新事件
+        success = db.update_event(session_id, event_id, data)
+
+        if not success:
+            return jsonify({"error_code": 404, "error_message": "事件不存在"}), 404
+
+        return jsonify(
+            {
+                "session_id": session_id,
+                "event_id": event_id,
+                "message": "事件更新成功",
+                "timestamp": datetime.now().isoformat(),
+            }
+        )
+
+    except Exception as e:
+        print(f"Error in update event endpoint: {str(e)}")
+        return (
+            jsonify({"error_code": 500, "error_message": f"服务器内部错误: {str(e)}"}),
+            500,
+        )
+
+
+@app.route("/api/events/<event_id>", methods=["DELETE"])
+def delete_event(event_id):
+    """删除事件"""
+    try:
+        session_id = request.args.get("session_id")
+
+        if not session_id:
+            return jsonify({"error_code": 400, "error_message": "缺少必要参数"}), 400
+
+        # 从数据库删除事件
+        db.delete_event(session_id, event_id)
+
+        return jsonify(
+            {
+                "session_id": session_id,
+                "event_id": event_id,
+                "timestamp": datetime.now().isoformat(),
+            }
+        )
+
+    except Exception as e:
+        print(f"Error in delete event endpoint: {str(e)}")
         return (
             jsonify({"error_code": 500, "error_message": f"服务器内部错误: {str(e)}"}),
             500,
