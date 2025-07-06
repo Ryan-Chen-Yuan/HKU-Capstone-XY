@@ -571,6 +571,7 @@ Page({
     })
 
     // Call /mood API
+
     // 获取最近N条用户消息内容，批量情绪分析
     const recentUserMessages = getRecentMessages(
       [...this.data.messages, newMessage].filter(m => m.type === 'user'), 
