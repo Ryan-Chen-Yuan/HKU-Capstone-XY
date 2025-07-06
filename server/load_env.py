@@ -47,6 +47,13 @@ def load_environment():
     print(f"对话模型配置: {os.environ.get('CHAT_MODEL_NAME')} @ {os.environ.get('CHAT_BASE_URL')}")
     print(f"事件提取模型配置: {os.environ.get('EVENT_MODEL_NAME')} @ {os.environ.get('EVENT_BASE_URL')}")
 
+    # 打印功能控制参数信息
+    guided_inquiry_enabled = os.environ.get("ENABLE_GUIDED_INQUIRY", "true").lower() == "true"
+    pattern_analysis_enabled = os.environ.get("ENABLE_PATTERN_ANALYSIS", "true").lower() == "true"
+    
+    print(f"引导性询问功能: {'启用' if guided_inquiry_enabled else '禁用'}")
+    print(f"行为模式分析功能: {'启用' if pattern_analysis_enabled else '禁用'}")
+
     return True
 
 

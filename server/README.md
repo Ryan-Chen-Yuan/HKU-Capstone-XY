@@ -35,11 +35,19 @@ pip install -r requirements.txt
 cp .env.example .env
 ```
 
-然后编辑 `.env` 文件，设置您的 OpenAI API 密钥：
+然后编辑 `.env` 文件，设置您的 OpenAI API 密钥和功能控制参数：
 
 ```
 OPENAI_API_KEY=your_openai_api_key_here
+BASE_URL=https://api.openai.com/v1
+MODEL_NAME=gpt-4o-mini
+
+# 功能控制参数
+ENABLE_GUIDED_INQUIRY=true
+ENABLE_PATTERN_ANALYSIS=true
 ```
+
+详细的配置说明请参考 [配置文档](README_config.md)。
 
 ### 启动服务器
 
