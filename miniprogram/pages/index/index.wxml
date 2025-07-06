@@ -175,6 +175,8 @@
         bindtouchmove="thermometerIconTouchMove"
         bindtouchend="thermometerIconTouchEnd">
     </view>
+    <view class="thermometer-bubble-inner">
+      <image class= "thermometer-icon {{thermometerIconAnimation ? 'shine' : ''}}" image src="/images/thermometer-icon.jpg" mode="aspectFit"></image>
   </view>
 
 </view> 
