@@ -164,6 +164,292 @@ class Database:
             print(f"Error getting sessions: {str(e)}")
             return {}
 
+    # =========================
+    # 新增数据模块支持
+    # =========================
+
+    def save_user_profile(self, user_id, profile_data):
+        """保存用户画像数据
+
+        Args:
+            user_id: 用户ID
+            profile_data: 用户画像数据字典
+        """
+        try:
+            profiles_file = os.path.join(self.data_dir, "user_profiles.json")
+
+            with self.lock:
+                # 读取现有用户画像
+                if os.path.exists(profiles_file):
+                    with open(profiles_file, "r", encoding="utf-8") as f:
+                        profiles = json.load(f)
+                else:
+                    profiles = {}
+
+                # 更新用户画像
+                if user_id not in profiles:
+                    profiles[user_id] = {}
+                profiles[user_id].update(profile_data)
+                profiles[user_id]["updated_at"] = datetime.now().isoformat()
+
+                # 保存用户画像
+                with open(profiles_file, "w", encoding="utf-8") as f:
+                    json.dump(profiles, f, ensure_ascii=False, indent=2)
+
+        except Exception as e:
+            print(f"Error saving user profile: {str(e)}")
+
+    def get_user_profile(self, user_id):
+        """获取用户画像数据
+
+        Args:
+            user_id: 用户ID
+
+        Returns:
+            dict: 用户画像数据
+        """
+        try:
+            profiles_file = os.path.join(self.data_dir, "user_profiles.json")
+
+            if not os.path.exists(profiles_file):
+                return {}
+
+            with self.lock:
+                with open(profiles_file, "r", encoding="utf-8") as f:
+                    profiles = json.load(f)
+
+            return profiles.get(user_id, {})
+
+        except Exception as e:
+            print(f"Error getting user profile: {str(e)}")
+            return {}
+
+    def save_long_term_memory(self, user_id, memory_content):
+        """保存长期记忆
+
+        Args:
+            user_id: 用户ID
+            memory_content: 记忆内容
+        """
+        try:
+            memory_file = os.path.join(self.data_dir, "long_term_memory.json")
+
+            with self.lock:
+                # 读取现有长期记忆
+                if os.path.exists(memory_file):
+                    with open(memory_file, "r", encoding="utf-8") as f:
+                        memories = json.load(f)
+                else:
+                    memories = {}
+
+                # 添加新记忆
+                if user_id not in memories:
+                    memories[user_id] = []
+
+                memory_entry = {
+                    "time": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+                    "content": memory_content,
+                }
+                memories[user_id].append(memory_entry)
+
+                # 保存长期记忆
+                with open(memory_file, "w", encoding="utf-8") as f:
+                    json.dump(memories, f, ensure_ascii=False, indent=2)
+
+        except Exception as e:
+            print(f"Error saving long term memory: {str(e)}")
+
+    def get_long_term_memory(self, user_id, limit=None):
+        """获取长期记忆
+
+        Args:
+            user_id: 用户ID
+            limit: 获取的记忆数量限制
+
+        Returns:
+            list: 长期记忆列表
+        """
+        try:
+            memory_file = os.path.join(self.data_dir, "long_term_memory.json")
+
+            if not os.path.exists(memory_file):
+                return []
+
+            with self.lock:
+                with open(memory_file, "r", encoding="utf-8") as f:
+                    memories = json.load(f)
+
+            user_memories = memories.get(user_id, [])
+
+            if limit is not None and limit > 0:
+                user_memories = user_memories[-limit:]
+
+            return user_memories
+
+        except Exception as e:
+            print(f"Error getting long term memory: {str(e)}")
+            return []
+
+    def save_emotion_score(
+        self, user_id, session_id, emotion_score, emotion_category=None
+    ):
+        """保存情绪评分
+
+        Args:
+            user_id: 用户ID
+            session_id: 会话ID
+            emotion_score: 情绪评分
+            emotion_category: 情绪类别（可选）
+        """
+        try:
+            emotions_file = os.path.join(self.data_dir, "emotion_scores.json")
+
+            with self.lock:
+                # 读取现有情绪数据
+                if os.path.exists(emotions_file):
+                    with open(emotions_file, "r", encoding="utf-8") as f:
+                        emotions = json.load(f)
+                else:
+                    emotions = {}
+
+                # 添加情绪数据
+                if user_id not in emotions:
+                    emotions[user_id] = []
+
+                emotion_entry = {
+                    "session_id": session_id,
+                    "emotion_score": emotion_score,
+                    "emotion_category": emotion_category,
+                    "timestamp": datetime.now().isoformat(),
+                }
+                emotions[user_id].append(emotion_entry)
+
+                # 保存情绪数据
+                with open(emotions_file, "w", encoding="utf-8") as f:
+                    json.dump(emotions, f, ensure_ascii=False, indent=2)
+
+        except Exception as e:
+            print(f"Error saving emotion score: {str(e)}")
+
+    def get_emotion_history(self, user_id, limit=None):
+        """获取用户情绪历史
+
+        Args:
+            user_id: 用户ID
+            limit: 获取的数量限制
+
+        Returns:
+            list: 情绪历史列表
+        """
+        try:
+            emotions_file = os.path.join(self.data_dir, "emotion_scores.json")
+
+            if not os.path.exists(emotions_file):
+                return []
+
+            with self.lock:
+                with open(emotions_file, "r", encoding="utf-8") as f:
+                    emotions = json.load(f)
+
+            user_emotions = emotions.get(user_id, [])
+
+            if limit is not None and limit > 0:
+                user_emotions = user_emotions[-limit:]
+
+            return user_emotions
+
+        except Exception as e:
+            print(f"Error getting emotion history: {str(e)}")
+            return []
+
+    def save_pattern_analysis(self, session_id, pattern_data):
+        """保存行为模式分析结果
+
+        Args:
+            session_id: 会话ID
+            pattern_data: 行为模式分析数据
+        """
+        try:
+            patterns_dir = os.path.join(self.data_dir, "patterns")
+            os.makedirs(patterns_dir, exist_ok=True)
+
+            pattern_file = os.path.join(patterns_dir, f"{session_id}.json")
+
+            with self.lock:
+                with open(pattern_file, "w", encoding="utf-8") as f:
+                    json.dump(pattern_data, f, ensure_ascii=False, indent=2)
+
+        except Exception as e:
+            print(f"Error saving pattern analysis: {str(e)}")
+
+    def get_pattern_analysis(self, session_id):
+        """获取行为模式分析结果
+
+        Args:
+            session_id: 会话ID
+
+        Returns:
+            dict: 行为模式分析数据
+        """
+        try:
+            patterns_dir = os.path.join(self.data_dir, "patterns")
+            pattern_file = os.path.join(patterns_dir, f"{session_id}.json")
+
+            if not os.path.exists(pattern_file):
+                return {}
+
+            with self.lock:
+                with open(pattern_file, "r", encoding="utf-8") as f:
+                    return json.load(f)
+
+        except Exception as e:
+            print(f"Error getting pattern analysis: {str(e)}")
+            return {}
+
+    def save_session_plan(self, session_id, plan_data):
+        """保存会话计划
+
+        Args:
+            session_id: 会话ID
+            plan_data: 计划数据
+        """
+        try:
+            plans_dir = os.path.join(self.data_dir, "plans")
+            os.makedirs(plans_dir, exist_ok=True)
+
+            plan_file = os.path.join(plans_dir, f"{session_id}.json")
+
+            with self.lock:
+                with open(plan_file, "w", encoding="utf-8") as f:
+                    json.dump(plan_data, f, ensure_ascii=False, indent=2)
+
+        except Exception as e:
+            print(f"Error saving session plan: {str(e)}")
+
+    def get_session_plan(self, session_id):
+        """获取会话计划
+
+        Args:
+            session_id: 会话ID
+
+        Returns:
+            dict: 会话计划数据
+        """
+        try:
+            plans_dir = os.path.join(self.data_dir, "plans")
+            plan_file = os.path.join(plans_dir, f"{session_id}.json")
+
+            if not os.path.exists(plan_file):
+                return {}
+
+            with self.lock:
+                with open(plan_file, "r", encoding="utf-8") as f:
+                    return json.load(f)
+
+        except Exception as e:
+            print(f"Error getting session plan: {str(e)}")
+            return {}
+
     def save_events(self, session_id, events):
         """保存事件列表
 
@@ -195,7 +481,10 @@ class Database:
                     # 只有当事件没有ID时才生成新ID（保持EventService生成的ID）
                     if "id" not in event or not event["id"]:
                         import uuid
-                        event["id"] = f"evt_{int(time.time() * 1000)}_{uuid.uuid4().hex[:8]}"
+
+                        event["id"] = (
+                            f"evt_{int(time.time() * 1000)}_{uuid.uuid4().hex[:8]}"
+                        )
                     event["created_at"] = datetime.now().isoformat()
                     existing_events.append(event)
 

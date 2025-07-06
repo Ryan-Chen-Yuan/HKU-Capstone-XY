@@ -2,6 +2,10 @@
 .DS_Store
 DS_Store
 
+# IDE / Editor
+.idea/
+*.iml
+
 # Server
 .env
 *.pyc

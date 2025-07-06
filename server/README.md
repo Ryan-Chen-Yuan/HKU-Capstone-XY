@@ -13,7 +13,7 @@
 
 ### 前提条件
 
-- Python 3.8+
+- Python 3.11+
 - OpenAI API 密钥
 
 ### 安装
@@ -32,7 +32,7 @@ pip install -r requirements.txt
 复制环境变量示例文件并进行配置：
 
 ```bash
-cp .env.example .env
+cp .env .env
 ```
 
 然后编辑 `.env` 文件，设置您的 OpenAI API 密钥和功能控制参数：
@@ -52,10 +52,10 @@ ENABLE_PATTERN_ANALYSIS=true
 ### 启动服务器
 
 ```bash
-python app.py
+python start_integrated.py
 ```
 
-服务器默认将在 http://localhost:5000 上运行。
+服务器默认将在 http://localhost:5858 上运行。
 
 ## API 文档
 
@@ -115,7 +115,7 @@ GET /api/chat/history?user_id=user123&session_id=session456
 ```json
 {
   "session_id": "session456",
-  "messages": [
+  "history": [
     {
       "role": "user",
       "content": "你是谁？",
@@ -136,7 +136,40 @@ GET /api/chat/history?user_id=user123&session_id=session456
       "content": "很遗憾听到你今天感觉不太好。你能告诉我是什么让你感到不舒服吗？或许我可以提供一些帮助。",
       "timestamp": "2023-04-01T12:00:10Z"
     }
-  ]
+  ],
+  "count": 4
+}
+```
+
+### 情绪分析
+
+**请求:**
+
+```
+POST /api/mood
+```
+
+**请求体:**
+
+```json
+{
+  "user_id": "user123",
+  "session_id": "session456",
+  "messages": ["我今天感觉不太好", "有点担心工作的事情"]
+}
+```
+
+**响应:**
+
+```json
+{
+  "message_id": "msg_c68a9920",
+  "moodCategory": "忧郁",
+  "moodIntensity": 5,
+  "scene": "在思考工作相关的事情",
+  "session_id": "session456",
+  "thinking": "我有点担心工作的事情",
+  "timestamp": "2025-07-06T03:20:25.903258"
 }
 ```
 
@@ -144,9 +177,55 @@ GET /api/chat/history?user_id=user123&session_id=session456
 
 咨询师的Prompt模板位于 `prompt/counselor_prompt.txt` 文件中，可以根据需要进行修改。
 
+## 目前版本情绪相关流程
+
+```
+用户消息 → SnowNLP情绪评分 → 实时日志记录
+         ↓
+       OpenAI情绪分析 → 详细情绪信息 → 影响AI回复策略
+         ↓
+       保存到数据库 → 用户画像更新 → 长期情绪跟踪
+```
+
+### 情绪分析说明
+
+1. **情绪评分**: 使用SnowNLP对用户消息进行实时情绪评分（-1到1范围）
+2. **情绪强度**: 通过OpenAI API分析得出情绪强度（0-10范围）
+3. **情绪类别**: 具体的情绪分类（如：开心、悲伤、焦虑、忧郁等）
+4. **内心独白**: AI推测的用户内心想法
+5. **情绪场景**: 产生该情绪的具体场景描述
+
+### 危机检测
+
+系统会自动检测用户消息中的危机信号，包括：
+- 高危关键词检测
+- 情绪极性分析
+- 当检测到危机时，会优先提供心理援助信息
+
 ## 数据存储
 
-聊天记录将存储在 `data` 目录下。每个会话都有一个单独的JSON文件，会话元数据存储在 `sessions.json` 文件中。
+聊天记录将存储在 `data` 目录下：
+- 会话记录：每个会话都有单独的JSON文件
+- 用户画像：`user_profiles.json`
+- 长期记忆：`long_term_memory.json`
+- 情绪评分：`emotion_scores.json`
+- 会话元数据：`sessions.json`
+
+### 数据目录结构
+
+```
+data/
+├── messages/           # 聊天消息记录
+│   ├── session1.json
+│   └── session2.json
+├── plans/             # 对话计划
+│   ├── session1.json
+│   └── default_user.json
+├── user_profiles.json  # 用户画像
+├── long_term_memory.json  # 长期记忆
+├── emotion_scores.json    # 情绪评分记录
+└── sessions.json         # 会话元数据
+```
 
 ## 开发
 
