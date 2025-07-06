@@ -8,6 +8,7 @@
 import sys
 import os
 from pathlib import Path
+from app_test import app
 
 # 添加项目根目录到Python路径
 sys.path.append(str(Path(__file__).parent))
@@ -114,8 +115,7 @@ def start_server():
     print(f"   情绪日志: {'✅ 启用' if emotion_logging else '❌ 禁用'}")
     print(f"   详细日志: {'✅ 启用' if detailed_logging else '❌ 禁用'}")
     print()
-    
-    from app_test import app
+
     
     # 获取配置
     HOST = os.environ.get("HOST", "0.0.0.0")
