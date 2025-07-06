@@ -37,6 +37,8 @@
   
   <!-- 无数据提示 -->
   <view class="no-data" wx:if="{{!loading && events.length === 0}}">
-    <text>暂无事件</text>
+    <view class="no-data-icon">📝</view>
+    <view class="no-data-title">暂无事件</view>
+    <view class="no-data-subtitle">继续对话，系统将自动为您提取关键事件</view>
   </view>
 </view> 
