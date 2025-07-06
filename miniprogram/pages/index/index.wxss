@@ -1404,17 +1404,6 @@
   display: block;
 }
 
-.thermometer-icon {
-    transition: opacity 0.3s;
-}
-
-
-.thermometer-icon.animation {
-    opacity: 0.5;
-    animation: temperatureRise 2s infinite ease-in-out;
-}
-
-
 /* 键盘显示时的位置调整 */
 .medal-bubble.keyboard-visible {
   margin-bottom: 220rpx;
