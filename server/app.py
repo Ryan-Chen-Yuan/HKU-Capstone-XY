@@ -118,39 +118,6 @@ def analyze_mood():
         data = request.json
 
         # Validate required parameters
-        if not data or "user_id" not in data or "session_id" not in data or "messages" not in data:
-            return jsonify({"error_code": 400, "error_message": "缺少必要参数"}), 400
-
-        user_id = data["user_id"]
-        session_id = data["session_id"]
-        messages = data["messages"]
-
-        # Validate messages
-        if not isinstance(messages, list) or not messages:
-            return jsonify({"error_code": 400, "error_message": "消息内容无效"}), 400
-
-        # Perform mood analysis
-        mood_service = MoodService()
-        mood_result = mood_service.analyze_mood(messages)
-
-        # Extract results
-        mood_intensity = mood_result["moodIntensity"]
-        mood_category = mood_result["moodCategory"]
-        thinking = mood_result["thinking"]
-        scene = mood_result["scene"]
-
-        # Generate a unique message ID and timestamp
-        message_id = f"msg_{uuid.uuid4().hex[:8]}"
-        response_time = datetime.now().isoformat()
-
-@app.route("/api/mood", methods=["POST"])
-def analyze_mood():
-    """Analyze mood of messages and provide mood intensity, category, thinking, and scene."""
-    try:
-        # Get request data
-        data = request.json
-
-        # Validate required parameters
         if (
             not data
             or "user_id" not in data
