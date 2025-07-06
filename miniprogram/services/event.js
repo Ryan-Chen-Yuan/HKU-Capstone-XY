@@ -1,4 +1,6 @@
-// Mock事件数据
+import API from './api.js';
+
+// Mock事件数据 (保留作为fallback)
 const mockEvents = [
   {
     id: '1',
@@ -8,7 +10,7 @@ const mockEvents = [
     content: '感到特别焦虑和沮丧，无法控制自己的情绪波动',
     time: '2024-04-05 10:30',
     dialogContent: '最近我经常感到莫名的焦虑，特别是晚上一个人的时候，有时候会突然很沮丧，控制不住情绪。',
-    sourceDialogId: 'dialog_001',
+    sourceDialogId: 'dialog_001',  
     status: 'pending',
     tagColor: '#4192FF',
     createTime: '2024-04-05 10:30',
@@ -17,7 +19,7 @@ const mockEvents = [
   {
     id: '2',
     primaryType: 'cognitive',
-    subType: 'positiveThinking',
+    subType: 'positiveThinking',  
     title: '积极思考',
     content: '回顾过去的成功经历，增强自信心',
     time: '2024-04-05 14:20',
@@ -86,33 +88,78 @@ const mockEvents = [
   }
 ];
 
-// 模拟延迟
-const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+// 配置是否使用Mock数据
+const USE_MOCK = false; // 设为true使用Mock，false使用真实API
 
 // 事件服务类
 class EventService {
   constructor() {
-    // 强制初始化本地存储
-    try {
+    this.sessionId = null; // 当前会话ID
+    
+    if (USE_MOCK) {
+      // Mock模式：初始化本地存储
+      try {
         wx.setStorageSync('events', mockEvents);
-    } catch (e) {
-      console.error('初始化事件存储失败:', e);
+      } catch (e) {
+        console.error('初始化事件存储失败:', e);
+      }
     }
+  }
+
+  // 设置会话ID
+  setSessionId(sessionId) {
+    this.sessionId = sessionId;
   }
 
   // 获取事件列表
   async getEvents({ page = 1, pageSize = 10, status, type } = {}) {
-    await delay(500); // 模拟网络延迟
+    if (USE_MOCK) {
+      return this._getMockEvents({ page, pageSize, status, type });
+    }
 
     try {
-      let events = wx.getStorageSync('events') || [];
+      if (!this.sessionId) {
+        throw new Error('会话ID未设置');
+      }
+
+      const result = await API.getEvents(this.sessionId, pageSize);
+      let events = result.events || [];
+      
+      // 客户端筛选
+      if (status) {
+        events = events.filter(event => event.status === status);
+      }
+      if (type) {
+        events = events.filter(event => event.primaryType === type);
+      }
+
+      // 客户端分页
+      const start = (page - 1) * pageSize;
+      const end = start + pageSize;
+      const pagedEvents = events.slice(start, end);
+
+      return {
+        events: pagedEvents,
+        total: events.length
+      };
+    } catch (e) {
+      console.error('获取事件列表失败:', e);
+      // 降级到Mock数据
+      return this._getMockEvents({ page, pageSize, status, type });
+    }
+  }
+
+  // Mock数据获取方法
+  async _getMockEvents({ page = 1, pageSize = 10, status, type } = {}) {
+    try {
+      let events = wx.getStorageSync('events') || mockEvents;
       
       // 筛选
       if (status) {
         events = events.filter(event => event.status === status);
       }
       if (type) {
-        events = events.filter(event => event.type === type);
+        events = events.filter(event => event.primaryType === type);
       }
 
       // 分页
@@ -125,15 +172,32 @@ class EventService {
         total: events.length
       };
     } catch (e) {
-      console.error('获取事件列表失败:', e);
-      throw new Error('获取事件列表失败');
+      console.error('获取Mock事件失败:', e);
+      return { events: [], total: 0 };
     }
   }
 
   // 更新事件状态
   async updateEventStatus(eventId, status) {
-    await delay(300);
+    if (USE_MOCK) {
+      return this._updateMockEventStatus(eventId, status);
+    }
 
+    try {
+      if (!this.sessionId) {
+        throw new Error('会话ID未设置');
+      }
+
+      await API.updateEvent(this.sessionId, eventId, { status });
+    } catch (e) {
+      console.error('更新事件状态失败:', e);
+      // 降级到Mock
+      return this._updateMockEventStatus(eventId, status);
+    }
+  }
+
+  // Mock事件状态更新
+  async _updateMockEventStatus(eventId, status) {
     try {
       const events = wx.getStorageSync('events') || [];
       const updatedEvents = events.map(event => {
@@ -149,15 +213,32 @@ class EventService {
 
       wx.setStorageSync('events', updatedEvents);
     } catch (e) {
-      console.error('更新事件状态失败:', e);
+      console.error('更新Mock事件状态失败:', e);
       throw new Error('更新事件状态失败');
     }
   }
 
   // 更新事件内容
   async updateEvent(eventId, data) {
-    await delay(300);
+    if (USE_MOCK) {
+      return this._updateMockEvent(eventId, data);
+    }
 
+    try {
+      if (!this.sessionId) {
+        throw new Error('会话ID未设置');
+      }
+
+      await API.updateEvent(this.sessionId, eventId, data);
+    } catch (e) {
+      console.error('更新事件失败:', e);
+      // 降级到Mock
+      return this._updateMockEvent(eventId, data);
+    }
+  }
+
+  // Mock事件更新
+  async _updateMockEvent(eventId, data) {
     try {
       const events = wx.getStorageSync('events') || [];
       const updatedEvents = events.map(event => {
@@ -173,52 +254,39 @@ class EventService {
 
       wx.setStorageSync('events', updatedEvents);
     } catch (e) {
-      console.error('更新事件失败:', e);
+      console.error('更新Mock事件失败:', e);
       throw new Error('更新事件失败');
     }
   }
 
   // 删除事件
   async deleteEvent(eventId) {
-    await delay(300);
+    if (USE_MOCK) {
+      return this._deleteMockEvent(eventId);
+    }
 
+    try {
+      if (!this.sessionId) {
+        throw new Error('会话ID未设置');
+      }
+
+      await API.deleteEvent(this.sessionId, eventId);
+    } catch (e) {
+      console.error('删除事件失败:', e);
+      // 降级到Mock
+      return this._deleteMockEvent(eventId);
+    }
+  }
+
+  // Mock事件删除
+  async _deleteMockEvent(eventId) {
     try {
       const events = wx.getStorageSync('events') || [];
       const updatedEvents = events.filter(event => event.id !== eventId);
       wx.setStorageSync('events', updatedEvents);
     } catch (e) {
-      console.error('删除事件失败:', e);
+      console.error('删除Mock事件失败:', e);
       throw new Error('删除事件失败');
-    }
-  }
-
-  // 模拟从对话中提取事件
-  async extractEventsFromDialog(dialogContent) {
-    await delay(800); // 模拟API调用延迟
-
-    // 模拟事件提取逻辑
-    const newEvent = {
-      id: `event_${Date.now()}`,
-      type: '待分类',
-      title: dialogContent.slice(0, 20) + (dialogContent.length > 20 ? '...' : ''),
-      content: dialogContent,
-      time: new Date().toISOString().slice(0, 16).replace('T', ' '),
-      dialogContent,
-      sourceDialogId: `dialog_${Date.now()}`,
-      status: 'pending',
-      tagColor: '#848484',
-      createTime: new Date().toISOString(),
-      updateTime: new Date().toISOString()
-    };
-
-    try {
-      const events = wx.getStorageSync('events') || [];
-      events.unshift(newEvent);
-      wx.setStorageSync('events', events);
-      return newEvent;
-    } catch (e) {
-      console.error('保存提取的事件失败:', e);
-      throw new Error('保存提取的事件失败');
     }
   }
 }

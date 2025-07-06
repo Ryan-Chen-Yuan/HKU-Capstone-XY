@@ -17,10 +17,10 @@ class ChatService:
         Args:
             model: OpenAI模型名称
         """
-        self.model = os.environ.get("MODEL_NAME")
+        self.model = os.environ.get("CHAT_MODEL_NAME")
         self.client = OpenAI(
-            api_key=os.environ.get("OPENAI_API_KEY"),
-            base_url=os.environ.get("BASE_URL"),
+            api_key=os.environ.get("CHAT_API_KEY"),
+            base_url=os.environ.get("CHAT_BASE_URL"),
         )
         self.prompt_template = self._load_prompt_template()
 

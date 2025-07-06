@@ -18,10 +18,34 @@ def load_environment():
         print("警告：未找到.env文件。请创建该文件并设置必要的环境变量。")
         print("可以复制.env.example文件作为模板：cp .env.example .env")
 
-    # 检查必要的环境变量
-    if not os.environ.get("OPENAI_API_KEY"):
-        print("错误：未设置OPENAI_API_KEY环境变量。请在.env文件中设置。")
+    # 检查对话模型的必要环境变量
+    if not os.environ.get("CHAT_API_KEY"):
+        print("错误：未设置CHAT_API_KEY环境变量（对话模型）。请在.env文件中设置。")
         return False
+        
+    if not os.environ.get("CHAT_MODEL_NAME"):
+        print("错误：未设置CHAT_MODEL_NAME环境变量（对话模型）。请在.env文件中设置。")
+        return False
+        
+    if not os.environ.get("CHAT_BASE_URL"):
+        print("错误：未设置CHAT_BASE_URL环境变量（对话模型）。请在.env文件中设置。")
+        return False
+
+    # 检查事件提取模型的必要环境变量
+    if not os.environ.get("EVENT_API_KEY"):
+        print("错误：未设置EVENT_API_KEY环境变量（事件提取模型）。请在.env文件中设置。")
+        return False
+        
+    if not os.environ.get("EVENT_MODEL_NAME"):
+        print("错误：未设置EVENT_MODEL_NAME环境变量（事件提取模型）。请在.env文件中设置。")
+        return False
+        
+    if not os.environ.get("EVENT_BASE_URL"):
+        print("错误：未设置EVENT_BASE_URL环境变量（事件提取模型）。请在.env文件中设置。")
+        return False
+
+    print(f"对话模型配置: {os.environ.get('CHAT_MODEL_NAME')} @ {os.environ.get('CHAT_BASE_URL')}")
+    print(f"事件提取模型配置: {os.environ.get('EVENT_MODEL_NAME')} @ {os.environ.get('EVENT_BASE_URL')}")
 
     return True
 
