@@ -13,7 +13,7 @@ from load_env import load_environment
 load_environment()
 
 from service.mood_service import MoodService
-from service.chat_test_integrated import ChatService  # 使用集成版ChatService
+from service.chat_langgraph_optimized import optimized_chat  # 使用LangGraph优化版
 from dao.database import Database
 from utils.chat_logger import chat_logger
 
@@ -25,9 +25,8 @@ PORT = int(os.environ.get("PORT", 5000))
 HOST = os.environ.get("HOST", "0.0.0.0")
 DEBUG = os.environ.get("FLASK_ENV", "production") == "development"
 
-# 初始化数据库和聊天服务
+# 初始化数据库
 db = Database()
-chat_service = ChatService(db)  # 集成版需要传入Database实例
 
 
 @app.route("/api/chat", methods=["POST"])
@@ -57,8 +56,14 @@ def chat():
         # 记录用户请求日志
         chat_logger.log_chat_request(user_id, session_id, message, timestamp)
 
-        # 获取AI回复
-        response = chat_service.get_response(message, history, session_id)
+        # 获取AI回复 - 使用LangGraph优化版本
+        response = optimized_chat(
+            user_input=message,
+            user_id=user_id,
+            session_id=session_id,
+            history=history,
+            enable_performance_monitoring=False
+        )
 
         # 构造响应消息
         message_id = f"msg_{uuid.uuid4().hex[:8]}"
@@ -67,12 +72,12 @@ def chat():
         # 保存对话记录到数据库
         db.save_message(session_id, user_id, "user", message, timestamp)
         db.save_message(
-            session_id, user_id, "agent", response["content"], response_time
+            session_id, user_id, "agent", response["response"], response_time
         )
 
         # 记录AI回复日志
         chat_logger.log_chat_response(
-            user_id, session_id, response["content"], 
+            user_id, session_id, response["response"], 
             response.get("emotion", "neutral"),
             response.get("crisis_detected", False),
             response.get("search_results", None),
@@ -83,7 +88,7 @@ def chat():
         return jsonify(
             {
                 "message_id": message_id,
-                "content": response["content"],
+                "content": response["response"],
                 "emotion": response.get("emotion", "neutral"),
                 "timestamp": response_time,
                 "session_id": session_id,
