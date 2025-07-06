@@ -1378,8 +1378,28 @@ Page({
 
   // 跳转到事件分析页面
   navigateToEvents() {
+    const sessionId = this.data.session_id;
+    // 如果没有会话ID，提示用户先进行对话
+    if (!sessionId) {
+      wx.showToast({
+        title: '请先进行对话',
+        icon: 'none'
+      });
+      return;
+    }
+    
     wx.navigateTo({
-      url: '/pages/events/index'
+      url: `/pages/events/index?session_id=${sessionId}`,
+      success: function() {
+        console.log('成功跳转到事件分析页面，session_id:', sessionId);
+      },
+      fail: function(error) {
+        console.error('跳转到事件分析页面失败:', error);
+        wx.showToast({
+          title: '跳转失败，请重试',
+          icon: 'none'
+        });
+      }
     })
   },
 

@@ -17,3 +17,9 @@ server/data/*
 miniprogram/node_modules/*
 
 prompt.md
+
+# cursor rules
+.cursorrules
+.cursor/
+
+

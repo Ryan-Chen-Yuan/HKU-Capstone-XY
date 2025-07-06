@@ -1,4 +1,3 @@
-
 import os
 import json
 from openai import OpenAI
@@ -12,10 +11,10 @@ class MoodService:
         Args:
             model: OpenAI model name
         """
-        self.model = os.environ.get("MODEL_NAME")
+        self.model = os.environ.get("CHAT_MODEL_NAME")
         self.client = OpenAI(
-            api_key=os.environ.get("OPENAI_API_KEY"),
-            base_url=os.environ.get("BASE_URL"),
+            api_key=os.environ.get("CHAT_API_KEY"),
+            base_url=os.environ.get("CHAT_BASE_URL"),
         )
         self.prompt_template = self._create_prompt_template()
 
@@ -39,7 +38,7 @@ class MoodService:
 4. 与情绪相关的场景（例如：在朋友圈看到朋友的分享）。
 
 注意事项：
-请确保所有判断均仅依据输入的具体内容，客观、谨慎地提供所需分析结果。如果没有足够的信息来做出准确的判断，你可以说“未知”。
+请确保所有判断均仅依据输入的具体内容，客观、谨慎地提供所需分析结果。如果没有足够的信息来做出准确的判断，你可以说"未知"。
 
 请按照下面的 JSON 格式进行回复：
 {

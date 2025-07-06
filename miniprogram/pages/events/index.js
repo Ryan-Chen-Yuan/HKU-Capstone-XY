@@ -10,10 +10,24 @@ Page({
     currentFilter: {
       status: '',
       type: ''
-    }
+    },
+    sessionId: ''
   },
 
-  onLoad() {
+  onLoad(options) {
+    const sessionId = options.session_id;
+    if (sessionId) {
+      this.setData({ sessionId });
+      EventService.setSessionId(sessionId);
+      console.log('事件页面接收到session_id:', sessionId);
+    } else {
+      console.warn('未接收到session_id参数');
+      wx.showToast({
+        title: '未找到会话信息',
+        icon: 'none'
+      });
+    }
+    
     this.loadEvents();
   },
 
@@ -84,11 +98,11 @@ Page({
   async handleEventReject(e) {
     const { eventId } = e.currentTarget.dataset;
     try {
-      await EventService.updateEventStatus(eventId, 'rejected');
-      this.updateLocalEvent(eventId, { status: 'rejected' });
+      await EventService.deleteEvent(eventId);
+      this.removeLocalEvent(eventId);
       wx.showToast({
         title: '已否定',
-        icon: 'error'
+        icon: 'success'
       });
     } catch (error) {
       wx.showToast({
