@@ -144,7 +144,16 @@ def analyze_mood():
         response_time = datetime.now().isoformat()
 
         # Save mood analysis result to the database
-        # db.save_sentiment_analysis(session_id, user_id, mood_intensity, mood_category, thinking, scene)
+        # mood_data = {
+        #     "id": message_id,
+        #     "user_id": user_id,
+        #     "moodIntensity": mood_intensity,
+        #     "moodCategory": mood_category,
+        #     "thinking": thinking,
+        #     "scene": scene,
+        #     "timestamp": response_time,
+        # }
+        # db.save_mood_data(session_id, mood_data)
 
         # Return mood analysis results
         return jsonify(
@@ -164,6 +173,27 @@ def analyze_mood():
         return (
             jsonify({"error_code": 500, "error_message": f"服务器内部错误: {str(e)}"}), 500
         )
+
+@app.route("/api/save_mood_data", methods=["POST"])
+def save_mood_data():
+    """保存情绪分析数据"""
+    try:
+        data = request.json
+        print(data)
+        if not data or "mood_data" not in data: #session_id
+            return jsonify({"error_code": 400, "error_message": "缺少必要参数"}), 400
+
+        user_id = data["user_id"] if "user_id" in data else 0
+        session_id = data["session_id"]
+        mood_data = data["mood_data"]
+
+        db.save_mood_data(user_id,session_id, mood_data)
+
+        return jsonify({"message": "情绪分析数据保存成功", "session_id": session_id}), 200
+
+    except Exception as e:
+        print(f"Error in save_mood_data endpoint: {str(e)}")
+        return jsonify({"error_code": 500, "error_message": f"服务器内部错误: {str(e)}"}), 500
     
 if __name__ == "__main__":
     # 确保数据目录存在

@@ -35,6 +35,10 @@ class Database:
         """获取消息存储文件的路径"""
         return os.path.join(self.messages_dir, f"{session_id}.json")
 
+    def _get_mood_file(self, session_id):
+        """获取情绪分析数据存储文件的路径"""
+        return os.path.join(self.messages_dir, f"{session_id}_mood.json")
+
     def session_exists(self, session_id):
         """检查会话是否存在
 
@@ -157,3 +161,131 @@ class Database:
         except Exception as e:
             print(f"Error getting sessions: {str(e)}")
             return {}
+
+    def save_mood_data(self, user_id, session_id, mood_data):
+        """保存情绪分析数据
+        Args:
+            session_id: 会话ID
+            mood_data: 情绪分析数据（dict 或 list）
+        """
+        try:
+            with self.lock:
+                # 确保会话存在
+                with open(self.sessions_file, "r", encoding="utf-8") as f:
+                    sessions = json.load(f)
+
+                if session_id not in sessions:
+                    print(f"Warning: Session {session_id} does not exist")
+                    return
+
+                mood_file = self._get_mood_file(session_id)
+
+                if os.path.exists(mood_file):
+                    with open(mood_file, "r", encoding="utf-8") as f:
+                        existing_moods = json.load(f)
+                else:
+                    existing_moods = []
+
+                # mood_data 可以是单个 dict 或 list
+                if isinstance(mood_data, dict):
+                    mood_data["created_at"] = datetime.now().isoformat()
+                    existing_moods.append(mood_data)
+                elif isinstance(mood_data, list):
+                    for mood in mood_data:
+                        mood["created_at"] = datetime.now().isoformat()
+                        existing_moods.append(mood)
+
+                with open(mood_file, "w", encoding="utf-8") as f:
+                    json.dump(existing_moods, f, ensure_ascii=False, indent=2)
+
+        except Exception as e:
+            print(f"Error saving mood analysis: {str(e)}")
+
+    def get_mood_analysis(self, session_id, limit=None):
+        """获取情绪分析数据
+        Args:
+            session_id: 会话ID
+            limit: 最大数量，None表示获取全部
+        Returns:
+            list: 情绪分析数据列表
+        """
+        try:
+            mood_file = self._get_mood_file(session_id)
+
+            if not os.path.exists(mood_file):
+                return []
+
+            with self.lock:
+                with open(mood_file, "r", encoding="utf-8") as f:
+                    moods = json.load(f)
+
+            if limit is not None and limit > 0:
+                moods = moods[-limit:]
+
+            return moods
+
+        except Exception as e:
+            print(f"Error getting mood analysis: {str(e)}")
+            return []
+
+    def update_mood_analysis(self, session_id, mood_id, update_data):
+        """更新情绪分析数据
+        Args:
+            session_id: 会话ID
+            mood_id: 情绪分析数据ID
+            update_data: 更新数据字典
+        Returns:
+            bool: 更新是否成功
+        """
+        try:
+            mood_file = self._get_mood_file(session_id)
+
+            if not os.path.exists(mood_file):
+                return False
+
+            with self.lock:
+                with open(mood_file, "r", encoding="utf-8") as f:
+                    moods = json.load(f)
+
+                updated = False
+                for mood in moods:
+                    if mood.get("id") == mood_id:
+                        for key, value in update_data.items():
+                            mood[key] = value
+                        mood["updateTime"] = datetime.now().isoformat()
+                        updated = True
+                        break
+
+                if updated:
+                    with open(mood_file, "w", encoding="utf-8") as f:
+                        json.dump(moods, f, ensure_ascii=False, indent=2)
+
+                return updated
+
+        except Exception as e:
+            print(f"Error updating mood analysis: {str(e)}")
+            return False
+
+    def delete_mood_analysis(self, session_id, mood_id):
+        """删除情绪分析数据
+        Args:
+            session_id: 会话ID
+            mood_id: 情绪分析数据ID
+        """
+        try:
+            mood_file = self._get_mood_file(session_id)
+
+            if not os.path.exists(mood_file):
+                return
+
+            with self.lock:
+                with open(mood_file, "r", encoding="utf-8") as f:
+                    moods = json.load(f)
+
+                moods = [mood for mood in moods if mood.get("id") != mood_id]
+
+                with open(mood_file, "w", encoding="utf-8") as f:
+                    json.dump(moods, f, ensure_ascii=False, indent=2)
+
+        except Exception as e:
+            print(f"Error deleting mood analysis: {str(e)}")

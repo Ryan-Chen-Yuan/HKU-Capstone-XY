@@ -1344,7 +1344,7 @@ Page({
   onThermometerBubbleTap: function() {
     if (!this.data.thermometerBubbleDragging) {
         wx.navigateTo({
-            url: `/pages/mood_score/index?data=${encodeURIComponent(JSON.stringify(this.data.moodData))}`,
+            url: `/pages/mood_score/index?data=${encodeURIComponent(JSON.stringify(this.data.moodData))}&session_id=${this.data.session_id}&user_id=${this.data.user_id}`,
             success: function() {
                 console.log('Successfully navigated to Mood Score page');
             },
