@@ -334,7 +334,7 @@ class Database:
             print(f"Error getting user message count: {str(e)}")
             return 0
         
-     def save_mood_data(self, user_id, session_id, mood_data):
+    def save_mood_data(self, user_id, session_id, mood_data):
         """保存情绪分析数据
         Args:
             session_id: 会话ID
