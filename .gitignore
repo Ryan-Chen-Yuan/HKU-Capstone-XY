@@ -2,6 +2,10 @@
 .DS_Store
 DS_Store
 
+# IDE / Editor
+.idea/
+*.iml
+
 # Server
 .env
 *.pyc
@@ -17,3 +21,8 @@ server/data/*
 miniprogram/node_modules/*
 
 prompt.md
+
+# cursor rules
+.cursorrules
+.cursor/
+

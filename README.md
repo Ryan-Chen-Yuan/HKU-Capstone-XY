@@ -8,7 +8,7 @@ AI-Powered Chatbot for Mental Health.
 
 1. Requirement
 
-- Python 3.8+
+- Python 3.11+
 
 - OpenAI API key (for demonstration purposes, you can use the temporary key in /server/.env.example, but this key will expire in the future)
 
@@ -24,7 +24,7 @@ pip install -r requirements.txt
 Copy the environment variable example file and configure it:
 
 ```bash
-cp .env.example .env
+cp .env .env
 ```
 
 4. Start the server
@@ -57,3 +57,4 @@ If you encounter any problems, feel free to contact:
 - Xu Hanlin (<hallymxu@gmail.com>)
 - Yu Yitao (<yitao_yu2024@connect.hku.hk>)
 - Su Yingcheng (<suyingc@connect.hku.hk>)
+

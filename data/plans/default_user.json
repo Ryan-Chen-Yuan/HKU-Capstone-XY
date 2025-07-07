@@ -1,0 +1,44 @@
+{
+  "user_intent": {
+    "type": "initial_contact",
+    "description": "用户发出困惑的声音，可能是对咨询流程不熟悉或对当前情况感到困惑",
+    "confidence": 0.7,
+    "identified_at": "2025-07-06T02:06:47.000000"
+  },
+  "current_state": {
+    "stage": "rapport_building",
+    "progress": 0.1,
+    "last_updated": "2025-07-06T02:06:47.000000"
+  },
+  "steps": [
+    {
+      "id": "step_1",
+      "type": "clarification",
+      "content": "向用户解释咨询流程和目的，建立初步信任关系",
+      "status": "pending"
+    },
+    {
+      "id": "step_2",
+      "type": "open_question",
+      "content": "询问用户是否有什么具体想讨论的话题或困扰",
+      "status": "pending"
+    }
+  ],
+  "context": {
+    "key_points": [
+      "用户表现出困惑"
+    ],
+    "emotions": [
+      "困惑"
+    ],
+    "concerns": [
+      "对咨询流程的理解"
+    ]
+  },
+  "inquiry_status": {
+    "stage": "初始阶段",
+    "information_completeness": 0,
+    "collected_info": {},
+    "pattern_analyzed": false
+  }
+}
