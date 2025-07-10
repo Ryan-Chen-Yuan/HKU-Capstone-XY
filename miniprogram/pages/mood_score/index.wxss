@@ -285,9 +285,9 @@
 /* 操作按钮组 */
 .action-group {
   display: flex;
+  flex-direction: row;
+  align-items: center;
   justify-content: flex-end;
-  gap: 16rpx;
-  margin-top: 24rpx;
 }
 
 /* 按钮样式 */
@@ -317,8 +317,16 @@
 }
 
 .weui-btn_rejected {
-  background: #FA5151;
-  opacity: 0.8;
+  background-color: #ccc !important;
+  color: #fff !important;
+  border: none;
+}
+
+.weui-btn_disabled {
+  background-color: #ccc !important;
+  color: #fff !important;
+  border: none;
+  opacity: 0.7;
 }
 
 /* 按钮点击效果 */
@@ -531,4 +539,4 @@
   .btn-icon {
     font-size: 28rpx;
   }
-} 
+}

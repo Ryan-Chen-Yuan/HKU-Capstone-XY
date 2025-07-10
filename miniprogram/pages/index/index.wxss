@@ -1469,3 +1469,82 @@
 .feedback-container button:hover {
     background-color: #ddd;
 }
+
+/* ========== 温度计气泡 ========== */
+.thermometer-bubble {
+  position: fixed;
+  width: 80rpx;
+  height: 80rpx;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #ffd700, #ff9800);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.2);
+  z-index: 1000;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  cursor: pointer;
+  touch-action: none;
+  will-change: transform;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+.thermometer-bubble.dragging {
+  transform: scale(1.1);
+  box-shadow: 0 6rpx 16rpx rgba(0, 0, 0, 0.3);
+  transition: none;
+}
+
+.thermometer-bubble-inner {
+  width: 60rpx;
+  height: 60rpx;
+  border-radius: 50%;
+  background: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  border: 2rpx solid #fff8e1;
+}
+
+.thermometer-bubble-icon {
+  width: 60rpx;
+  height: 60rpx;
+  display: block;
+}
+
+/* 键盘显示时的位置调整 */
+.thermometer-bubble.keyboard-visible {
+  margin-bottom: 220rpx;
+}
+
+/* 添加闪光动画 */
+.thermometer-bubble::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.3) 50%, rgba(255,255,255,0) 100%);
+  background-size: 200% 100%;
+  border-radius: 50%;
+  animation: shimmer 2s infinite;
+  pointer-events: none;
+}
+
+/* 点击效果 */
+.thermometer-bubble:active {
+  transform: scale(0.95);
+  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.15);
+}
+
+.thermometer-icon.shine {
+  animation: shine-effect 0.8s linear infinite alternate;
+  box-shadow: 0 0 16px 6px #ffb347;
+}
+@keyframes shine-effect {
+  0% { filter: brightness(1); }
+  100% { filter: brightness(2); }
+}

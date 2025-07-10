@@ -4,6 +4,10 @@ const app = getApp()
 // 添加后端API基础URL
 const API_BASE_URL = 'http://localhost:5858/api'
 
+function getRecentMessages(messages, windowSize = 7) {
+  return messages.slice(-windowSize);
+}
+
 Page({
   data: {
     showSidebar: false,
@@ -48,7 +52,7 @@ Page({
     medalBubbleStartY: 0,
 
     thermometerIcon: '/images/thermometer-icon.jpg', // Path to the thermometer icon
-    thermometerIconAnimation: true, 
+    thermometerIconAnimation: false, 
     thermometerBubblePosition: {
       x: wx.getWindowInfo().windowWidth - 80, // Initial X position
       y: 200, // Initial Y position
@@ -567,43 +571,65 @@ Page({
     })
 
     // Call /mood API
-    this.fetchMoodAnalysis(content);
+
+    // 获取最近N条用户消息内容，批量情绪分析
+    const recentUserMessages = getRecentMessages(
+      [...this.data.messages, newMessage].filter(m => m.type === 'user'), 
+      7
+    ).map(m => m.content);
+    this.fetchMoodAnalysis(recentUserMessages);
+    // this.fetchMoodAnalysis(content);
   },
 
   // Fetch mood analysis and make the thermometer icon flicker
-  fetchMoodAnalysis: function(message) {
+  fetchMoodAnalysis: function(messages) {
     wx.request({
-        url: `${API_BASE_URL}/mood`,
-        method: 'POST',
-        data: {
-            user_id: this.data.user_id,
-            session_id: this.data.session_id,
-            messages: [message]
-        },
-        header: {
-            'content-type': 'application/json'
-        },
-        success: (res) => {
-            if (res.statusCode === 200) {
-                // Save mood data for navigation
-                this.setData({
-                    moodData: res.data
-                });
-                // TODO: Flicker the thermometer icon 
-            } else {
-                wx.showToast({
-                    title: 'Failed to fetch mood data',
-                    icon: 'none'
-                });
-            }
-        },
-        fail: (error) => {
-            console.error('Mood API request failed:', error);
-            wx.showToast({
-                title: 'Request failed',
-                icon: 'none'
-            });
-        }
+      url: `${API_BASE_URL}/mood`,
+      method: 'POST',
+      data: {
+          user_id: this.data.user_id,
+          session_id: this.data.session_id,
+          messages: [messages]
+      },
+      header: {
+          'content-type': 'application/json'
+      },
+      success: (res) => {
+          if (res.statusCode === 200 && res.data) {
+              const newMood = res.data;
+              const lastMood = this.data.moodData;
+
+              // 只在情绪强度大于3且类别发生变化时才更新
+              if (
+                newMood.moodIntensity > 3 &&
+                (!lastMood || newMood.moodCategory !== lastMood.moodCategory)
+              ) {
+                  this.setData({
+                      moodData: newMood,
+                      // 让温度计图标闪烁/高亮
+                      thermometerIconAnimation: true
+                  });
+                  // 3秒后关闭动画
+                  setTimeout(() => {
+                    this.setData({ thermometerIconAnimation: false });
+                  }, 5000);
+              }
+              // 否则不更新
+          } else {
+              wx.showToast({
+                  title: 'Failed to fetch mood data',
+                  icon: 'none'
+              });
+          }
+      },
+      fail: (error) => {
+          console.error('Mood API request failed:', error);
+          wx.showToast({
+              title: 'Request failed',
+              icon: 'none'
+          });
+      }
+
     });
   },
 
@@ -1320,7 +1346,7 @@ Page({
   onThermometerBubbleTap: function() {
     if (!this.data.thermometerBubbleDragging) {
         wx.navigateTo({
-            url: `/pages/mood_score/index?data=${encodeURIComponent(JSON.stringify(this.data.moodData))}`,
+            url: `/pages/mood_score/index?data=${encodeURIComponent(JSON.stringify(this.data.moodData))}&session_id=${this.data.session_id}&user_id=${this.data.user_id}`,
             success: function() {
                 console.log('Successfully navigated to Mood Score page');
             },
