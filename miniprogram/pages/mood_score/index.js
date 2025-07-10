@@ -1,10 +1,10 @@
 const API_BASE_URL = 'http://localhost:5858/api'
 Page({
   data: {
-    moodIntensity: 8/10, // Mood intensity (0-10)
-    moodCategory: '沮丧', // Detected mood category
-    thinking: '我真是一事无成', // Current thinking
-    scene: '在朋友圈看到朋友的分享', // Current scene or context
+    moodIntensity: 5, // Mood intensity (0-10)
+    moodCategory: '中性', // Detected mood category
+    thinking: '平和', // Current thinking
+    scene: '请畅所欲言吧，知己AI助手会帮您分析和记录情绪～', // Current scene or context
     ec: {
       lazyLoad: true // Enable lazy loading for the chart
     },

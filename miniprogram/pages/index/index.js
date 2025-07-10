@@ -599,9 +599,9 @@ Page({
               const newMood = res.data;
               const lastMood = this.data.moodData;
 
-              // 只在情绪强度大于0.8且类别发生变化时才更新
+              // 只在情绪强度大于3且类别发生变化时才更新
               if (
-                newMood.moodIntensity > 0.8 &&
+                newMood.moodIntensity > 3 &&
                 (!lastMood || newMood.moodCategory !== lastMood.moodCategory)
               ) {
                   this.setData({
