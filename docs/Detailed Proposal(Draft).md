@@ -361,10 +361,12 @@ Users can view and edit their personal information in the profile section.
 ### 3.4 Psychological Assessment Feature
 
 The Psychological Assessment feature is mainly designed to help users understand their mental health status through regular assessments, detailed reports, and trend analysis. By combining questionnaire results and chat history analysis, this feature provides users with valuable insights into their emotional state, stress levels, and key concerns over time. And there is another function to read user's real-time mental state.
+The Psychological Assessment feature is mainly designed to help users understand their mental health status through regular assessments, detailed reports, and trend analysis. By combining questionnaire results and chat history analysis, this feature provides users with valuable insights into their emotional state, stress levels, and key concerns over time. And there is another function to read user's real-time mental state.
 
 #### Key Functions
 
 ##### 1. Regular Assessments
+
 
 - Frequency: Monthly assessments for regular users.
 - Data Sources:
@@ -385,9 +387,18 @@ Trend Analysis function is to identify patterns and trends in the user's mental 
 
 Real-time mental state function will employ a sentiment score to reflect the user's current mental state, which is derived from the real-time conversation between the AI Agent and the user, and with this score, the system will be able to offer more appropriate content for the user in the community based on their current needs.  In other words, the real-time mental state function enables the three modules of AI dialog, community, and user assessment to interact and produce a more intelligent AI dialog system.
 
+
+Trend Analysis function is to identify patterns and trends in the user's mental health status and provide long-term insights to help users track their progress after continuous assessments.
+
+##### 4. Real-time mental state
+
+Real-time mental state function will employ a sentiment score to reflect the user's current mental state, which is derived from the real-time conversation between the AI Agent and the user, and with this score, the system will be able to offer more appropriate content for the user in the community based on their current needs.  In other words, the real-time mental state function enables the three modules of AI dialog, community, and user assessment to interact and produce a more intelligent AI dialog system.
+
 ---
 
 #### Technical Implementation
+
+##### 1. Assessment Data
 
 ##### 1. Assessment Data
 
@@ -398,19 +409,28 @@ Real-time mental state function will employ a sentiment score to reflect the use
 | High-frequency keyword List| Chat History| Extract keywords using NLP techniques (e.g., NLP API, TF-IDF, LDA)
 
 ###### Example
+###### Example
 
+User ID: 12345 | Assessment Date: 2025-03-01  
 User ID: 12345 | Assessment Date: 2025-03-01  
 
 - Emotional Score: 0.3 (Negative)  
 - Stress Level: 7.5 (High)  
 - Keyword List: ["stress", "anxiety", "work pressure"]  
+- Emotional Score: 0.3 (Negative)  
+- Stress Level: 7.5 (High)  
+- Keyword List: ["stress", "anxiety", "work pressure"]  
 
+###### 2. Trend Analysis
 ###### 2. Trend Analysis
 
 - Emotional Score Trend: [Line Chart]
 - Stress Level Trend: [Line Chart]
 - Keyword Cloud: [Word Cloud]
 
+###### 3. Real-time mental state
+
+The user's real-time mental state can be evaluated by performing sentiment analysis using NLP on the user chat conversations within a reasonably short time period and context.  
 ###### 3. Real-time mental state
 
 The user's real-time mental state can be evaluated by performing sentiment analysis using NLP on the user chat conversations within a reasonably short time period and context.  

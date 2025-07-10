@@ -532,6 +532,229 @@ class ChatService:
         # 默认情绪
         return content, "neutral"
 
+    def _detect_report_command(self, message):
+        """检测是否是"知己报告"命令
+
+        Args:
+            message: 用户消息
+
+        Returns:
+            bool: 是否是"知己报告"命令
+        """
+        # 支持多种表达方式
+        command_variations = [
+            "知己报告", "知己分析报告", "生成报告", "我的报告", 
+            "心理分析报告", "分析报告", "知己报告生成"
+        ]
+        message_clean = message.strip().lower()
+        return any(cmd.lower() in message_clean for cmd in command_variations)
+
+    def _handle_report_command(self, message, session_id):
+        """处理"知己报告"命令，调用分析报告服务
+
+        Args:
+            message: 用户消息
+            session_id: 会话ID
+
+        Returns:
+            dict: 包含报告内容的字典
+        """
+        try:
+            print(f"检测到知己报告命令，会话ID: {session_id}")
+            
+            # 导入分析报告服务
+            from service.analysis_report_service import AnalysisReportService
+            from dao.database import Database
+            
+            # 初始化服务
+            analysis_service = AnalysisReportService()
+            db = Database()
+            
+            # 获取用户ID（从会话中推断，这里假设有方法获取）
+            # 由于session_id包含用户信息，我们需要从数据库中获取
+            sessions = db.get_sessions()
+            user_id = None
+            for sid, session_data in sessions.items():
+                if sid == session_id:
+                    user_id = session_data.get("user_id")
+                    break
+            
+            if not user_id:
+                return {
+                    "content": "抱歉，无法识别您的用户身份。请先进行对话后再请求知己报告。",
+                    "emotion": "neutral",
+                    "plan": None
+                }
+            
+            # 获取用户的所有会话
+            user_sessions = db.get_sessions(user_id)
+            session_ids = list(user_sessions.keys())
+            
+            if not session_ids:
+                return {
+                    "content": "抱歉，您还没有足够的对话历史来生成知己报告。请多与我交流一些，我会更好地了解您的情况。",
+                    "emotion": "neutral",
+                    "plan": None
+                }
+            
+            # 生成报告（最近30天）
+            print(f"为用户 {user_id} 生成报告，包含 {len(session_ids)} 个会话")
+            report = analysis_service.generate_user_report(user_id, session_ids, time_period=30)
+            
+            if "error" in report:
+                return {
+                    "content": f"生成知己报告时出现问题：{report['error']}。请稍后再试，或联系技术支持。",
+                    "emotion": "neutral",
+                    "plan": None
+                }
+            
+            # 格式化报告摘要为用户友好的回复
+            report_summary = self._format_report_summary(report)
+            
+            return {
+                "content": report_summary,
+                "emotion": "neutral",
+                "plan": None,
+                "report_data": report,  # 包含完整报告数据
+                "report_generated": True  # 标识这是一个报告回复
+            }
+            
+        except Exception as e:
+            print(f"处理知己报告命令时出错: {str(e)}")
+            return {
+                "content": "抱歉，生成知己报告时遇到了技术问题。请稍后再试，或告诉我您希望了解哪方面的分析。",
+                "emotion": "neutral", 
+                "plan": None
+            }
+
+    def _format_report_summary(self, report):
+        """将报告数据格式化为用户友好的摘要
+
+        Args:
+            report: 分析报告数据
+
+        Returns:
+            str: 格式化的报告摘要
+        """
+        try:
+            metadata = report.get("metadata", {})
+            data_summary = report.get("data_summary", {})
+            ai_analysis = report.get("ai_analysis", {})
+            
+            # 基础数据摘要
+            sessions_count = metadata.get("sessions_analyzed", 0)
+            events_count = metadata.get("total_events", 0)
+            emotions_count = metadata.get("emotion_records", 0)
+            
+            # 情绪统计
+            emotion_stats = data_summary.get("emotion_statistics", {})
+            avg_intensity = emotion_stats.get("average_intensity", 0)
+            emotion_dist = emotion_stats.get("emotion_distribution", {})
+            
+            # 事件统计
+            event_stats = data_summary.get("event_statistics", {})
+            event_types = event_stats.get("event_types", {})
+            
+            # 构建回复
+            summary_lines = [
+                "📊 您的知己分析报告 📊",
+                "",
+                f"📈 数据概览",
+                f"• 分析了 {sessions_count} 次对话会话",
+                f"• 识别了 {events_count} 个重要事件",
+                f"• 记录了 {emotions_count} 次情绪状态",
+                ""
+            ]
+            
+            if emotion_stats:
+                summary_lines.extend([
+                    f"💭 情绪画像",
+                    f"• 平均情绪强度: {avg_intensity:.1f}/10"
+                ])
+                
+                if emotion_dist:
+                    most_common = max(emotion_dist.items(), key=lambda x: x[1])
+                    summary_lines.append(f"• 主要情绪状态: {most_common[0]} ({most_common[1]}次)")
+                
+                summary_lines.append("")
+            
+            if event_types:
+                summary_lines.extend([
+                    f"🎯 事件分析"
+                ])
+                
+                for event_type, count in event_types.items():
+                    type_name = {
+                        "emotional": "情绪相关",
+                        "behavioral": "行为模式", 
+                        "physiological": "生理状态",
+                        "cognitive": "认知思维",
+                        "interpersonal": "人际关系",
+                        "lifeEvent": "生活事件"
+                    }.get(event_type, event_type)
+                    summary_lines.append(f"• {type_name}: {count}个事件")
+                
+                summary_lines.append("")
+            
+            # AI分析结果
+            if "summary" in ai_analysis:
+                ai_summary = ai_analysis["summary"]
+                summary_lines.extend([
+                    f"🤖 AI智能分析",
+                    f"• 整体状态: {ai_summary.get('overallStatus', '需要更多数据')}",
+                    f"• 风险等级: {ai_summary.get('riskLevel', '未知')}",
+                    f"• 发展趋势: {ai_summary.get('progressTrend', '稳定')}"
+                ])
+                
+                key_findings = ai_summary.get("keyFindings", [])
+                if key_findings:
+                    summary_lines.append("• 主要发现:")
+                    for finding in key_findings[:3]:  # 只显示前3个
+                        summary_lines.append(f"  - {finding}")
+                
+                summary_lines.append("")
+                
+                # 建议
+                recommendations = ai_analysis.get("recommendations", {})
+                immediate = recommendations.get("immediate", [])
+                if immediate:
+                    summary_lines.extend([
+                        f"💡 即时建议"
+                    ])
+                    for rec in immediate[:2]:  # 只显示前2个
+                        summary_lines.append(f"• {rec}")
+                    summary_lines.append("")
+            
+            elif "fallback_analysis" in ai_analysis:
+                # 使用备用分析
+                fallback = ai_analysis["fallback_analysis"]
+                fallback_summary = fallback.get("summary", {})
+                summary_lines.extend([
+                    f"📋 基础分析",
+                    f"• 状态评估: {fallback_summary.get('overallStatus', '需要更多数据')}"
+                ])
+                
+                key_findings = fallback_summary.get("keyFindings", [])
+                if key_findings:
+                    summary_lines.append("• 主要发现:")
+                    for finding in key_findings:
+                        summary_lines.append(f"  - {finding}")
+                
+                summary_lines.append("")
+            
+            # 结尾
+            summary_lines.extend([
+                "---",
+                "这是基于我们对话历史生成的个性化分析报告。",
+                "如需详细报告或有任何疑问，请随时告诉我！"
+            ])
+            
+            return "\n".join(summary_lines)
+            
+        except Exception as e:
+            print(f"格式化报告摘要时出错: {str(e)}")
+            return "已成功生成您的知己分析报告，但在格式化显示时遇到问题。报告数据已保存，您可以请求详细信息。"
+
     def get_response(self, message, history=None, session_id=None):
         """获取AI回复
 
@@ -547,6 +770,10 @@ class ChatService:
             history = []
 
         try:
+            # 检测特殊命令：知己报告
+            if self._detect_report_command(message):
+                return self._handle_report_command(message, session_id)
+
             # 更新对话计划
             plan = self._update_plan(session_id, message, history)
 
