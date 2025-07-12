@@ -32,27 +32,16 @@ pip install -r requirements.txt
 复制环境变量示例文件并进行配置：
 
 ```bash
-cp .env .env
+cp .env.example .env
 ```
 
 然后编辑 `.env` 文件，设置您的 OpenAI API 密钥和功能控制参数：
 
-```
-OPENAI_API_KEY=your_openai_api_key_here
-BASE_URL=https://api.openai.com/v1
-MODEL_NAME=gpt-4o-mini
-
-# 功能控制参数
-ENABLE_GUIDED_INQUIRY=true
-ENABLE_PATTERN_ANALYSIS=true
-```
-
-详细的配置说明请参考 [配置文档](README_config.md)。
 
 ### 启动服务器
 
 ```bash
-python start_integrated.py
+python start.py
 ```
 
 服务器默认将在 http://localhost:5858 上运行。
@@ -182,7 +171,7 @@ POST /api/mood
 ```
 用户消息 → SnowNLP情绪评分 → 实时日志记录
          ↓
-       OpenAI情绪分析 → 详细情绪信息 → 影响AI回复策略
+       LLM 情绪分析 → 详细情绪信息 → 影响AI回复策略
          ↓
        保存到数据库 → 用户画像更新 → 长期情绪跟踪
 ```

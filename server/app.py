@@ -16,10 +16,11 @@ from load_env import load_environment
 load_environment()
 
 from service.mood_service import MoodService
-from service.chat_service import ChatService
 from service.event_service import EventService
 from dao.database import Database
 from service.analysis_report_service import AnalysisReportService
+from service.chat_langgraph_optimized import optimized_chat  # 使用LangGraph优化版
+from utils.chat_logger import chat_logger
 
 app = Flask(__name__)
 CORS(app)  # 允许跨域请求
@@ -31,7 +32,6 @@ DEBUG = os.environ.get("FLASK_ENV", "production") == "development"
 
 # 初始化数据库和聊天服务
 db = Database()
-chat_service = ChatService()
 event_service = EventService()
 analysis_service = AnalysisReportService()
 
@@ -70,8 +70,18 @@ def chat():
         if not history and session_id and db.session_exists(session_id):
             history = db.get_chat_history(session_id)
 
+        # 记录用户请求日志
+        chat_logger.log_chat_request(user_id, session_id, message, timestamp)
+
         # 获取AI回复
-        response = chat_service.get_response(message, history, session_id)
+        response = optimized_chat(
+            user_input=message,
+            user_id=user_id,
+            session_id=session_id,
+            history=history,
+            enable_performance_monitoring=False,
+        )
+        # response = chat_service.get_response(message, history, session_id)
 
         # 构造响应消息
         message_id = f"msg_{uuid.uuid4().hex[:8]}"
@@ -80,7 +90,18 @@ def chat():
         # 保存对话记录到数据库
         db.save_message(session_id, user_id, "user", message, timestamp)
         db.save_message(
-            session_id, user_id, "agent", response["content"], response_time
+            session_id, user_id, "agent", response["response"], response_time
+        )
+
+        # 记录AI回复日志
+        chat_logger.log_chat_response(
+            user_id,
+            session_id,
+            response["response"],
+            response.get("emotion", "neutral"),
+            response.get("crisis_detected", False),
+            response.get("search_results", None),
+            response_time,
         )
 
         # 检查用户消息数量，每3条消息进行一次事件提取
@@ -97,7 +118,7 @@ def chat():
         # 构建基础响应
         response_data = {
             "message_id": message_id,
-            "content": response["content"],
+            "content": response["response"],
             "emotion": response.get("emotion", "neutral"),
             "timestamp": response_time,
             "session_id": session_id,
@@ -200,18 +221,6 @@ def analyze_mood():
         # Generate a unique message ID and timestamp
         message_id = f"msg_{uuid.uuid4().hex[:8]}"
         response_time = datetime.now().isoformat()
-
-        # Save mood analysis result to the database
-        # mood_data = {
-        #     "id": message_id,
-        #     "user_id": user_id,
-        #     "moodIntensity": mood_intensity,
-        #     "moodCategory": mood_category,
-        #     "thinking": thinking,
-        #     "scene": scene,
-        #     "timestamp": response_time,
-        # }
-        # db.save_mood_data(session_id, mood_data)
 
         # Return mood analysis results
         return jsonify(
