@@ -1,7 +1,7 @@
 .container {
   min-height: 100vh;
   background-color: #f8f9fa;
-  padding: 20px;
+  padding: 10px;
   position: relative;
 }
 
@@ -100,14 +100,15 @@
 
 .score-display {
   text-align: center;
-  margin: 20px 0;
+  margin: 10px 0;
 }
 
 .score {
-  font-size: 48px;
+  font-size: 32px;
   font-weight: bold;
   color: #4caf50; /* Green for positive mood */
-  height:40px;
+  height: 32px;
+  line-height: 32px;
 }
 
 .category {
@@ -285,17 +286,24 @@
 /* 操作按钮组 */
 .action-group {
   display: flex;
-  flex-direction: row;
+  justify-content: center;
   align-items: center;
-  justify-content: flex-end;
+  gap: 6rpx;
+  margin-top: 24rpx;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.action-group .weui-btn_mini {
+  flex-shrink: 0;
 }
 
 /* 按钮样式 */
 .weui-btn_mini {
-  margin: 0;
-  padding: 0;
-  width: 64rpx;
-  height: 64rpx;
+  margin: 0 !important;
+  padding: 0 !important;
+  width: 32rpx;
+  height: 32rpx;
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -303,10 +311,13 @@
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
   overflow: hidden;
+  border: none;
+  outline: none;
+  box-sizing: border-box;
 }
 
 .btn-icon {
-  font-size: 32rpx;
+  font-size: 26rpx;
   transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
@@ -531,12 +542,16 @@
     font-size: 26rpx;
   }
   
+  .action-group {
+    gap: 6rpx;
+  }
+  
   .weui-btn_mini {
-    width: 56rpx;
-    height: 56rpx;
+    width: 28rpx;
+    height: 28rpx;
   }
   
   .btn-icon {
-    font-size: 28rpx;
+    font-size: 26rpx;
   }
 }
