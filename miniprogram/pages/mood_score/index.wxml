@@ -38,19 +38,20 @@
         </view>
     </view>
 
+   <view style="height: 10px;"></view>
     <!-- 操作按钮组 -->
     <view class="action-group" >
-      <button class="weui-btn weui-btn_mini {{buttonDisabled ? 'weui-btn_disabled' : 'weui-btn_primary'}}"
+      <button class="weui-btn_mini {{buttonDisabled ? 'weui-btn_disabled' : 'weui-btn_primary'}}"
           bindtap="onAccept"
           disabled="{{buttonDisabled}}">
         <text class="btn-icon">✓</text>
       </button>
-      <button class="weui-btn weui-btn_mini {{buttonDisabled ? 'weui-btn_disabled' : 'weui-btn_warn'}}"
+      <button class="weui-btn_mini {{buttonDisabled ? 'weui-btn_disabled' : 'weui-btn_warn'}}"
           bindtap="onReject"
           disabled="{{buttonDisabled}}">
         <text class="btn-icon">✗</text>
       </button>
-      <button class="weui-btn weui-btn_mini {{buttonDisabled ? 'weui-btn_disabled' : ''}}"
+      <button class="weui-btn_mini {{buttonDisabled ? 'weui-btn_disabled' : ''}}"
           bindtap="onEdit"
           disabled="{{buttonDisabled}}">
         <text class="btn-icon">✎</text>

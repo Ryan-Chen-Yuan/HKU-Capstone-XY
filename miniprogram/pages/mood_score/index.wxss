@@ -294,7 +294,7 @@
 .weui-btn_mini {
   margin: 0;
   padding: 0;
-  width: 64rpx;
+  width: 56rpx;
   height: 64rpx;
   border-radius: 50%;
   display: flex;
