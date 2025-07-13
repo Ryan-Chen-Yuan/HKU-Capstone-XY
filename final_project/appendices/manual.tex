@@ -1,0 +1,69 @@
+\section{Operation Manual}
+\label{sec:manual}
+
+\subsection{System Installation}
+
+\begin{enumerate}
+    \item Install Python 3.8+ and required dependencies
+    \item Clone the repository and navigate to project directory
+    \item Install Flask and other required packages: \texttt{pip install -r requirements.txt}
+    \item Configure environment variables in \texttt{.env} file
+    \item Initialize database: \texttt{python init\_db.py}
+    \item Start the server: \texttt{python app.py}
+\end{enumerate}
+
+\subsection{WeChat Mini Program Setup}
+
+\begin{enumerate}
+    \item Download WeChat Developer Tools
+    \item Import the mini program project
+    \item Configure AppID and server domain
+    \item Upload and deploy to WeChat platform
+\end{enumerate}
+
+\subsection{API Documentation}
+
+The system provides the following RESTful APIs:
+
+\begin{itemize}
+    \item \texttt{POST /api/chat} - Send message to AI chatbot
+    \item \texttt{GET /api/chat/history} - Get conversation history
+    \item \texttt{POST /api/mood} - Analyze mood of messages
+    \item \texttt{POST /api/events/extract} - Extract events from conversation
+    \item \texttt{GET /api/events} - Get extracted events
+    \item \texttt{POST /api/analysis/user-report} - Generate user analysis report
+\end{itemize}
+
+\subsection{User Guide}
+
+\subsubsection{Getting Started}
+
+\begin{enumerate}
+    \item Open the WeChat Mini Program
+    \item Start a conversation with the AI assistant
+    \item Share your thoughts and feelings
+    \item Receive empathetic responses and emotional analysis
+\end{enumerate}
+
+\subsubsection{Features}
+
+\begin{itemize}
+    \item \textbf{Emotional Support}: Receive understanding and supportive responses
+    \item \textbf{Mood Analysis}: Get real-time emotional state analysis
+    \item \textbf{Event Tracking}: Automatic identification of significant psychological events
+    \item \textbf{Progress Tracking}: Monitor emotional patterns over time
+\end{itemize}
+
+\subsection{Troubleshooting}
+
+\subsubsection{Common Issues}
+
+\begin{itemize}
+    \item \textbf{Connection Problems}: Check internet connection and server status
+    \item \textbf{Slow Responses}: May occur during peak usage times
+    \item \textbf{Data Loss}: Ensure regular backups of conversation history
+\end{itemize}
+
+\subsubsection{Support}
+
+For technical support, contact the development team through the provided channels in the project documentation. 
