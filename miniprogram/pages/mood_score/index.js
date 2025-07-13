@@ -11,26 +11,33 @@ Page({
     disabled: true, 
     buttonDisabled: false, // Button state
     session_id: 0, // Session ID
-    user_id: 0, // User ID
+    //user_id: 0, // User ID
   },
 
   onLoad(options) {
     if (options.data) {
-        const moodData = JSON.parse(decodeURIComponent(options.data));
-        this.setData({
-            moodIntensity: moodData.moodIntensity,
-            moodCategory: moodData.moodCategory,
-            thinking: moodData.thinking,
-            scene: moodData.scene
-        });
+        let moodData = null;
+        try {
+            moodData = JSON.parse(decodeURIComponent(options.data));
+        } catch (e) {
+            moodData = null;
+        }
+        if (moodData) {
+            this.setData({
+                moodIntensity: moodData.moodIntensity,
+                moodCategory: moodData.moodCategory,
+                thinking: moodData.thinking,
+                scene: moodData.scene
+            });
+        }
     }
     // Save session_id and user_id if present
     if (options.session_id) {
         this.setData({ session_id: JSON.parse(decodeURIComponent(options.session_id)) });
     }
-    if (options.user_id) {
-        this.setData({ user_id:JSON.parse(decodeURIComponent(options.user_id)) });
-    }
+    // if (options.user_id) {
+    //     this.setData({ user_id:JSON.parse(decodeURIComponent(options.user_id)) });
+    // }
 },
 
   /**
