@@ -1,0 +1,77 @@
+\section{Design and Construction of Hardware/Software System}
+\label{sec:design}
+
+\subsection{System Design Overview}
+
+The Zhiji AI Assistant is designed as a WeChat Mini Program to maximize accessibility and user familiarity. The system architecture follows a microservices pattern with clear separation of concerns.
+
+\subsection{Core Modules}
+
+\subsubsection{AI Chatbot Module}
+
+The chatbot module provides the primary interface for user interaction:
+
+\begin{itemize}
+    \item \textbf{Empathetic Response Generation}: Uses fine-tuned LLM models to generate supportive responses
+    \item \textbf{Context Awareness}: Maintains conversation history and user emotional state
+    \item \textbf{Safety Protocols}: Implements crisis detection and appropriate escalation procedures
+    \item \textbf{Personalization}: Adapts responses based on user history and preferences
+\end{itemize}
+
+\subsubsection{Psychological Assessment Tool}
+
+The assessment module provides comprehensive mental health tracking:
+
+\begin{itemize}
+    \item \textbf{Regular Assessments}: Monthly psychological evaluations with standardized questionnaires
+    \item \textbf{Real-time Emotion Analysis}: Continuous sentiment analysis of user conversations
+    \item \textbf{Trend Visualization}: Graphical representation of emotional patterns over time
+    \item \textbf{Personalized Insights}: AI-generated recommendations based on assessment results
+\end{itemize}
+
+\subsection{User Interface Design}
+
+The user interface is designed with accessibility and ease of use in mind:
+
+\begin{itemize}
+    \item \textbf{WeChat Mini Program}: Familiar interface for Chinese users
+    \item \textbf{Responsive Design}: Adapts to different screen sizes
+    \item \textbf{Intuitive Navigation}: Clear menu structure and user flow
+    \item \textbf{Visual Feedback}: Real-time emotion indicators and progress tracking
+\end{itemize}
+
+\subsection{Technical Architecture}
+
+\subsubsection{Backend Services}
+
+The backend is built using Flask framework with the following components:
+
+\begin{itemize}
+    \item \textbf{API Gateway}: Handles all incoming requests and routes them to appropriate services
+    \item \textbf{Chat Service}: Manages conversation flow and AI interactions
+    \item \textbf{Emotion Analysis Service}: Processes user messages for emotional content
+    \item \textbf{Event Extraction Service}: Identifies significant psychological events
+    \item \textbf{Data Storage Service}: Manages user data and conversation history
+\end{itemize}
+
+\subsubsection{AI Integration}
+
+The system integrates multiple AI models for different tasks:
+
+\begin{itemize}
+    \item \textbf{Conversation Model}: Handles natural language understanding and response generation
+    \item \textbf{Emotion Analysis Model}: Analyzes emotional content in user messages
+    \item \textbf{Event Extraction Model}: Identifies and categorizes psychological events
+    \item \textbf{Assessment Model}: Generates personalized psychological insights
+\end{itemize}
+
+\subsection{Security and Privacy}
+
+The system implements several security measures:
+
+\begin{itemize}
+    \item \textbf{Data Encryption}: All sensitive data is encrypted in transit and at rest
+    \item \textbf{User Anonymity}: Users can interact without revealing personal information
+    \item \textbf{Access Control}: Strict authentication and authorization protocols
+    \item \textbf{Compliance}: Adheres to relevant privacy regulations and guidelines
+\end{itemize} 

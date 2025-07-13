@@ -1,0 +1,54 @@
+\section{Software and Program Listings}
+\label{sec:software}
+
+\subsection{System Architecture Code}
+
+\begin{verbatim}
+# Main application structure
+app/
+├── __init__.py
+├── config.py
+├── models/
+│   ├── __init__.py
+│   ├── user.py
+│   ├── conversation.py
+│   └── assessment.py
+├── services/
+│   ├── __init__.py
+│   ├── chat_service.py
+│   ├── emotion_service.py
+│   └── community_service.py
+├── api/
+│   ├── __init__.py
+│   ├── chat_routes.py
+│   ├── user_routes.py
+│   └── assessment_routes.py
+└── utils/
+    ├── __init__.py
+    ├── ai_utils.py
+    └── security.py
+\end{verbatim}
+
+\subsection{Key Algorithm Implementation}
+
+\begin{verbatim}
+# Emotion analysis algorithm
+def analyze_emotion(text):
+    """
+    Analyze emotional content of user input
+    Returns: emotion_score, keywords, sentiment
+    """
+    # Preprocess text
+    processed_text = preprocess_text(text)
+    
+    # Generate embeddings
+    embeddings = model.encode(processed_text)
+    
+    # Classify emotion
+    emotion_score = emotion_classifier.predict(embeddings)
+    
+    # Extract keywords
+    keywords = extract_keywords(processed_text)
+    
+    return emotion_score, keywords, sentiment
+\end{verbatim} 

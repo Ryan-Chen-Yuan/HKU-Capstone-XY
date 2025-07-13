@@ -28,11 +28,7 @@
 1. **深层次的情感问题**：如创伤处理、深层次的自我认同问题等，需要专业心理咨询师的介入。
 2. **紧急情况**：如自杀倾向、严重的心理危机等，需要即时的专业干预。
 3. **法律和医学问题**：如家庭暴力、严重精神疾病等，需要专业的法律和医学介入。
-<<<<<<< HEAD
-4. **用户认同问题**：LLM的回复有时较为空泛，无法实现人与人之间的情感链接，用户可能主观上不愿与AI交流心理问题。
-=======
 4. **用户认同问题**：LLM无法实现人与人之间的情感链接，用户可能主观上不愿与AI交流心理问题。
->>>>>>> 8434499 (add content of suyingcheng's commit.)
 
 ### 法律和伦理风险
 
@@ -53,28 +49,17 @@
 
 AI倾听情绪输出，给予情绪肯定。
 
-### 做内容社区
-
-由用户发帖驱动的日常case、心理学习资源、咨询经历分享。
-
-匿名树洞 + AI情感共鸣 ： 用户可以分享自己的心理困扰、日常情绪或成长故事，LLM 自动生成鼓励性回复或建议（比如“你最近感觉焦虑，试试深呼吸或写日记吧”）。
-示例：发布“职场压力”故事的用户，会收到AI整理的相关CBT技巧，并进入“打工人互助小组”聊天室。
-
 ### 做评测工具：心理量表
 
 ## Object & Metric
 
 针对心理咨询AI Agent的功能设计，以下是各模块可量化的指标及设计目标建议
-=======
 
 | ​**Item**​                     | ​**Description**​                                                                                   |
 |-------------------------------|---------------------------------------------------------------------------------------------------|
 | ​**心理对话 Chatbot**​    | 根据来访者的需求提供倾听和咨询服务。                                                             |
-| ​**心理内容社区**​        | 由用户发帖驱动的日常生活、心理学习资源、咨询经历分享。                                           |
 | ​**心理评测工具**​        | 自动检测实时情绪水平，主动评测心理量表。                                                         |
 | ​**隐私政策合规**​          | 参考 HIPAA/GDPR 合规框架标准，实现所有场景的隐私政策覆盖和数据脱敏。                             |
-
->>>>>>> 8df9d816d17a197e7bb6f616283f6aadb2b0884c
 
 ---
 
@@ -83,8 +68,6 @@ AI倾听情绪输出，给予情绪肯定。
 ### 3.1 AI 对话
 
 #### 对话流程
-
-
 
 ```mermaid
 graph LR
@@ -152,221 +135,17 @@ graph TD
 
 存储对话
 
-### 3.2 社区
-
-#### 核心功能架构
-
-```mermaid
-graph TD
-    A[内容生产] --> B[智能推荐]
-    B --> C[用户互动]
-    A --> D[RAG知识库]
-    D --> E[Chatbot增强]
-    
-```
-
-#### 功能实现细节
-
-##### 核心功能模块
-
-| 功能维度     | 核心能力说明                                          | 预计工作量    | 预计交付  |
-| ------------ | -------------------------------------------------- |------------ |------------ |
-| **内容创作** | 支持富文本+匿名模式编辑，支持富文本展示                  | 4 week | Progress 1 April 7 |
-| **社区互动** | 匿名点赞/评论系统                                     | 4 week | Progress 2 May 5 |
-| **智能推荐** | 基于用户心理画像的个性化推荐（结合实时情绪状态+长期兴趣标签） | 4 week | Progress 3 June 16 |
-| **知识沉淀** | 自动生成结构化案例库，用于增强 Chatbot 对话效果           | 4 week | Progress 4 July 7 |
-
-##### 整体技术实现方案
-
-```mermaid
-graph TD
-    A[微信小程序] -->|WebSocket| B[API Gateway]
-    B --> C[创作服务]
-    B --> D[互动服务]
-    B --> E[知识库服务]
-    C --> F[MySQL]
-    D --> G[Redis]
-    E --> H[RAG引擎]
-```
-
-##### Chatbot集成方案(RAG增强流程)
-
-```mermaid
-sequenceDiagram
-    participant U as 用户
-    participant C as Chatbot
-    participant R as RAG引擎
-    participant K as 社区知识库
-
-    U->>C: "最近总是失眠焦虑"
-    C->>R: 查询相似案例请求
-    R->>K: 语义检索[焦虑,失眠]
-    K-->>R: 返回TOP3案例 
-    R->>R: 生成对话策略
-    R-->>C: 建议话术+社区资源
-    C->>U: "很多用户通过正念练习改善睡眠，这是社区里分享的方法..."
-```
-
-##### 内容搜索和推荐方案
-
-1. **数据存储层**
-   - **MongoDB 核心集合设计**：
-     ```javascript
-     // 用户集合（users）
-     {
-       _id: ObjectId,
-       username: String,
-       preferences: { tags: [String], topics: [String] }, // 动态更新的用户兴趣
-       behavior_history: [ // 固定长度队列（保留最近100条）
-         { action: "search/click/like", content_id: ObjectId, timestamp: Date }
-       ]
-     }
-     
-     // 内容集合（contents）
-     {
-       _id: ObjectId,
-       title: String,
-       body: String,
-       tags: [String],
-       embeddings: [Float], // 文本向量（通过AI模型预计算）
-       stats: { views: Int, likes: Int },
-       created_at: Date
-     }
-     ```
-
-   - **索引策略**：
-     - 内容集合：`tags`（多键索引）、`created_at`（降序复合索引）、`title`（文本索引）
-     - 用户行为日志：`content_id` + `timestamp` 复合索引
-
-2. **搜索模块**
-   - **中文搜索实现**：
-     - 预处理：使用 `jieba` 对内容标题/正文分词，存储为 `tags` 数组字段
-     - 查询时：将用户输入同样分词后，通过 `$in` + `$text` 索引联合查询
-     - 权重策略：标题匹配权重 > 标签匹配 > 正文匹配
-
-   - **性能优化**：
-     - 分页采用 `seek pagination`（基于 `_id` + `created_at` 游标分页，避免skip性能问题）
-     - 热词缓存：Redis 存储近期高频搜索词，辅助自动补全
-
-3. **推荐模块**
-   
-   - **冷启动策略**：
-     - 新用户：基于全局热门内容（`stats.likes` 降序）
-     - 新内容：基于标签相似性推荐（余弦相似度匹配 `tags` 字段）
-   
-   - **实时推荐流程**：
-     ```python
-     # 用户触发行为（如点击内容）后：
-     1. 更新用户.behavior_history（维护固定长度队列）
-     2. 基于最近10条行为的 content.embeddings 计算平均向量
-     3. 在 contents 集合中 ANN 检索相似内容（MongoDB $vectorSearch）
-     4. 混合热度权重（0.2*views + 0.3*likes）生成最终推荐列表
-     4. 结果缓存至 Redis（用户ID为key，过期时间5分钟）
-     ```
-
-4. **AI增强**
-
-- **文本向量化**：
-  - 使用 `BERT-base-Chinese` 模型生成内容 `embeddings`（768维）
-  - 预计算：内容入库时通过批处理生成向量
-  - 更新策略：内容修改后触发向量重算
-
-- **轻量级主题建模**：
-  - 对 `tags` 字段进行 TF-IDF 统计，自动合并高频关联标签（如 "机器学习" 和 "AI"）
-  - 结果用于用户兴趣画像的 `preferences.topics` 字段
-
-- **深度学习部署**
-
-  - **模型选型**：
-    - 双塔召回模型：用户行为序列（通过LSTM编码） + 内容向量 计算相似度
-    - 离线训练：TensorFlow，每周全量更新
-    - 在线服务：TF Serving + Docker 容器化，响应时间 <50ms
-
-
-  - **特征工程**：
-    
-    ```python
-    # 用户特征：
-    [
-      mean(behavior_embeddings), // 行为序列的向量均值
-      preferences.topic_weights, // 主题兴趣分布（通过历史行为统计）
-      time_decay_factors // 按行为时间衰减加权（最近行为权重更高）
-    ]
-    
-    # 内容特征：
-    [
-      embeddings, 
-      tags_onehot, 
-      stats_normalized // 归一化的热度值
-    ]
-    ```
-
-5. **技术栈**
-
-| 模块     | 核心组件                   |
-| -------- | -------------------------- |
-| 向量搜索 | MongoDB $vectorSearch      |
-| 缓存     | Redis                      |
-| 行为队列 | MongoDB Update with $slice |
-| NLP模型  | BERT-base-Chinese          |
-
-6. **基础性能要求**
-
-- 90% 搜索请求响应时间 <200ms（含中文分词）
-- 支持1000 QPS 并发查询
-
-TODO(@xuhanlin)
-
-#### 运行效果示例
-
-##### 心理历程分享
-
-```markdown
-**匿名用户@高考复读**: 
-"⬆️ 内耗三个月后终于决定再战了！分享我的心理重建过程：
-1️⃣ 每天写『成就日记』对抗自我否定
-2️⃣ 参加线下心理支持小组
-3️⃣ 阅读《自卑与超越 /》获得力量
-👉 想知道大家如何走出失利阴霾？"
-
-```
-
-##### 学习资源分享
-
-```markdown
-**认证咨询师@李医生**: 
-"【专业资源】最新发布的CBT疗法自助手册包含：
-- 自动思维记录表模板
-- 行为激活周计划表
-- 10分钟正念练习音频
-支持导出PDF格式，欢迎取用❤️"
-
-```
-
-##### Chatbot交互案例
-
-```markdown
-用户: 觉得最近所有人都讨厌我...
-Chatbot: 
-"这种被孤立感确实很难受呢（共情），社区里有很多类似经历的朋友：
-1️⃣ @匿名用户 通过每日感恩练习改善人际关系认知
-2️⃣ @小白 参加社交焦虑训练营的经验分享
-需要我为你详细解读这些方法吗？"
-```
-
-### 3.3 User Profile Feature
+### 3.2 User Profile Feature
 
 Users can view and edit their personal information in the profile section.
 
-### 3.4 Psychological Assessment Feature
+### 3.3 Psychological Assessment Feature
 
-The Psychological Assessment feature is mainly designed to help users understand their mental health status through regular assessments, detailed reports, and trend analysis. By combining questionnaire results and chat history analysis, this feature provides users with valuable insights into their emotional state, stress levels, and key concerns over time. And there is another function to read user's real-time mental state.
 The Psychological Assessment feature is mainly designed to help users understand their mental health status through regular assessments, detailed reports, and trend analysis. By combining questionnaire results and chat history analysis, this feature provides users with valuable insights into their emotional state, stress levels, and key concerns over time. And there is another function to read user's real-time mental state.
 
 #### Key Functions
 
 ##### 1. Regular Assessments
-
 
 - Frequency: Monthly assessments for regular users.
 - Data Sources:
@@ -387,18 +166,9 @@ Trend Analysis function is to identify patterns and trends in the user's mental 
 
 Real-time mental state function will employ a sentiment score to reflect the user's current mental state, which is derived from the real-time conversation between the AI Agent and the user, and with this score, the system will be able to offer more appropriate content for the user in the community based on their current needs.  In other words, the real-time mental state function enables the three modules of AI dialog, community, and user assessment to interact and produce a more intelligent AI dialog system.
 
-
-Trend Analysis function is to identify patterns and trends in the user's mental health status and provide long-term insights to help users track their progress after continuous assessments.
-
-##### 4. Real-time mental state
-
-Real-time mental state function will employ a sentiment score to reflect the user's current mental state, which is derived from the real-time conversation between the AI Agent and the user, and with this score, the system will be able to offer more appropriate content for the user in the community based on their current needs.  In other words, the real-time mental state function enables the three modules of AI dialog, community, and user assessment to interact and produce a more intelligent AI dialog system.
-
 ---
 
 #### Technical Implementation
-
-##### 1. Assessment Data
 
 ##### 1. Assessment Data
 
@@ -409,28 +179,19 @@ Real-time mental state function will employ a sentiment score to reflect the use
 | High-frequency keyword List| Chat History| Extract keywords using NLP techniques (e.g., NLP API, TF-IDF, LDA)
 
 ###### Example
-###### Example
 
-User ID: 12345 | Assessment Date: 2025-03-01  
 User ID: 12345 | Assessment Date: 2025-03-01  
 
 - Emotional Score: 0.3 (Negative)  
 - Stress Level: 7.5 (High)  
 - Keyword List: ["stress", "anxiety", "work pressure"]  
-- Emotional Score: 0.3 (Negative)  
-- Stress Level: 7.5 (High)  
-- Keyword List: ["stress", "anxiety", "work pressure"]  
 
-###### 2. Trend Analysis
 ###### 2. Trend Analysis
 
 - Emotional Score Trend: [Line Chart]
 - Stress Level Trend: [Line Chart]
 - Keyword Cloud: [Word Cloud]
 
-###### 3. Real-time mental state
-
-The user's real-time mental state can be evaluated by performing sentiment analysis using NLP on the user chat conversations within a reasonably short time period and context.  
 ###### 3. Real-time mental state
 
 The user's real-time mental state can be evaluated by performing sentiment analysis using NLP on the user chat conversations within a reasonably short time period and context.  
@@ -460,4 +221,4 @@ Progress 4 July 7
 Webpage July 15  
 Project Report July 18  
 Oral Examination end of July  
-Revised Project Report August 1  
+Revised Project Report August 1
