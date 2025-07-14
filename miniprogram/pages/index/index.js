@@ -1367,8 +1367,8 @@ Page({
 
     this.setData({
       thermometerIconDragging: true,
-      thermometerIconStartX: e.touches[0].clientX - thermometerIconPosition.x,
-      thermometerIconStartY: e.touches[0].clientY - thermometerIconPosition.y,
+      // thermometerIconStartX: e.touches[0].clientX - thermometerIconPosition.x,
+      // thermometerIconStartY: e.touches[0].clientY - thermometerIconPosition.y,
     });
   },
 
