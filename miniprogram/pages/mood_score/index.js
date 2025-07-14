@@ -33,7 +33,7 @@ Page({
     }
     // Save session_id and user_id if present
     if (options.session_id) {
-        this.setData({ session_id: JSON.parse(decodeURIComponent(options.session_id)) });
+        this.setData({ session_id: options.session_id});
     }
     // if (options.user_id) {
     //     this.setData({ user_id:JSON.parse(decodeURIComponent(options.user_id)) });
