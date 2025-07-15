@@ -1,0 +1,73 @@
+{
+  "user_intent": {
+    "type": "dream_concern",
+    "description": "用户表达对频繁奇怪梦境的担忧，并询问是否与压力有关",
+    "confidence": 0.9,
+    "identified_at": "2025-07-14T20:17:18.438Z"
+  },
+  "current_state": {
+    "stage": "issue_exploration",
+    "progress": 0.4,
+    "last_updated": "2025-07-14T20:17:18.438Z"
+  },
+  "steps": [
+    {
+      "id": "step_1",
+      "type": "greeting_response",
+      "content": "回应问候并建立初步连接",
+      "status": "completed"
+    },
+    {
+      "id": "step_2",
+      "type": "open_ended_question",
+      "content": "询问用户今天想讨论什么话题",
+      "status": "completed"
+    },
+    {
+      "id": "step_3",
+      "type": "validation",
+      "content": "共情回应梦境困扰",
+      "status": "current"
+    },
+    {
+      "id": "step_4",
+      "type": "exploration",
+      "content": "探索梦境具体内容和频率",
+      "status": "pending"
+    },
+    {
+      "id": "step_5",
+      "type": "context_collection",
+      "content": "了解近期生活变化和压力源",
+      "status": "pending"
+    },
+    {
+      "id": "step_6",
+      "type": "psychoeducation",
+      "content": "解释梦境与压力的可能关联",
+      "status": "pending"
+    }
+  ],
+  "context": {
+    "key_points": [
+      "频繁奇怪梦境",
+      "压力关联假设"
+    ],
+    "emotions": [
+      "concerned",
+      "anxious"
+    ],
+    "concerns": [
+      "梦境异常",
+      "压力水平"
+    ]
+  },
+  "inquiry_status": {
+    "stage": "问题探索",
+    "information_completeness": 0.3,
+    "collected_info": {
+      "presenting_issue": "频繁奇怪梦境"
+    },
+    "pattern_analyzed": false
+  }
+}

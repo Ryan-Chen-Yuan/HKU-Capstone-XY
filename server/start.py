@@ -18,12 +18,15 @@ def check_environment():
     # 首先尝试加载环境变量
     try:
         from load_env import load_environment
-
-        load_environment()
+        # 检查是否已经加载过环境变量，避免重复输出
+        if not os.environ.get('ENV_LOADED'):
+            load_environment()
+            os.environ['ENV_LOADED'] = 'true'
+        else:
+            print("ℹ️ 环境变量已加载，跳过重复加载")
     except ImportError:
         print("⚠️ 无法加载环境变量模块，使用系统环境变量")
         from dotenv import load_dotenv
-
         load_dotenv()
 
     # TODO: 整理实际所需的环境变量
@@ -43,6 +46,118 @@ def check_environment():
     return True
 
 
+def initialize_rag_system():
+    """初始化RAG系统"""
+    rag_enabled = os.environ.get("ENABLE_RAG", "true").lower() == "true"
+    
+    if not rag_enabled:
+        print("ℹ️ RAG 功能已禁用")
+        return True
+    
+    try:
+        print("🔍 初始化RAG系统...")
+        
+        # 导入新的RAG核心模块
+        from rag.core.rag_service import RAGCoreService
+        import torch
+        
+        # 设置路径
+        knowledge_source_dir = str(Path(__file__).parent / "knowledge_source")
+        data_dir = str(Path(__file__).parent / "data")
+        embedding_model_path = str(Path(__file__).parent / "qwen_embeddings")
+        rerank_model_path = str(Path(__file__).parent / "qwen_reranker")
+        
+        # 设备选择（为MacBook Pro优化）
+        device_config = os.environ.get("RAG_DEVICE", "auto").lower()
+        force_cpu = os.environ.get("RAG_FORCE_CPU", "false").lower() == "true"
+        
+        if force_cpu:
+            device = "cpu"
+            print(f"🖥️ 强制使用设备: {device}")
+        elif device_config == "auto":
+            # 自动选择设备
+            if hasattr(torch.backends, 'mps') and torch.backends.mps.is_available():
+                device = "mps"
+                # 安全的MPS内存管理设置
+                mps_ratio = os.environ.get("PYTORCH_MPS_HIGH_WATERMARK_RATIO", "0.0")
+                try:
+                    # 验证MPS ratio有效性
+                    ratio_float = float(mps_ratio)
+                    if ratio_float < 0.0 or ratio_float > 1.0:
+                        print(f"⚠️ 无效的MPS内存比率: {mps_ratio}，使用默认值0.0")
+                        mps_ratio = "0.0"
+                        os.environ["PYTORCH_MPS_HIGH_WATERMARK_RATIO"] = mps_ratio
+                    
+                    # 对于MPS，使用保守的内存管理设置
+                    os.environ["PYTORCH_MPS_HIGH_WATERMARK_RATIO"] = "0.0"
+                    
+                    # 测试MPS是否真正可用
+                    try:
+                        test_device = torch.device("mps")
+                        test_tensor = torch.ones(2, 2, device=test_device)
+                        _ = test_tensor * 2  # 简单的运算测试
+                        print(f"🧠 MPS设备测试成功，使用保守内存管理")
+                    except Exception as mps_e:
+                        print(f"⚠️ MPS设备测试失败，回退到CPU: {mps_e}")
+                        device = "cpu"
+                        
+                except ValueError:
+                    print(f"⚠️ MPS内存比率格式错误: {mps_ratio}，使用CPU设备")
+                    device = "cpu"
+            elif torch.cuda.is_available():
+                device = "cuda"
+            else:
+                device = "cpu"
+            print(f"🖥️ 自动选择设备: {device}")
+        else:
+            device = device_config
+            print(f"🖥️ 指定使用设备: {device}")
+        
+        # 获取分块配置
+        chunk_size = int(os.environ.get("RAG_CHUNK_SIZE", "512"))
+        chunk_overlap = int(os.environ.get("RAG_CHUNK_OVERLAP", "50"))
+        print(f"📄 分块配置: 大小={chunk_size}, 重叠={chunk_overlap}")
+        
+        # 创建RAG核心服务
+        rag_service = RAGCoreService(
+            knowledge_source_dir=knowledge_source_dir,
+            data_dir=data_dir,
+            embedding_model_path=embedding_model_path,
+            rerank_model_path=rerank_model_path,
+            device=device,
+            chunk_size=chunk_size,
+            chunk_overlap=chunk_overlap
+        )
+        
+        # 初始化RAG系统（会扫描和处理新文件）
+        success = rag_service.initialize()
+        
+        if success:
+            stats = rag_service.get_statistics()
+            print(f"✅ RAG系统初始化成功:")
+            print(f"   - 已处理文件: {stats['knowledge_base']['processed_files']}")
+            print(f"   - 向量库文档块: {stats['vector_store']['total_chunks']}")
+            print(f"   - 嵌入维度: {stats['vector_store']['embedding_dim']}")
+            print(f"   - 计算设备: {stats['vector_store'].get('device', 'unknown')}")
+            
+            # 将RAG服务存储到全局变量，供其他模块使用
+            import sys
+            sys.modules[__name__].rag_service = rag_service
+        else:
+            print("❌ RAG系统初始化失败")
+            return False
+            
+        return True
+        
+    except ImportError as e:
+        print(f"⚠️ RAG 依赖模块缺失: {e}")
+        print("RAG 功能将被禁用，请检查依赖包安装")
+        return True  # 不阻止系统启动
+    except Exception as e:
+        print(f"❌ RAG系统初始化错误: {e}")
+        return False
+
+
 def check_dependencies():
     """检查依赖包"""
     try:
@@ -52,7 +167,26 @@ def check_dependencies():
         import snownlp
         import pydantic
 
-        print("✅ 依赖包检查通过")
+        print("✅ 基础依赖包检查通过")
+        
+        # 检查 RAG 依赖
+        rag_enabled = os.environ.get("ENABLE_RAG", "true").lower() == "true"
+        if rag_enabled:
+            try:
+                import numpy
+                import faiss
+                import sentence_transformers
+                import torch
+                import transformers
+                import fitz  # PyMuPDF
+                print("✅ RAG 依赖包检查通过")
+            except ImportError as e:
+                print(f"⚠️ RAG 依赖包缺失: {e}")
+                print("RAG 功能将被禁用，请运行安装命令:")
+                print("pip install -r requirements_rag.txt")
+        else:
+            print("ℹ️ RAG 功能已禁用")
+        
         return True
     except ImportError as e:
         print(f"❌ 缺少依赖包: {e}")
@@ -99,7 +233,7 @@ def initialize_data_directories():
 def start_server():
     """启动服务器"""
     print("🚀 启动心理咨询对话系统...")
-    print("📊 使用集成版架构:")
+    print("📊 使用集成版架构 (app_fixed.py):")
     print("   - 统一数据库管理")
     print("   - 用户画像存储")
     print("   - 长短期记忆")
@@ -139,7 +273,8 @@ def start_server():
     print("=" * 50)
 
     try:
-        app.run(host=HOST, port=PORT, debug=DEBUG)
+        # 设置重启选项，避免重复初始化
+        app.run(host=HOST, port=PORT, debug=DEBUG, use_reloader=False)
     except KeyboardInterrupt:
         print("\n👋 服务器已停止")
 
@@ -158,6 +293,13 @@ def main():
 
     check_prompt_files()
     initialize_data_directories()
+    
+    # 初始化RAG系统
+    if not initialize_rag_system():
+        print("RAG系统初始化失败，是否继续启动？(y/N): ", end="")
+        choice = input().lower()
+        if choice != 'y':
+            return
 
     print("=" * 50)
     start_server()

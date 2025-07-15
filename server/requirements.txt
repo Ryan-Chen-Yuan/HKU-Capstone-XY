@@ -9,3 +9,23 @@ langchain-openai==0.3.23
 langgraph==0.4.8
 snownlp==0.12.3
 pydantic==2.11.7
+
+# RAG系统依赖
+# 向量计算和相似度搜索
+numpy>=1.21.0
+faiss-cpu>=1.7.4  # 如果有GPU可以使用 faiss-gpu
+
+# 文档处理
+PyMuPDF>=1.23.0  # PDF处理
+python-docx>=0.8.11  # Word文档处理
+
+# 深度学习和Transformer模型
+torch>=2.0.0
+transformers>=4.30.0
+sentence-transformers>=2.2.0
+
+# 可选：如果要使用Qwen模型的官方实现
+# modelscope>=1.9.0
+
+# 数据处理
+scikit-learn>=1.0.0  # 用于文本预处理和评估

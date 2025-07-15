@@ -1,0 +1,69 @@
+{
+  "user_intent": {
+    "type": "dream_analysis",
+    "description": "用户希望理解和处理近期频繁出现的奇怪梦境",
+    "confidence": 0.9,
+    "identified_at": "2025-07-14T19:58:22.330Z"
+  },
+  "current_state": {
+    "stage": "information_gathering",
+    "progress": 0.3,
+    "last_updated": "2025-07-14T19:58:22.330Z"
+  },
+  "steps": [
+    {
+      "id": "step_1",
+      "type": "open_question",
+      "content": "能具体描述一下这些奇怪的梦吗？比如梦的内容、频率或特别令你在意的细节？",
+      "status": "pending"
+    },
+    {
+      "id": "step_2",
+      "type": "follow_up",
+      "content": "这些梦境出现前后，你的生活状态或情绪有什么变化吗？",
+      "status": "pending"
+    },
+    {
+      "id": "step_3",
+      "type": "assessment",
+      "content": "评估梦境对用户日常生活的影响程度",
+      "status": "pending"
+    },
+    {
+      "id": "step_4",
+      "type": "intervention",
+      "content": "根据收集的信息提供初步解释或应对策略",
+      "status": "pending"
+    },
+    {
+      "id": "step_5",
+      "type": "clarification",
+      "content": "解释治疗建议需要先了解具体梦境情况，询问用户是否愿意先分享更多细节",
+      "status": "added"
+    }
+  ],
+  "context": {
+    "key_points": [
+      "奇怪的梦",
+      "频繁出现",
+      "寻求治疗方法"
+    ],
+    "emotions": [
+      "困惑",
+      "可能焦虑",
+      "急切"
+    ],
+    "concerns": [
+      "梦境的意义",
+      "对生活的影响",
+      "快速解决方案"
+    ]
+  },
+  "note": "用户表现出急于寻求解决方案的倾向，需要平衡专业评估需求和用户急切心理，先建立信任关系再逐步深入",
+  "inquiry_status": {
+    "stage": "初始阶段",
+    "information_completeness": 0,
+    "collected_info": {},
+    "pattern_analyzed": false
+  }
+}

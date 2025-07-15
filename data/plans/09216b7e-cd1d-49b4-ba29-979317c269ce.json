@@ -1,0 +1,53 @@
+{
+  "user_intent": {
+    "type": "off-topic_request",
+    "description": "用户请求与心理咨询无关的日本新闻内容",
+    "confidence": 0.9,
+    "identified_at": "2025-07-12T17:58:59.560Z"
+  },
+  "current_state": {
+    "stage": "redirecting",
+    "progress": 0.3,
+    "last_updated": "2025-07-12T17:58:59.560Z"
+  },
+  "steps": [
+    {
+      "id": "step_1",
+      "type": "response",
+      "content": "回应问候并引导用户表达咨询需求",
+      "status": "completed"
+    },
+    {
+      "id": "step_2",
+      "type": "inquiry",
+      "content": "询问用户希望讨论的话题或问题",
+      "status": "interrupted"
+    },
+    {
+      "id": "step_3",
+      "type": "clarification",
+      "content": "温和解释咨询范围并重新引导",
+      "status": "active"
+    }
+  ],
+  "context": {
+    "key_points": [
+      "用户发起问候",
+      "提出非咨询相关请求"
+    ],
+    "emotions": [
+      "neutral",
+      "possibly_distracted"
+    ],
+    "concerns": [
+      "咨询边界确认"
+    ]
+  },
+  "adjustment_note": "需要温和而专业地将对话引导回心理咨询领域，同时保持共情态度",
+  "inquiry_status": {
+    "stage": "初始阶段",
+    "information_completeness": 0,
+    "collected_info": {},
+    "pattern_analyzed": false
+  }
+}

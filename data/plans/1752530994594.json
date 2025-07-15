@@ -1,0 +1,59 @@
+{
+  "user_intent": {
+    "type": "sleep_disturbance",
+    "description": "用户因频繁出现奇怪梦境而感到困扰，寻求解决方法",
+    "confidence": 0.85,
+    "identified_at": "2025-07-15T06:10:30.640455"
+  },
+  "current_state": {
+    "stage": "problem_exploration",
+    "progress": 0.3,
+    "last_updated": "2025-07-15T06:10:30.640457"
+  },
+  "steps": [
+    {
+      "id": "step1",
+      "type": "clarification",
+      "content": "询问梦境的具体特征（如内容、频率、醒来后的感受）",
+      "status": "pending"
+    },
+    {
+      "id": "step2",
+      "type": "assessment",
+      "content": "评估梦境对日常生活的影响程度",
+      "status": "pending"
+    },
+    {
+      "id": "step3",
+      "type": "connection",
+      "content": "探讨梦境与先前提到的焦虑情绪的可能关联",
+      "status": "pending"
+    },
+    {
+      "id": "step4",
+      "type": "intervention",
+      "content": "提供梦境日记记录法等初步应对策略",
+      "status": "pending"
+    }
+  ],
+  "context": {
+    "key_points": [
+      "存在焦虑情绪",
+      "近期频繁出现奇怪梦境"
+    ],
+    "emotions": [
+      "困扰",
+      "不安"
+    ],
+    "concerns": [
+      "梦境内容异常",
+      "睡眠质量受影响"
+    ]
+  },
+  "inquiry_status": {
+    "stage": "初始阶段",
+    "information_completeness": 0,
+    "collected_info": {},
+    "pattern_analyzed": false
+  }
+}

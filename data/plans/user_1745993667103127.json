@@ -1,0 +1,69 @@
+{
+  "user_intent": {
+    "type": "emotional_distress",
+    "description": "用户表达焦虑情绪并寻求帮助",
+    "confidence": 0.95,
+    "identified_at": "2025-07-14T22:09:16.972Z"
+  },
+  "current_state": {
+    "stage": "emotional_validation",
+    "progress": 0.4,
+    "last_updated": "2025-07-14T22:09:16.972Z"
+  },
+  "steps": [
+    {
+      "id": "step_0",
+      "type": "greeting_response",
+      "content": "你好，欢迎来到这里。我是你的心理咨询师，请问有什么我可以帮助你的吗？",
+      "status": "completed"
+    },
+    {
+      "id": "step_1",
+      "type": "emotional_validation",
+      "content": "听起来你最近经历了一些困扰，这种烦躁的感觉确实会让人感到不舒服。",
+      "status": "completed"
+    },
+    {
+      "id": "step_2",
+      "type": "exploration",
+      "content": "你愿意多说说是什么样的事情让你感到烦恼吗？",
+      "status": "active"
+    },
+    {
+      "id": "step_3",
+      "type": "context_gathering",
+      "content": "这种烦躁的感觉持续多久了？在什么情况下会特别明显？",
+      "status": "pending"
+    },
+    {
+      "id": "step_4",
+      "type": "coping_strategy",
+      "content": "我们可以一起探讨一些缓解焦虑的方法，你觉得怎么样？",
+      "status": "pending"
+    }
+  ],
+  "context": {
+    "key_points": [
+      "焦虑情绪表达",
+      "求助意向"
+    ],
+    "emotions": [
+      "焦虑",
+      "无助"
+    ],
+    "concerns": [
+      "情绪管理",
+      "问题解决"
+    ]
+  },
+  "note": "用户明确表达了焦虑情绪和求助需求。需要先进行情绪确认和共情，然后逐步探索焦虑源和应对策略。保持非评判性态度，给予安全表达空间。",
+  "inquiry_status": {
+    "stage": "问题探索阶段",
+    "information_completeness": 0.3,
+    "collected_info": {
+      "main_emotion": "焦虑",
+      "help_seeking": true
+    },
+    "pattern_analyzed": false
+  }
+}

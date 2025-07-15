@@ -1,0 +1,58 @@
+{
+  "user_intent": {
+    "type": "dream_analysis",
+    "description": "用户希望了解关于奇怪梦境的原因和应对方法",
+    "confidence": 0.8,
+    "identified_at": "2025-07-14T20:10:56.622Z"
+  },
+  "current_state": {
+    "stage": "information_gathering",
+    "progress": 0.3,
+    "last_updated": "2025-07-15T04:11:10.771753"
+  },
+  "steps": [
+    {
+      "id": "step_1",
+      "type": "clarification",
+      "content": "询问梦境的具体内容和频率",
+      "status": "pending"
+    },
+    {
+      "id": "step_2",
+      "type": "exploration",
+      "content": "了解梦境对用户日常生活的影响",
+      "status": "pending"
+    },
+    {
+      "id": "step_3",
+      "type": "assessment",
+      "content": "评估用户的睡眠质量和压力水平",
+      "status": "pending"
+    },
+    {
+      "id": "step_4",
+      "type": "intervention",
+      "content": "提供应对奇怪梦境的建议和方法",
+      "status": "pending"
+    }
+  ],
+  "context": {
+    "key_points": [
+      "奇怪的梦境"
+    ],
+    "emotions": [
+      "困惑",
+      "寻求帮助"
+    ],
+    "concerns": [
+      "梦境的影响",
+      "应对方法"
+    ]
+  },
+  "inquiry_status": {
+    "stage": "初始阶段",
+    "information_completeness": 0,
+    "collected_info": {},
+    "pattern_analyzed": false
+  }
+}

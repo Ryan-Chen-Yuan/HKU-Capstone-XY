@@ -55,7 +55,7 @@ class ChatLogger:
             ])
         
         print("\n".join(log_info))
-        print("-" * 50)
+        # 不在这里打印分隔符，让后续的情绪分析紧跟其后
     
     def log_chat_response(self, user_id: str, session_id: str, response: str, emotion: str = None, 
                          crisis_detected: bool = False, search_results: str = None, timestamp: str = None):
@@ -64,11 +64,14 @@ class ChatLogger:
             return
         
         if timestamp is None:
-            timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            # 使用与情绪分析一致的时间格式
+            response_timestamp = datetime.now().isoformat()
+        else:
+            response_timestamp = timestamp
         
         # 基础日志信息
         log_info = [
-            f"🤖 AI回复 [{timestamp}]",
+            f"🤖 AI回复 [{response_timestamp}]",
             f"   用户ID: {user_id}",
             f"   会话ID: {session_id}",
             f"   回复: {response[:100]}{'...' if len(response) > 100 else ''}"
@@ -92,20 +95,24 @@ class ChatLogger:
         if self.detailed_logging_enabled:
             log_info.extend([
                 f"   回复长度: {len(response)} 字符",
-                f"   生成时间: {timestamp}"
+                f"   生成时间: {response_timestamp}"
             ])
         
         print("\n".join(log_info))
         print("-" * 50)
     
     def log_mood_analysis(self, user_id: str, session_id: str, messages: List[str], 
-                         mood_result: Dict[str, Any], timestamp: str = None):
+                         mood_result: Dict[str, Any], timestamp: str = None, suppress_header: bool = False):
         """记录情绪分析结果"""
         if not self.emotion_logging_enabled:
             return
         
         if timestamp is None:
             timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        
+        # 如果suppress_header为True，表示这是聊天流程的一部分，不需要额外的分隔符
+        if not suppress_header:
+            print("")  # 空行分隔
         
         log_info = [
             f"💭 情绪分析 [{timestamp}]",
@@ -198,6 +205,29 @@ class ChatLogger:
         
         print("\n".join(log_info))
         print("=" * 50)
+    
+    def log_chat(self, user_id: str, session_id: str, user_message: str, ai_response: str, 
+                 emotion: str = None, crisis_detected: bool = False, timestamp: str = None, 
+                 processing_time: float = 0, search_results: str = None):
+        """统一记录聊天对话日志（仅记录AI响应）"""
+        if not self.chat_logging_enabled:
+            return
+        
+        # 记录AI响应
+        self.log_chat_response(user_id, session_id, ai_response, emotion, crisis_detected, search_results, timestamp)
+        
+        # 如果启用详细日志，记录处理时间
+        if self.detailed_logging_enabled and processing_time > 0:
+            print(f"⏱️  处理时间: {processing_time:.3f}秒")
+            print("-" * 50)
+    
+    def log_user_message_start(self, user_id: str, session_id: str, user_message: str, timestamp: str = None):
+        """记录用户消息（聊天开始时调用）"""
+        if not self.chat_logging_enabled:
+            return
+        
+        # 记录用户请求（包含NLP情绪分析）
+        self.log_chat_request(user_id, session_id, user_message, timestamp)
 
 
 # 创建全局日志记录器实例

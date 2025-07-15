@@ -84,5 +84,55 @@
       "emotion_category": "neutral",
       "timestamp": "2025-07-06T04:15:59.272163"
     }
+  ],
+  "user_1745993667103127": [
+    {
+      "session_id": "f884052f-778e-405d-808c-24300cc4133b",
+      "emotion_score": 0.10471854940557335,
+      "emotion_category": "sleepy",
+      "timestamp": "2025-07-15T05:16:08.677391"
+    },
+    {
+      "session_id": "0735ad4b-0359-4074-91e3-b5886674aa51",
+      "emotion_score": -0.16336107933530708,
+      "emotion_category": "sleepy",
+      "timestamp": "2025-07-15T05:25:07.586208"
+    },
+    {
+      "session_id": "user_1745993667103127",
+      "emotion_score": -0.20123390210308378,
+      "emotion_category": "angry",
+      "timestamp": "2025-07-15T05:48:42.712142"
+    },
+    {
+      "session_id": "user_1745993667103127",
+      "emotion_score": 0.3117256417880858,
+      "emotion_category": "happy",
+      "timestamp": "2025-07-15T05:51:09.022284"
+    },
+    {
+      "session_id": "user_1745993667103127",
+      "emotion_score": 0.3117256417880858,
+      "emotion_category": "happy",
+      "timestamp": "2025-07-15T05:58:10.662395"
+    },
+    {
+      "session_id": "1752530290690",
+      "emotion_score": 0.9392896831098472,
+      "emotion_category": "sleepy",
+      "timestamp": "2025-07-15T05:59:22.750277"
+    },
+    {
+      "session_id": "user_1745993667103127",
+      "emotion_score": 0.4106964765602512,
+      "emotion_category": "sleepy",
+      "timestamp": "2025-07-15T06:09:54.567747"
+    },
+    {
+      "session_id": "1752530994594",
+      "emotion_score": -0.4025393715032095,
+      "emotion_category": "sleepy",
+      "timestamp": "2025-07-15T06:10:58.272647"
+    }
   ]
 }
