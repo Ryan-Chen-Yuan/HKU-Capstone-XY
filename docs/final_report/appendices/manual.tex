@@ -1,0 +1,157 @@
+\section{Operation Manual}
+\label{sec:manual}
+
+\subsection{System Installation}
+
+\begin{enumerate}
+    \item Install Python 3.8+ and required dependencies
+    \item Clone the repository and navigate to project directory
+    \item Install Flask and other required packages: \texttt{pip install -r requirements.txt}
+    \item Configure environment variables in \texttt{.env} file
+    \item Initialize database: \texttt{python init\_db.py}
+    \item Start the server: \texttt{python app.py}
+\end{enumerate}
+
+\subsection{WeChat Mini Program Setup}
+
+\begin{enumerate}
+    \item Download WeChat Developer Tools
+    \item Import the mini program project
+    \item Configure AppID and server domain
+    \item Upload and deploy to WeChat platform
+\end{enumerate}
+
+\subsection{API Documentation}
+
+The system provides the following RESTful APIs:
+
+\begin{itemize}
+    \item \texttt{POST /api/chat} - Send message to AI chatbot
+    \item \texttt{GET /api/chat/history} - Get conversation history
+    \item \texttt{POST /api/mood} - Analyze mood of messages
+    \item \texttt{POST /api/events/extract} - Extract events from conversation
+    \item \texttt{GET /api/events} - Get extracted events
+    \item \texttt{POST /api/analysis/user-report} - Generate user analysis report
+\end{itemize}
+
+\subsection{Technical Implementation Details}
+
+\subsubsection{AI Model Configuration}
+
+The system utilizes the Meta-Llama-3.1-8B-Instruct model for natural language processing. The model is configured with specific parameters optimized for mental health support:
+
+\begin{itemize}
+    \item Temperature: 0.7 (balanced creativity and consistency)
+    \item Max tokens: 2048 (adequate response length)
+    \item Top-p: 0.9 (maintains response quality)
+    \item Safety filters: Enabled for crisis detection
+\end{itemize}
+
+\subsubsection{Emotion Analysis Pipeline}
+
+The emotion analysis system implements a multi-stage pipeline:
+
+\begin{enumerate}
+    \item Text preprocessing and normalization
+    \item Sentiment analysis using lexicon-based approach
+    \item Emotion classification using machine learning models
+    \item Keyword extraction for pattern recognition
+    \item Context-aware emotion scoring
+\end{enumerate}
+
+\subsubsection{Event Extraction Algorithm}
+
+The event extraction system employs sophisticated pattern recognition:
+
+\begin{enumerate}
+    \item Natural language processing for event detection
+    \item Psychological event categorization
+    \item Severity assessment algorithms
+    \item Temporal pattern analysis
+    \item Risk factor identification
+\end{enumerate}
+
+\subsubsection{User Profile Management}
+
+The user profile system maintains comprehensive user data:
+
+\begin{itemize}
+    \item Conversation history with timestamps
+    \item Emotional pattern analysis
+    \item Assessment results and trends
+    \item Interaction preferences and settings
+    \item Privacy and security settings
+\end{itemize}
+
+\subsection{User Guide}
+
+\subsubsection{Getting Started}
+
+\begin{enumerate}
+    \item Open the WeChat Mini Program
+    \item Start a conversation with the AI assistant
+    \item Express your thoughts and feelings
+    \item Receive empathetic responses and emotional analysis
+\end{enumerate}
+
+\subsubsection{Features}
+
+\begin{itemize}
+    \item \textbf{Emotional Support}: Receive understanding and supportive responses
+    \item \textbf{Mood Analysis}: Get real-time emotional state analysis
+    \item \textbf{Event Tracking}: Automatic identification of significant psychological events
+    \item \textbf{Progress Tracking}: Monitor emotional patterns over time
+    \item \textbf{Personalized Insights}: AI-generated recommendations based on your patterns
+\end{itemize}
+
+\subsection{System Architecture}
+
+\subsubsection{Backend Services}
+
+The backend implements a microservices architecture:
+
+\begin{itemize}
+    \item API Gateway for request routing and authentication
+    \item Chat Service for conversation management
+    \item Emotion Analysis Service for sentiment processing
+    \item Event Extraction Service for pattern recognition
+    \item User Profile Service for data management
+\end{itemize}
+
+\subsubsection{Data Storage}
+
+The system employs local file-based storage with encryption:
+
+\begin{itemize}
+    \item User profiles stored in encrypted JSON files
+    \item Conversation history with compression
+    \item Assessment data with privacy protection
+    \item System logs for monitoring and debugging
+\end{itemize}
+
+\subsubsection{Security Implementation}
+
+Security measures include:
+
+\begin{itemize}
+    \item End-to-end encryption for all data transmission
+    \item Local storage to minimize data exposure
+    \item User anonymity features
+    \item Access control and authentication
+    \item Regular security audits and updates
+\end{itemize}
+
+\subsection{Troubleshooting}
+
+\subsubsection{Common Issues}
+
+\begin{itemize}
+    \item \textbf{Connection Problems}: Check internet connection and server status
+    \item \textbf{Slow Responses}: May occur during peak usage times
+    \item \textbf{Data Loss}: Ensure regular backups of conversation history
+    \item \textbf{AI Response Quality}: Adjust model parameters if needed
+\end{itemize}
+
+\subsubsection{Support}
+
+For technical support, contact the development team through the provided channels in the project documentation. 
