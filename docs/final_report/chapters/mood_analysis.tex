@@ -1,0 +1,17 @@
+\subsubsection{Mood Assessment}
+\label{subsubsec:mood_assessment}
+
+Parallel to event extraction, the \textit{Perception} module performs continuous mood assessment. This task is designed to move beyond simplistic sentiment analysis by providing a multi-dimensional, structured evaluation of the user's emotional state. The objective is not merely to classify text as positive or negative, but to offer a nuanced psychological snapshot that can inform both the agent's immediate response and the user's long-term self-reflection.
+
+To achieve this, we employ a dedicated LLM-based service, the \textit{MoodService}. The core of this service is a carefully engineered prompt that instructs the model to act as an "emotion analysis expert." The prompt explicitly directs the LLM to analyze conversational data and return a structured JSON object containing four key dimensions:
+
+\begin{itemize}
+    \item \textbf{Mood Intensity:} A normalized score from 0 to 10, quantifying the strength of the detected emotion.
+    \item \textbf{Mood Category:} A specific emotional label (e.g., "Sad", "Anxious", "Excited"), drawn from a comprehensive list of psychological states.
+    \item \textbf{Thinking:} A direct quote or paraphrased monologue representing the user's potential inner thoughts or cognitive appraisals (e.g., "I am a failure"). This dimension is crucial for identifying potential cognitive distortions, a core concept in Cognitive Behavioral Therapy (CBT).
+    \item \textbf{Scene:} The contextual trigger or situation associated with the emotion (e.g., "Seeing a friend's post on social media"). This helps to ground the emotional experience in concrete, real-world events.
+\end{itemize}
+
+This structured, multi-faceted output provides a significantly richer signal than a simple sentiment score. The implementation has evolved throughout the project, moving from single-message analysis to processing batches of the user's most recent messages to improve contextual accuracy and capture emotional trends.
+
+Crucially, this feature adheres to the same user-in-the-loop validation principle as our event extraction mechanism. The analyzed mood data is presented to the user, who has the final authority to confirm, edit, or reject the assessment. This ensures that the system's understanding remains aligned with the user's subjective experience and that all persisted emotional data is both accurate and user-validated. 
