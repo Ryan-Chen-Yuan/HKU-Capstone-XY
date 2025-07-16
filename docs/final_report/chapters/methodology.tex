@@ -1,90 +1,129 @@
 \section{Methodology}
 \label{sec:methodology}
 
-\subsection{System Architecture}
+\begin{figure}[t]
+  \includegraphics[width=\columnwidth]{figs/introspection-agent.png}
+  \caption{An overview of introspection agent.}
+  \label{fig:introspection-agent}
+\end{figure}
 
-The Introspection system employs a sophisticated modular architecture designed to provide comprehensive mental health support through the integration of multiple specialized AI agents. The architectural design prioritizes scalability, maintainability, and user privacy while ensuring robust performance across diverse use cases. The system's modular approach enables independent development and testing of individual components while maintaining seamless integration through well-defined interfaces.
+In this section, we first provide an overview of how the Introspection Agent operates, followed by a detailed discussion of its main components.
 
-The core system architecture consists of three primary components that work in concert to deliver personalized mental health support. The AI Chatbot Module serves as the primary interface for user interaction, providing empathetic emotional support through advanced natural language processing capabilities. This module incorporates sophisticated conversation management algorithms that maintain context across extended interactions while adapting responses based on user emotional states and historical patterns.
+As illustrated in Figure~\ref{fig:introspection-agent}, the agent is organized into four key modules: \textbf{Perception}, \textbf{Reasoning}, \textbf{Action}, and \textbf{Memory}. Upon receiving user input, the system initially performs \textit{Mood Analysis} and \textit{Event Extraction} to interpret the user's emotional state and contextual information. The \textbf{Reasoning} module then engages in \textit{Planning} and leverages tools such as \textit{Guided Inquiry} to process the user's request. If a potential crisis is detected (\textit{Crisis Detection}), the system immediately enters a crisis intervention phase and provides a psychological help hotline. If a search intent is identified, the system conducts an \textit{Information Search} before generating a \textit{Counselor Response}. 
 
-The Psychological Assessment Tool represents a critical component that continuously monitors and analyzes user mental health patterns. This tool employs multiple assessment methodologies including real-time sentiment analysis, behavioral pattern recognition, and longitudinal trend analysis. The assessment capabilities extend beyond simple mood tracking to include comprehensive psychological profiling that identifies potential risk factors and positive behavioral changes.
+Throughout this process, all interactions are systematically logged in the \textit{Chat History}, \textit{User Profile}, and \textit{User History}, enabling continuous learning and personalized user experiences.
 
-The User Profile Management component ensures secure and personalized user experiences through sophisticated data management protocols. This component maintains user preferences, interaction histories, and assessment results while implementing rigorous privacy protection measures. The profile management system enables personalized interventions while maintaining strict data security standards.
+\subsection{Perception}
 
-\subsection{Technical Implementation}
+\subsubsection{Mood}
 
-The system's technical implementation leverages a carefully selected technology stack optimized for mental health applications. The frontend implementation utilizes WeChat Mini Program technology, chosen for its widespread adoption in the Chinese market and its ability to provide seamless user experiences. The WeChat platform offers significant advantages including built-in user authentication, secure communication protocols, and extensive API capabilities that facilitate integration with the broader WeChat ecosystem.
+TODO@Wang Xueyao  
 
-The backend architecture employs Flask, a lightweight Python microservice framework that provides the flexibility necessary for rapid development and deployment while maintaining robust performance characteristics. The choice of Flask enables efficient handling of concurrent user sessions while supporting the complex processing requirements of multiple AI agents. The microservice architecture facilitates independent scaling of different system components based on demand patterns.
+The mood analysis feature represents a sophisticated integration of large language model (LLM) capabilities with clinical psychology principles, specifically designed to provide continuous, contextually-aware emotional evaluation.
 
-The AI processing capabilities are powered by the Meta-Llama-3.1-8B-Instruct model, selected for its superior performance in natural language understanding and generation tasks. This model demonstrates particular strength in empathetic response generation and context-aware conversation management. The implementation includes sophisticated prompt engineering techniques that optimize the model's performance for mental health support scenarios.
+\paragraph{Data Structure}
 
-Data storage and management utilize a local file-based storage system designed to maximize user privacy and data security. This approach eliminates external database dependencies while providing robust data persistence capabilities. The storage system implements comprehensive encryption protocols and access control mechanisms that ensure user data remains secure and confidential.
+The analytical foundation leverages meticulously engineered prompts that instruct the LLM to function as an emotion analysis expert, ensuring consistent and clinically-relevant outputs. This prompt engineering approach directs the model to analyze conversational data and return a structured JSON schema encompassing four fundamental dimensions that align with established psychological frameworks, particularly Cognitive Behavioral Therapy (CBT) principles.
 
-\subsection{Detailed Technical Implementation}
+\begin{itemize}
+\item \textbf{Mood Intensity:} A normalized scalar value ranging from 0 to 10, providing a quantitative measure of emotional arousal. This continuous scale enables nuanced tracking of emotional fluctuations and facilitates longitudinal analysis of affective patterns.
 
-\subsubsection{AI Model Configuration and Optimization}
+scheme
 
-The Meta-Llama-3.1-8B-Instruct model is configured with specific parameters optimized for mental health support applications. The temperature parameter is set to 0.7 to balance creativity and consistency in responses, ensuring that the AI can provide empathetic and varied responses while maintaining therapeutic appropriateness. The maximum token limit is configured to 2048 tokens, providing adequate response length for meaningful therapeutic interactions while maintaining reasonable processing times.
+\item \textbf{Mood Category:} A discrete emotional classification drawn from a comprehensive taxonomy of psychological states (e.g., Sad,'' Anxious,'' ``Excited''). This categorical approach aligns with established psychological frameworks while maintaining sufficient granularity for clinical relevance.
 
-The model's top-p parameter is set to 0.9 to maintain high response quality while allowing for appropriate variation in therapeutic approaches. Safety filters are enabled to detect and appropriately respond to crisis situations, including self-harm ideation and severe mental health concerns. The model incorporates specialized prompts designed for mental health support, including therapeutic techniques such as active listening, validation, and cognitive restructuring.
+\item \textbf{Thinking:} A verbatim quote or paraphrased representation of the user's potential inner monologue or cognitive appraisals (e.g., ``I am a failure''). This dimension serves as a critical component for identifying cognitive distortions, a fundamental concept in Cognitive Behavioral Therapy (CBT), enabling therapeutic interventions targeting maladaptive thought patterns.
 
-\subsubsection{Emotion Analysis Pipeline}
+\item \textbf{Scene:} The contextual trigger or situational antecedent associated with the emotional response (e.g., ``Seeing a friend's post on social media''). This contextual grounding facilitates the identification of environmental triggers and supports the development of situation-specific coping strategies.
+\end{itemize}
 
-The emotion analysis system implements a sophisticated multi-stage pipeline that processes user input through multiple analysis layers. The first stage involves text preprocessing and normalization, including tokenization, lemmatization, and removal of irrelevant content. This preprocessing ensures consistent input format for subsequent analysis stages.
+This multi-faceted analytical framework transcends traditional sentiment analysis by providing a comprehensive psychological profile that captures not merely the valence and arousal of emotions, but also their cognitive and contextual underpinnings.
 
-The second stage employs lexicon-based sentiment analysis using established psychological lexicons and emotion dictionaries. This approach provides baseline sentiment classification and emotional state assessment. The third stage utilizes machine learning classification models trained on mental health conversation datasets to identify specific emotional states and psychological indicators.
+\paragraph{Technical Implementation Architecture}
 
-The fourth stage implements keyword extraction algorithms that identify significant psychological terms and emotional indicators. This keyword analysis supports pattern recognition and trend identification. The final stage incorporates context-aware emotion scoring that considers conversation history and user emotional patterns to provide more accurate and personalized emotional assessment.
+\begin{enumerate}
+\item \textbf{MoodService }\\
+The system implements a dedicated LLM-based analytical service, designated as the MoodService, which operates through a discrete LLM instance (specifically, Qwen3-32B) to ensure computational independence from primary conversational functions. This service is governed by meticulously engineered prompts, which constrains model outputs to conform to predefined analytical specifications while maintaining focus on comprehensive psychological evaluation. In addition, the architectural segregation  ensures that intensive mood analysis computations do not compromise real-time conversational responsiveness, thereby preserving user experience integrity.
 
-\subsubsection{Event Extraction and Pattern Recognition}
+    \item \textbf{Contextual Batch Processing}\\
+The system employs a sliding window methodology for contextual message processing, systematically extracting and analyzing the seven most recent user messages subsequent to each conversational interaction. This temporal windowing approach facilitates the incorporation of conversational context essential for accurate emotional state detection while enabling the identification of emotional progression patterns rather than discrete affective snapshots. 
 
-The event extraction system employs advanced natural language processing techniques to identify psychologically significant events within user conversations. The system utilizes named entity recognition to identify people, places, and events mentioned in conversations. Event categorization algorithms classify identified events into psychological categories such as behavioral changes, emotional breakthroughs, relationship issues, and potential risk factors.
+\item \textbf{Feedback Integration}
 
-Severity assessment algorithms evaluate the psychological significance of identified events using multiple criteria including emotional intensity, frequency of occurrence, and potential impact on user well-being. Temporal pattern analysis identifies recurring themes and behavioral patterns over time, enabling the system to provide more sophisticated intervention recommendations.
+To optimize user experience and prevent cognitive overload, the system implements an intelligent refresh algorithm for mood data updates that operates under dual criteria: when mood intensity exceeds 0.8 on the normalized scale, indicating emotionally significant states, and when the detected mood category differs from the previous assessment, preventing redundant notifications. This approach ensures users receive alerts only for meaningful emotional transitions, reducing notification fatigue while maintaining clinical relevance and therapeutic value.
 
-Risk factor identification algorithms continuously monitor user communications for indicators of mental health crises, including self-harm ideation, severe depression symptoms, and other emergency situations. When such indicators are detected, the system implements appropriate escalation procedures while maintaining user privacy and dignity.
+Upon navigation to the mood analysis interface, the system presents automatically generated emotional assessments in a structured, visually accessible format with mood intensity, category, cognitive content, and situational context displayed in an initially read-only state, allowing users to inspect assessments without inadvertent modification. The system incorporates feedback mechanisms through editing functionality that enable users to correct misidentified emotional states or contextual elements. All user interactions include real-time UI feedback through toast notifications and visual state indicators, ensuring transparency and maintaining engagement throughout the assessment process.
 
-\subsubsection{Conversation Management and Context Preservation}
+\item \textbf{Data Management}
 
-The conversation management system implements sophisticated algorithms for maintaining context across extended interactions. The system employs conversation state tracking that preserves user emotional states, conversation topics, and therapeutic progress across multiple sessions. This context preservation enables the AI to provide increasingly personalized and effective support as user interactions progress.
+The system's backend architecture supports comprehensive data management through structured data transmission using RESTful API endpoints with standardized JSON schemas, ensuring data integrity and interoperability across system components. Each mood record incorporates session identifiers and temporal metadata, enabling accurate longitudinal tracking and user-specific analysis patterns essential for monitoring.
 
-The context management system utilizes conversation summarization algorithms that extract key themes and emotional patterns from extended conversations. These summaries enable the AI to maintain awareness of user history and progress while avoiding information overload. The system also implements conversation flow management that ensures natural transitions between topics and therapeutic approaches.
+\end{enumerate}
 
-\subsubsection{User Profile and Personalization System}
 
-The user profile system maintains comprehensive user data including conversation history, emotional patterns, assessment results, and interaction preferences. The system employs sophisticated user modeling algorithms that analyze user data to create detailed psychological profiles. These profiles enable the system to provide personalized interventions and support recommendations.
+\subsubsection{Event}
 
-The personalization system implements adaptive response generation that tailors AI responses based on individual user characteristics, emotional states, and therapeutic progress. The system also incorporates learning algorithms that continuously improve personalization based on user feedback and interaction outcomes. Privacy protection measures ensure that all user data is encrypted and stored locally, with strict access controls and data retention policies.
+\paragraph{Event-Driven Reflection}
+A cornerstone of our methodology is the principle of event-driven reflection. We posit that significant psychological insight is often anchored to specific life events. Rather than merely providing conversational support, our system is designed to function as a non-judgmental mirror, empowering users to identify, structure, and reflect upon these pivotal moments. As outlined in our initial proposal, the core value of this mechanism lies not in AI-driven judgment, but in providing users with a structured and objective record of their own experiences. This approach transforms raw conversational data into a curated timeline of personal growth, facilitating self-discovery and fostering a deeper understanding of one's own emotional and cognitive patterns. The entire event mechanism is designed to be user-centric, granting users full agency to accept, modify, or discard the AI's interpretations, thereby ensuring the final record is a faithful representation of their personal narrative.
 
-\subsection{AI Processing Pipeline}
+\paragraph{Asynchronous Event Extraction}
 
-The system's AI processing pipeline represents a sophisticated multi-stage architecture that processes user input through parallel LLM-based modules before synthesizing coherent responses. The pipeline begins with user input processing, where advanced natural language understanding algorithms analyze messages for emotional content, intent classification, and contextual relevance. This stage employs multiple analysis techniques including sentiment analysis, topic modeling, and emotional state classification.
+To technically realize the principle of event-driven reflection, we implement an asynchronous Event Extraction (EE) pipeline. Formulated as a generative information extraction task \cite{xu2023large}, its primary objective is to distill unstructured user dialogues into structured representations of psychologically significant events. This pipeline operates in the background, decoupled from the main chat interface, to ensure a seamless user experience without interrupting the conversational flow. It is triggered automatically based on conversational cues, specifically after every three turns of dialogue. Upon activation, the service retrieves the recent conversation history and processes it to identify and extract key events.
 
-The empathetic response generation stage utilizes specialized prompt engineering techniques to generate supportive and non-judgmental responses. This stage incorporates psychological principles and therapeutic techniques to ensure responses provide genuine emotional support while avoiding harmful or inappropriate content. The response generation process considers user history, current emotional state, and conversation context to deliver personalized assistance.
+The integrity and utility of our system hinge on the quality of this extracted data. To this end, we have implemented several key mechanisms to ensure high-fidelity, structured output:
 
-Event extraction represents a critical component that identifies psychologically significant events and patterns within user conversations. This stage employs advanced pattern recognition algorithms to detect meaningful psychological events, behavioral changes, and risk indicators. The event extraction process enables proactive intervention and personalized support recommendations.
+\begin{itemize}
+    \item \textbf{Standardized Event Schema.} We define a rigid JSON schema for event representation, encapsulating essential fields such as \texttt{primaryType}, \texttt{subType}, \texttt{title}, and \texttt{content}. This schema categorizes events across multiple psychological dimensions (e.g., emotional, relational, cognitive), providing a consistent and machine-readable format for subsequent analysis. To enforce this structure, we leverage constrained decoding by setting the \texttt{response\_format=\{``type'': ``json\_object''\}} parameter in the LLM API call. This feature has already been implemented by most inference engines, including vLLM and SGLang. It directly addresses the common challenge of misalignment between the LLM's natural language output and the required structured form \cite{xu2023large}.
 
-The response synthesis stage combines outputs from multiple AI agents into coherent, contextually appropriate responses. This stage employs sophisticated fusion algorithms that balance multiple objectives including emotional support, therapeutic guidance, and user engagement. The synthesis process ensures that responses maintain consistency across extended conversations while adapting to changing user needs.
+    \item \textbf{Dedicated Processing Service.} The EE task is managed by a dedicated microservice, the \textit{EventService}, which utilizes a separate LLM instance (i.e., Qwen3-32B) from the primary conversational agent. This architectural choice serves a dual purpose: it allows for task-specific model optimization and prevents potential API rate-limiting issues that could arise from overloading a single model endpoint, thereby safeguarding the responsiveness of the main dialogue.
 
-The feedback integration stage updates user profiles and conversation histories based on interaction outcomes. This stage implements learning algorithms that continuously improve system performance based on user feedback and interaction patterns. The integration process maintains comprehensive records while implementing strict privacy protection measures.
+    \item \textbf{User-in-the-Loop Validation.} Recognizing the potential for LLM-induced hallucinations, we incorporate a user-in-the-loop validation mechanism. Extracted events are presented to the user as editable cards within the application's interface. Users are granted full agency to review, confirm, modify, or delete any event. This process not only acts as a crucial safeguard for data fidelity but also enhances user trust and engagement by maintaining transparency and user control over their personal data. The system only commits events to the long-term storage---a lightweight, file-based system organized by session ID---upon explicit user confirmation.
+\end{itemize} 
 
-\subsection{Data Collection and Analysis Framework}
+\subsection{Reasoning}
 
-The system implements a comprehensive data collection and analysis framework designed to support both immediate user assistance and long-term system improvement. The framework collects conversation data including user messages and AI responses, enabling detailed analysis of interaction patterns and effectiveness metrics. This data supports context understanding and enables personalized response generation.
+\subsubsection{Planning}
 
-Emotional data collection encompasses sentiment analysis results and emotional pattern recognition. The system employs multiple emotional analysis techniques including lexicon-based analysis, machine learning classification, and deep learning approaches. This multi-modal approach ensures robust emotional state assessment across diverse user populations and communication styles.
+The Planning module is responsible for analyzing the user's intent and dynamically generating a dialogue strategy to guide the conversation. Upon receiving new user input, the system retrieves the current plan from persistent storage or initializes a new plan if none exists. The plan is structured as a JSON object containing fields such as \texttt{user\_intent}, \texttt{current\_state}, \texttt{steps}, \texttt{context}, and \texttt{inquiry\_status}. 
 
-Event data collection focuses on extracting significant psychological events and their categorization. The system employs advanced natural language processing techniques to identify events such as behavioral changes, emotional breakthroughs, and potential risk indicators. This event data supports proactive intervention and personalized support recommendations.
+A dedicated prompt is used to instruct the LLM to update the plan based on the latest user message and conversation history. The LLM analyzes the user's needs, updates the dialogue steps, and refines the inquiry strategy. Each step in the plan is tracked with a status (e.g., ``pending'', ``in progress'', ``completed''), allowing for iterative and adaptive planning as the conversation evolves. The updated plan is then stored and used to inform subsequent system actions, ensuring that responses are purposeful, context-aware, and aligned with the user's goals.
 
-User behavior data collection encompasses interaction patterns and feature usage statistics. This data enables system optimization and personalization while maintaining strict privacy standards. The behavior analysis supports continuous system improvement and user experience optimization.
+This modular planning approach enables the agent to maintain coherence across multi-turn dialogues, adapt to new information, and provide structured guidance throughout the counseling process.
 
-\subsection{Evaluation Methodology}
+\subsubsection{Tools}
 
-The system's effectiveness evaluation employs a comprehensive multi-dimensional approach that combines quantitative metrics with qualitative assessment. The evaluation framework examines user engagement through metrics including session duration, message frequency, and feature utilization patterns. These metrics provide insights into system usability and user satisfaction levels.
+PATTERN ANALYSIS \& GUIDED INQUIRY
 
-Emotional support quality assessment utilizes user satisfaction ratings and emotional improvement scores to evaluate the system's therapeutic effectiveness. The evaluation process incorporates validated psychological assessment tools and user feedback mechanisms to ensure accurate quality measurement. This assessment framework enables continuous improvement of support quality and effectiveness.
+TODO@Xu Hanlin
 
-System performance evaluation focuses on technical metrics including response time, emotion analysis accuracy, and event extraction precision. These metrics ensure that the system meets performance requirements while maintaining high accuracy standards. The performance evaluation framework supports system optimization and scalability planning.
+\subsection{Action}
 
-Safety metrics evaluation examines crisis detection accuracy and appropriate escalation rates. This evaluation ensures that the system can effectively identify and respond to potential mental health crises while maintaining appropriate intervention protocols. The safety evaluation framework incorporates multiple assessment methodologies to ensure comprehensive safety monitoring. 
+\subsubsection{Counselor Response}
+
+The Counselor Response module is responsible for generating empathetic, professional, and contextually relevant replies to the user. It integrates information from the current plan, recent conversation history, user profile, and any relevant search results or memory context. The system uses a carefully engineered prompt to instruct the LLM to act as a psychological counselor, adhering to principles of empathy, respect, and evidence-based guidance.
+
+The response generation process involves:
+\begin{itemize}
+    \item Formatting the conversation history and system context as input to the LLM.
+    \item Appending additional context, such as the current plan and search results, to the system prompt.
+    \item Invoking the LLM to produce a concise, supportive, and actionable reply.
+    \item Extracting and annotating the emotional tone of the response for further analysis and feedback.
+\end{itemize}
+
+This design ensures that each response is not only tailored to the user's immediate needs but also consistent with the overall counseling strategy, promoting user engagement and psychological well-being.
+
+\subsubsection{Serach / RAG}
+
+TODO@Yu Yitao
+
+\subsubsection{Crisis Detection}
+
+TODO@Yu Yitao
+
+\subsubsection{Report Generation}
+
+TODO@Xu Hanlin
+
+\subsection{Memory}
+
+TODO@Yu Yitao
