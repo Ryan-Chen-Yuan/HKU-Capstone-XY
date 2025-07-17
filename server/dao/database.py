@@ -727,3 +727,161 @@ class Database:
         except Exception as e:
             print(f"Error getting user profile: {str(e)}")
             return {}
+
+    def save_inquiry_result(self, session_id, inquiry_data):
+        """保存引导性询问结果
+
+        Args:
+            session_id: 会话ID
+            inquiry_data: 引导性询问结果数据
+        """
+        try:
+            inquiry_dir = os.path.join(self.data_dir, "inquiry_results")
+            os.makedirs(inquiry_dir, exist_ok=True)
+
+            inquiry_file = os.path.join(inquiry_dir, f"{session_id}.json")
+
+            # 添加时间戳
+            inquiry_data["saved_at"] = datetime.now().isoformat()
+
+            with self.lock:
+                with open(inquiry_file, "w", encoding="utf-8") as f:
+                    json.dump(inquiry_data, f, ensure_ascii=False, indent=2)
+
+        except Exception as e:
+            print(f"Error saving inquiry result: {str(e)}")
+
+    def get_inquiry_result(self, session_id):
+        """获取引导性询问结果
+
+        Args:
+            session_id: 会话ID
+
+        Returns:
+            dict: 引导性询问结果数据
+        """
+        try:
+            inquiry_dir = os.path.join(self.data_dir, "inquiry_results")
+            inquiry_file = os.path.join(inquiry_dir, f"{session_id}.json")
+
+            if not os.path.exists(inquiry_file):
+                return {}
+
+            with self.lock:
+                with open(inquiry_file, "r", encoding="utf-8") as f:
+                    return json.load(f)
+
+        except Exception as e:
+            print(f"Error getting inquiry result: {str(e)}")
+            return {}
+
+    def save_pattern_analysis(self, session_id, pattern_data):
+        """保存模式分析结果
+
+        Args:
+            session_id: 会话ID
+            pattern_data: 模式分析结果数据
+        """
+        try:
+            patterns_dir = os.path.join(self.data_dir, "patterns")
+            os.makedirs(patterns_dir, exist_ok=True)
+
+            pattern_file = os.path.join(patterns_dir, f"{session_id}.json")
+
+            # 添加时间戳
+            pattern_data["saved_at"] = datetime.now().isoformat()
+
+            with self.lock:
+                with open(pattern_file, "w", encoding="utf-8") as f:
+                    json.dump(pattern_data, f, ensure_ascii=False, indent=2)
+
+        except Exception as e:
+            print(f"Error saving pattern analysis: {str(e)}")
+
+    def get_pattern_analysis(self, session_id):
+        """获取模式分析结果
+
+        Args:
+            session_id: 会话ID
+
+        Returns:
+            dict: 模式分析结果数据
+        """
+        try:
+            patterns_dir = os.path.join(self.data_dir, "patterns")
+            pattern_file = os.path.join(patterns_dir, f"{session_id}.json")
+
+            if not os.path.exists(pattern_file):
+                return {}
+
+            with self.lock:
+                with open(pattern_file, "r", encoding="utf-8") as f:
+                    return json.load(f)
+
+        except Exception as e:
+            print(f"Error getting pattern analysis: {str(e)}")
+            return {}
+
+    def save_inquiry_history(self, session_id, inquiry_data):
+        """保存引导性询问历史记录
+
+        Args:
+            session_id: 会话ID
+            inquiry_data: 引导性询问数据
+        """
+        try:
+            inquiry_dir = os.path.join(self.data_dir, "inquiry_history")
+            os.makedirs(inquiry_dir, exist_ok=True)
+
+            inquiry_file = os.path.join(inquiry_dir, f"{session_id}.json")
+
+            # 添加时间戳
+            inquiry_data["timestamp"] = datetime.now().isoformat()
+
+            with self.lock:
+                # 读取现有历史记录
+                if os.path.exists(inquiry_file):
+                    with open(inquiry_file, "r", encoding="utf-8") as f:
+                        inquiry_history = json.load(f)
+                else:
+                    inquiry_history = []
+
+                # 添加新的询问记录
+                inquiry_history.append(inquiry_data)
+
+                # 保存更新后的历史记录
+                with open(inquiry_file, "w", encoding="utf-8") as f:
+                    json.dump(inquiry_history, f, ensure_ascii=False, indent=2)
+
+        except Exception as e:
+            print(f"Error saving inquiry history: {str(e)}")
+
+    def get_inquiry_history(self, session_id, limit=None):
+        """获取引导性询问历史记录
+
+        Args:
+            session_id: 会话ID
+            limit: 获取的记录数量限制
+
+        Returns:
+            list: 引导性询问历史记录列表
+        """
+        try:
+            inquiry_dir = os.path.join(self.data_dir, "inquiry_history")
+            inquiry_file = os.path.join(inquiry_dir, f"{session_id}.json")
+
+            if not os.path.exists(inquiry_file):
+                return []
+
+            with self.lock:
+                with open(inquiry_file, "r", encoding="utf-8") as f:
+                    inquiry_history = json.load(f)
+
+            if limit is not None and limit > 0:
+                inquiry_history = inquiry_history[-limit:]
+
+            return inquiry_history
+
+        except Exception as e:
+            print(f"Error getting inquiry history: {str(e)}")
+            return []

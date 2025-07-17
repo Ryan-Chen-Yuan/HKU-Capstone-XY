@@ -80,6 +80,13 @@ class OptimizedSessionState(BaseModel):
     # 计划和分析
     plan: Dict[str, Any] = Field(default_factory=dict)
     pattern_analysis: Dict[str, Any] | None = None
+    
+    # 引导性询问
+    inquiry_result: Dict[str, Any] | None = None
+    need_guided_inquiry: bool = False
+    
+    # 模式分析
+    need_pattern_analysis: bool = False
 
     # 处理状态
     processing_stage: str = "init"
@@ -227,6 +234,8 @@ class OptimizedChatService:
         # 加载提示词模板
         self.prompt_template = self._load_prompt_template()
         self.planning_prompt = self._load_planning_prompt()
+        self.guided_inquiry_prompt = self._load_guided_inquiry_prompt()
+        self.pattern_analysis_prompt = self._load_pattern_analysis_prompt()
 
         # 创建线程池用于并行处理
         self.executor = ThreadPoolExecutor(max_workers=3)
@@ -284,6 +293,28 @@ class OptimizedChatService:
         with open(prompt_file, "r", encoding="utf-8") as f:
             return f.read()
 
+    def _load_guided_inquiry_prompt(self) -> str:
+        """加载引导性询问提示词模板"""
+        prompt_dir = os.path.join(os.path.dirname(__file__), "../prompt")
+        prompt_file = os.path.join(prompt_dir, "guided_inquiry_prompt.txt")
+
+        if not os.path.exists(prompt_file):
+            raise FileNotFoundError("Guided inquiry prompt file not found")
+
+        with open(prompt_file, "r", encoding="utf-8") as f:
+            return f.read()
+
+    def _load_pattern_analysis_prompt(self) -> str:
+        """加载行为模式分析提示词模板"""
+        prompt_dir = os.path.join(os.path.dirname(__file__), "../prompt")
+        prompt_file = os.path.join(prompt_dir, "pattern_analysis_prompt.txt")
+
+        if not os.path.exists(prompt_file):
+            raise FileNotFoundError("Pattern analysis prompt file not found")
+
+        with open(prompt_file, "r", encoding="utf-8") as f:
+            return f.read()
+
     def batch_get_user_data(self, user_id: str) -> Dict[str, Any]:
         """批量获取用户数据"""
         try:
@@ -310,6 +341,29 @@ class OptimizedChatService:
         except Exception as e:
             print(f"Error in batch_get_user_data: {e}")
             return {"profile": {}, "memory": [], "emotion_history": []}
+
+    def get_session_analysis_data(self, session_id: str) -> Dict[str, Any]:
+        """获取会话分析数据（引导性询问和模式分析结果）"""
+        try:
+            # 并行获取会话分析数据
+            futures = {
+                "inquiry_result": self.executor.submit(self.db.get_inquiry_result, session_id),
+                "pattern_analysis": self.executor.submit(self.db.get_pattern_analysis, session_id),
+                "inquiry_history": self.executor.submit(self.db.get_inquiry_history, session_id, 5),
+            }
+
+            results = {}
+            for key, future in futures.items():
+                try:
+                    results[key] = future.result(timeout=2)
+                except Exception as e:
+                    print(f"Error getting {key}: {e}")
+                    results[key] = {} if key != "inquiry_history" else []
+
+            return results
+        except Exception as e:
+            print(f"Error in get_session_analysis_data: {e}")
+            return {"inquiry_result": {}, "pattern_analysis": {}, "inquiry_history": []}
 
     def format_memory_context(self, memories: List[Dict[str, Any]]) -> str:
         """格式化记忆上下文"""
@@ -349,6 +403,176 @@ class OptimizedChatService:
                 return content, emotion
 
         return content, "neutral"
+
+    def _parse_inquiry_manually(self, text: str) -> Dict[str, Any] | None:
+        """手动解析引导性询问结果的备用方法"""
+        try:
+            # 从文本中提取关键信息
+            result = {
+                "need_inquiry": True,
+                "current_stage": "基础情况了解",
+                "missing_info": [],
+                "suggested_questions": [],
+                "information_completeness": 50,
+                "reason": "手动解析结果"
+            }
+            
+            # 查找信息完整度
+            completeness_match = re.search(r'信息完整[度性]?[：:]\s*(\d+)%?', text)
+            if completeness_match:
+                result["information_completeness"] = int(completeness_match.group(1))
+            
+            # 查找当前阶段
+            stage_match = re.search(r'当前阶段[：:]\s*([^\n]+)', text)
+            if stage_match:
+                result["current_stage"] = stage_match.group(1).strip()
+            
+            # 查找建议的问题
+            questions = re.findall(r'[12]\.?\s*([^？?]*[？?])', text)
+            if questions:
+                result["suggested_questions"] = [q.strip() for q in questions[:2]]
+            
+            # 判断是否需要询问
+            if result["information_completeness"] >= 80:
+                result["need_inquiry"] = False
+                result["current_stage"] = "信息充分"
+            
+            return result
+            
+        except Exception as e:
+            print(f"Manual parsing failed: {e}")
+            return None
+
+    def _parse_pattern_manually(self, text: str) -> Dict[str, Any] | None:
+        """手动解析行为模式分析结果的备用方法"""
+        try:
+            # 创建基础的模式分析结构
+            pattern_analysis = {
+                "pattern_analysis": {
+                    "trigger_patterns": {
+                        "common_triggers": [],
+                        "trigger_intensity": "中",
+                        "trigger_frequency": "经常"
+                    },
+                    "cognitive_patterns": {
+                        "thinking_styles": [],
+                        "cognitive_biases": [],
+                        "core_beliefs": []
+                    },
+                    "emotional_patterns": {
+                        "primary_emotions": [],
+                        "emotion_regulation": "部分有效",
+                        "emotion_duration": "中等"
+                    },
+                    "behavioral_patterns": {
+                        "coping_strategies": [],
+                        "behavior_effectiveness": "部分有效",
+                        "behavior_habits": []
+                    },
+                    "interpersonal_patterns": {
+                        "interaction_style": "被动",
+                        "support_utilization": "部分",
+                        "social_behaviors": []
+                    },
+                    "resource_patterns": {
+                        "personal_strengths": [],
+                        "successful_experiences": [],
+                        "growth_potential": []
+                    }
+                },
+                "pattern_summary": "基于对话内容进行的手动模式分析",
+                "key_insights": ["需要进一步分析", "模式识别中", "持续关注"],
+                "consultation_recommendations": ["保持开放沟通", "建立信任关系", "逐步深入了解"]
+            }
+            
+            return pattern_analysis
+            
+        except Exception as e:
+            print(f"Manual pattern parsing failed: {e}")
+            return None
+
+    def _assess_information_completeness(self, session_id: str, message: str, history: List[Dict[str, str]]) -> Dict[str, Any]:
+        """评估信息完整性并生成引导性询问"""
+        try:
+            # 准备消息历史用于分析
+            conversation_context = {
+                "current_message": message,
+                "history": history,
+                "session_id": session_id
+            }
+
+            messages = [
+                {"role": "system", "content": self.guided_inquiry_prompt},
+                {
+                    "role": "user",
+                    "content": f"请评估以下对话的信息完整性并决定是否需要引导性询问：\n\n{json.dumps(conversation_context, ensure_ascii=False)}"
+                }
+            ]
+
+            response = self.client.invoke(messages)
+            reply = response.content.strip()
+            
+            # 解析响应
+            print(f"Attempting to parse JSON with extract_json...")
+            inquiry_result = extract_json(reply)
+            print(f"Parse result: {inquiry_result}")
+            
+            if inquiry_result is None:
+                print(f"JSON parser failed. Raw reply length: {len(reply)}")
+                print(f"First 500 chars: {repr(reply[:500])}")
+                # 尝试手动解析关键信息
+                inquiry_result = self._parse_inquiry_manually(reply)
+                if inquiry_result is None:
+                    return {
+                        "need_inquiry": False,
+                        "current_stage": "信息充分",
+                        "information_completeness": 50,
+                        "reason": "分析失败，默认不进行询问"
+                    }
+
+            return inquiry_result
+
+        except Exception as e:
+            print(f"Error assessing information completeness: {str(e)}")
+            return {
+                "need_inquiry": False,
+                "current_stage": "信息充分",
+                "information_completeness": 50,
+                "reason": f"分析错误: {str(e)}"
+            }
+
+    def _analyze_behavior_pattern(self, session_id: str, collected_info: Dict[str, Any]) -> Dict[str, Any] | None:
+        """分析行为模式"""
+        try:
+            messages = [
+                {"role": "system", "content": self.pattern_analysis_prompt},
+                {
+                    "role": "user",
+                    "content": f"请基于以下收集到的信息分析客户的行为模式：\n\n{json.dumps(collected_info, ensure_ascii=False)}"
+                }
+            ]
+
+            response = self.client.invoke(messages)
+            reply = response.content.strip()
+            
+            # 解析响应
+            pattern_analysis = extract_json(reply)
+            if pattern_analysis is None:
+                print(f"Failed to extract JSON from pattern analysis: {reply}")
+                # 尝试手动解析模式分析信息
+                pattern_analysis = self._parse_pattern_manually(reply)
+                if pattern_analysis is None:
+                    return None
+
+            # 添加分析时间戳
+            pattern_analysis["analyzed_at"] = datetime.now().isoformat()
+            pattern_analysis["session_id"] = session_id
+
+            return pattern_analysis
+
+        except Exception as e:
+            print(f"Error analyzing behavior pattern: {str(e)}")
+            return None
 
 
 # 初始化服务
@@ -428,6 +652,18 @@ def build_context(state: OptimizedSessionState) -> OptimizedSessionState:
     state.memory_context = chat_service.format_memory_context(
         user_data.get("memory", [])
     )
+
+    # 获取会话分析数据（引导性询问和模式分析结果）
+    analysis_data = chat_service.get_session_analysis_data(state.session_id)
+    
+    # 如果存在之前的分析结果，加载到状态中
+    if analysis_data.get("inquiry_result"):
+        state.inquiry_result = analysis_data["inquiry_result"]
+        print(f"Loaded previous inquiry result: {state.inquiry_result.get('current_stage', 'N/A')}")
+    
+    if analysis_data.get("pattern_analysis"):
+        state.pattern_analysis = analysis_data["pattern_analysis"]
+        print(f"Loaded previous pattern analysis: {len(state.pattern_analysis.get('key_insights', []))} insights")
 
     state.processing_stage = "context_built"
     state.stage_timings["context_building"] = datetime.now().timestamp() - start_time
@@ -564,6 +800,22 @@ def generate_response(state: OptimizedSessionState) -> OptimizedSessionState:
         if state.memory_context:
             additional_context += f"\n\n相关记忆：{state.memory_context}"
 
+        # 添加引导性询问上下文
+        if state.inquiry_result:
+            additional_context += f"\n\n引导性询问评估：{json.dumps(state.inquiry_result, ensure_ascii=False)}"
+            
+            # 如果需要引导性询问，修改系统提示
+            if state.inquiry_result.get("need_inquiry", False):
+                suggested_questions = state.inquiry_result.get("suggested_questions", [])
+                if suggested_questions:
+                    additional_context += f"\n\n建议的引导性问题：{suggested_questions}"
+                    additional_context += "\n\n请在给出共情回应后，适当地提出1-2个引导性问题来了解更多信息。"
+
+        # 添加模式分析上下文
+        if state.pattern_analysis:
+            additional_context += f"\n\n行为模式分析已完成，关键洞察：{state.pattern_analysis.get('key_insights', [])}"
+            additional_context += f"\n\n咨询建议：{state.pattern_analysis.get('consultation_recommendations', [])}"
+
         if additional_context:
             messages[0]["content"] += additional_context
 
@@ -584,6 +836,118 @@ def generate_response(state: OptimizedSessionState) -> OptimizedSessionState:
     state.processing_stage = "response_generated"
     state.stage_timings["response_generation"] = datetime.now().timestamp() - start_time
 
+    return state
+
+
+def guided_inquiry_assessment(state: OptimizedSessionState) -> OptimizedSessionState:
+    """引导性询问评估节点"""
+    start_time = datetime.now().timestamp()
+    
+    # 判断是否需要进行引导性询问
+    if (chat_service.enable_guided_inquiry and 
+        len(state.history) <= 10 and 
+        not state.plan.get("inquiry_status", {}).get("pattern_analyzed", False)):
+        
+        state.need_guided_inquiry = True
+        
+        # 评估信息完整性
+        inquiry_result = chat_service._assess_information_completeness(
+            state.session_id, state.user_input, state.history
+        )
+        
+        state.inquiry_result = inquiry_result
+        
+        # 更新计划中的询问状态
+        if not state.plan.get("inquiry_status"):
+            state.plan["inquiry_status"] = {
+                "stage": "初始阶段",
+                "information_completeness": 0,
+                "collected_info": {},
+                "pattern_analyzed": False
+            }
+        
+        state.plan["inquiry_status"]["information_completeness"] = inquiry_result.get("information_completeness", 0)
+        state.plan["inquiry_status"]["stage"] = inquiry_result.get("current_stage", "初始阶段")
+        
+        # 保存引导性询问结果
+        chat_service.db.save_inquiry_result(state.session_id, inquiry_result)
+        
+        # 保存引导性询问历史记录
+        chat_service.db.save_inquiry_history(state.session_id, inquiry_result)
+        
+        print(f"Information completeness: {inquiry_result.get('information_completeness', 0)}%")
+        
+        # 判断是否需要进行模式分析
+        should_analyze = (
+            chat_service.enable_pattern_analysis and
+            (inquiry_result.get("information_completeness", 0) >= 80 or 
+             len(state.history) >= 4)  # 测试模式：4轮对话后强制分析
+        )
+        
+        if should_analyze and not state.plan["inquiry_status"]["pattern_analyzed"]:
+            state.need_pattern_analysis = True
+            
+    elif not chat_service.enable_guided_inquiry:
+        print("Guided inquiry is disabled by configuration.")
+        
+        # 即使引导性询问被禁用，仍然检查是否需要进行模式分析
+        if (chat_service.enable_pattern_analysis and
+            len(state.history) >= 4 and
+            not state.plan.get("inquiry_status", {}).get("pattern_analyzed", False)):
+            state.need_pattern_analysis = True
+    
+    state.processing_stage = "inquiry_assessed"
+    state.stage_timings["guided_inquiry"] = datetime.now().timestamp() - start_time
+    
+    return state
+
+
+def pattern_analysis(state: OptimizedSessionState) -> OptimizedSessionState:
+    """用户模式分析节点"""
+    start_time = datetime.now().timestamp()
+    
+    if state.need_pattern_analysis:
+        print("Triggering behavior pattern analysis...")
+        
+        # 收集所有对话信息用于模式分析
+        collected_info = {
+            "session_id": state.session_id,
+            "conversation_history": state.history + [{"role": "user", "content": state.user_input}],
+            "plan_context": state.plan.get("context", {}),
+            "inquiry_stage": state.inquiry_result.get("current_stage", "信息充分") if state.inquiry_result else "信息充分",
+            "inquiry_result": state.inquiry_result
+        }
+        
+        pattern_analysis_result = chat_service._analyze_behavior_pattern(state.session_id, collected_info)
+        
+        if pattern_analysis_result:
+            state.pattern_analysis = pattern_analysis_result
+            
+            # 更新计划状态
+            if not state.plan.get("inquiry_status"):
+                state.plan["inquiry_status"] = {
+                    "stage": "初始阶段",
+                    "information_completeness": 0,
+                    "collected_info": {},
+                    "pattern_analyzed": False
+                }
+            
+            state.plan["inquiry_status"]["pattern_analyzed"] = True
+            state.plan["inquiry_status"]["pattern_analysis_completed_at"] = datetime.now().isoformat()
+            
+            # 保存模式分析结果到数据库
+            chat_service.db.save_pattern_analysis(state.session_id, pattern_analysis_result)
+            
+            # 保存更新后的会话计划
+            chat_service.db.save_session_plan(state.session_id, state.plan)
+            
+            print("Behavior pattern analysis completed and saved.")
+        else:
+            print("Behavior pattern analysis failed.")
+    
+    state.processing_stage = "pattern_analyzed"
+    state.stage_timings["pattern_analysis"] = datetime.now().timestamp() - start_time
+    
     return state
 
 
@@ -689,6 +1053,18 @@ def should_update_plan(state: OptimizedSessionState) -> str:
     return "plan_update"
 
 
+def should_do_guided_inquiry(state: OptimizedSessionState) -> str:
+    """检查是否需要进行引导性询问"""
+    return "guided_inquiry"
+
+
+def should_do_pattern_analysis(state: OptimizedSessionState) -> str:
+    """检查是否需要进行模式分析"""
+    if state.need_pattern_analysis:
+        return "pattern_analysis_node"
+    return "generate_response"
+
+
 # === 构建 LangGraph ===
 
 # 创建工作流
@@ -700,6 +1076,8 @@ workflow.add_node("crisis_check", detect_crisis)
 workflow.add_node("context_build", build_context)
 workflow.add_node("search_info", search_information)
 workflow.add_node("plan_update", update_plan)
+workflow.add_node("guided_inquiry", guided_inquiry_assessment)
+workflow.add_node("pattern_analysis_node", pattern_analysis)
 workflow.add_node("generate_response", generate_response)
 workflow.add_node("postprocess_save", postprocess_and_save)
 
@@ -723,7 +1101,17 @@ workflow.add_conditional_edges(
     should_update_plan,
     {"plan_update": "plan_update", "generate_response": "generate_response"},
 )
-workflow.add_edge("plan_update", "generate_response")
+workflow.add_conditional_edges(
+    "plan_update",
+    should_do_guided_inquiry,
+    {"guided_inquiry": "guided_inquiry"},
+)
+workflow.add_conditional_edges(
+    "guided_inquiry",
+    should_do_pattern_analysis,
+    {"pattern_analysis_node": "pattern_analysis_node", "generate_response": "generate_response"},
+)
+workflow.add_edge("pattern_analysis_node", "generate_response")
 workflow.add_edge("generate_response", "postprocess_save")
 workflow.add_edge("postprocess_save", END)
 
@@ -778,6 +1166,8 @@ def optimized_chat(
             "crisis_reason": final_state.get("crisis_reason"),
             "search_results": final_state.get("search_results"),
             "pattern_analysis": final_state.get("pattern_analysis"),
+            "inquiry_result": final_state.get("inquiry_result"),
+            "plan": final_state.get("plan"),
         }
 
         # 添加性能监控信息
@@ -800,6 +1190,8 @@ def optimized_chat(
             "crisis_reason": None,
             "search_results": None,
             "pattern_analysis": None,
+            "inquiry_result": None,
+            "plan": None,
         }
 
 
