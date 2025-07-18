@@ -1,0 +1,16 @@
+[
+  {
+    "moodIntensity": 7,
+    "moodCategory": "焦虑",
+    "thinking": "我最近总是做噩梦，感觉好困扰。",
+    "scene": "夜晚睡眠时频繁做噩梦",
+    "created_at": "2025-07-18T20:03:41.439696"
+  },
+  {
+    "moodIntensity": 6,
+    "moodCategory": "忧郁",
+    "thinking": "最近噩梦很多，怎么办",
+    "scene": "在忙碌的生活中无法抽出时间读书",
+    "created_at": "2025-07-18T20:07:00.194009"
+  }
+]

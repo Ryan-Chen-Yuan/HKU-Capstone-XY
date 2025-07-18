@@ -81,13 +81,6 @@ class ChatLogger:
         if crisis_detected:
             log_info.append(f"   ⚠️  危机检测: 是")
         
-        # 搜索结果信息
-        if search_results:
-            search_summary = search_results[:80] + "..." if len(search_results) > 80 else search_results
-            log_info.append(f"   🔍 搜索结果: {search_summary}")
-        else:
-            log_info.append(f"   🔍 搜索结果: 未进行")
-        
         # 详细信息
         if self.detailed_logging_enabled:
             log_info.extend([
