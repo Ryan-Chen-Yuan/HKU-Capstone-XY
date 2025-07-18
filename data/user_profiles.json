@@ -5,9 +5,27 @@
     "updated_at": "2025-07-06T04:15:59.271674"
   },
   "user_1745993667103127": {
-    "last_interaction": "2025-07-18 20:06:27",
-    "recent_emotion_score": 0.7368421052631582,
+    "last_interaction": "2025-07-19 06:32:47",
+    "recent_emotion_score": 0.2089192028076372,
+    "recent_emotion": "sleepy",
+    "updated_at": "2025-07-19T06:32:47.932813"
+  },
+  "test_user_new_workflow": {
+    "last_interaction": "2025-07-19 04:18:13",
+    "recent_emotion_score": -0.12794810622667052,
     "recent_emotion": "happy",
-    "updated_at": "2025-07-18T20:06:27.221682"
+    "updated_at": "2025-07-19T04:18:13.060818"
+  },
+  "test_user_fix_verification": {
+    "last_interaction": "2025-07-19 05:19:31",
+    "recent_emotion_score": 0.4653278401276042,
+    "recent_emotion": "sleepy",
+    "updated_at": "2025-07-19T05:19:31.144036"
+  },
+  "test_user": {
+    "last_interaction": "2025-07-19 05:20:31",
+    "recent_emotion_score": 0.06250000000000022,
+    "recent_emotion": "happy",
+    "updated_at": "2025-07-19T05:20:31.082359"
   }
 }
