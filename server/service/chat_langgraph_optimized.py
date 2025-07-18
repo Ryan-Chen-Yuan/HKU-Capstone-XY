@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
 """
 心理咨询对话系统 - LangGraph优化版本
 
@@ -32,6 +30,7 @@ sys.path.append(str(Path(__file__).parent.parent))
 
 from datetime import datetime
 import re
+import logging
 import requests
 from dotenv import load_dotenv
 from langchain_core.messages import HumanMessage
@@ -43,12 +42,24 @@ from snownlp import SnowNLP
 from utils.extract_json import extract_json
 from dao.database import Database
 
+# RAG相关导入
+try:
+    from rag import RAGService, IntentRouter
+    from rag.langgraph_nodes import create_rag_node, create_web_search_node
+    from rag.core.rag_retriever import RerankedResult
+    RAG_AVAILABLE = True
+except ImportError:
+    RAG_AVAILABLE = False
+
 import warnings
 
 warnings.filterwarnings("ignore", category=UserWarning, module="pydantic")
 
 # 加载环境变量
 load_dotenv()
+
+# 创建logger
+logger = logging.getLogger(__name__)
 
 
 # 扩展的会话状态数据模型
@@ -76,6 +87,15 @@ class OptimizedSessionState(BaseModel):
     # 搜索相关
     need_search: bool = False
     search_results: str | None = None
+
+    # RAG相关
+    need_rag: bool = False
+    rag_context: str = ""
+    has_rag_context: bool = False
+    
+    # 意图识别
+    intent_result: Dict[str, Any] = Field(default_factory=dict)
+    route_decision: str = "direct_chat"  # direct_chat, rag, web_search
 
     # 计划和分析
     plan: Dict[str, Any] = Field(default_factory=dict)
@@ -177,6 +197,9 @@ class OptimizedSearchService:
     def _sync_search(self, query: str) -> str:
         """同步搜索实现"""
         try:
+            print(f"🔍 开始网络搜索，查询: {query}")
+            print(f"📊 搜索配置: 最大结果数={self.max_results}, 超时时间={self.timeout}秒")
+            
             r = requests.get(
                 "https://serpapi.com/search",
                 params={
@@ -191,16 +214,35 @@ class OptimizedSearchService:
             data = r.json()
 
             snippets = []
-            for item in data.get("organic_results", [])[: self.max_results]:
+            organic_results = data.get("organic_results", [])
+            
+            print(f"✅ 搜索API调用成功，获得 {len(organic_results)} 个原始结果")
+            
+            for i, item in enumerate(organic_results[:self.max_results], 1):
+                title = item.get('title', '').strip()
+                snippet = item.get('snippet', '').strip()
+                link = item.get('link', '').strip()
+            
+                
                 snippets.append(
-                    f"标题: {item.get('title', '').strip()}\n"
-                    f"摘要: {item.get('snippet', '').strip()}\n"
-                    f"链接: {item.get('link', '').strip()}"
+                    f"标题: {title}\n"
+                    f"摘要: {snippet}\n"
+                    f"链接: {link}"
                 )
 
-            return "\n\n".join(snippets) if snippets else "未找到相关搜索结果"
+            final_result = "\n\n".join(snippets) if snippets else "未找到相关搜索结果"
+            print(f"📋 最终搜索结果长度: {len(final_result)} 字符")
+            print("=" * 60)
+            print("完整搜索结果:")
+            print(final_result)
+            print("=" * 60)
+            
+            return final_result
         except Exception as e:
-            return f"搜索出错: {e}"
+            error_msg = f"搜索出错: {e}"
+            print(f"❌ {error_msg}")
+            return error_msg
+
 
 
 # 优化的聊天服务
@@ -230,6 +272,15 @@ class OptimizedChatService:
 
         # 创建线程池用于并行处理
         self.executor = ThreadPoolExecutor(max_workers=3)
+
+        # 初始化RAG相关组件
+        self.rag_service = None
+        self.intent_router = None
+        self.rag_node = None
+        self.web_search_node = None
+        
+        if RAG_AVAILABLE:
+            self._initialize_rag_components()
 
     def _load_prompt_template(self) -> str:
         """加载咨询师提示词模板"""
@@ -349,19 +400,107 @@ class OptimizedChatService:
                 return content, emotion
 
         return content, "neutral"
+    
+    def _initialize_rag_components(self):
+        """初始化RAG相关组件"""
+        try:
+            # 检查RAG是否启用
+            rag_enabled = os.environ.get("ENABLE_RAG", "true").lower() == "true"
+            if not rag_enabled:
+                print("   ℹ️ RAG功能已禁用")
+                return
+            
+            # 尝试从start.py模块获取RAG服务
+            start_module = sys.modules.get('start')
+            main_module = sys.modules.get('__main__')
+            
+            if start_module and hasattr(start_module, 'rag_service'):
+                self.rag_service = start_module.rag_service
+                print("   ✅ 使用全局RAG服务")
+                logger.info("从start模块获取RAG服务")
+            elif main_module and hasattr(main_module, 'rag_service'):
+                self.rag_service = main_module.rag_service
+                print("   ✅ 使用全局RAG服务")
+                logger.info("从main模块获取RAG服务")
+            else:
+                # 如果获取不到，创建新的RAG服务（这通常发生在测试环境中）
+                print("   ⚠️ 未找到全局RAG服务，创建新实例")
+                logger.warning("未找到全局RAG服务，创建新的实例")
+                from rag.core.rag_service import RAGCoreService
+                
+                knowledge_source_dir = str(Path(__file__).parent.parent / "knowledge_source")
+                data_dir = str(Path(__file__).parent.parent / "data")
+                embedding_model_path = str(Path(__file__).parent.parent / "qwen_embeddings")
+                rerank_model_path = str(Path(__file__).parent.parent / "qwen_reranker")
+                
+                self.rag_service = RAGCoreService(
+                    knowledge_source_dir=knowledge_source_dir,
+                    data_dir=data_dir,
+                    embedding_model_path=embedding_model_path,
+                    rerank_model_path=rerank_model_path,
+                    device="auto"
+                )
+                
+                # 初始化服务
+                success = self.rag_service.initialize()
+                if success:
+                    print("   ✅ 新RAG实例初始化成功")
+                else:
+                    print("   ❌ 新RAG实例初始化失败")
+            
+            # 初始化意图路由器
+            self.intent_router = IntentRouter(self.client)
+            
+            # 初始化web搜索节点
+            search_enabled = bool(os.getenv("SERPAPI_KEY"))
+            self.web_search_node = create_web_search_node(search_enabled)
+            if search_enabled:
+                print("   ✅ 网络搜索组件就绪")
+            else:
+                print("   ⚠️ 网络搜索组件未启用: 未设置SERPAPI_KEY")
+            
+        except Exception as e:
+            print(f"   ❌ RAG组件初始化失败: {e}")
+            logger.error(f"RAG组件初始化失败: {e}")
+            self.rag_service = None
+            self.intent_router = None
+            self.web_search_node = None
 
 
-# 初始化服务
-db = Database()
-crisis_detector = OptimizedCrisisDetector()
-search_service = OptimizedSearchService()
-chat_service = OptimizedChatService(db)
+# 全局服务实例（延迟初始化）
+_db_instance = None
+_crisis_detector_instance = None
+_search_service_instance = None
+_chat_service_instance = None
+
+def get_db_instance():
+    global _db_instance
+    if _db_instance is None:
+        _db_instance = Database()
+    return _db_instance
+
+def get_crisis_detector_instance():
+    global _crisis_detector_instance
+    if _crisis_detector_instance is None:
+        _crisis_detector_instance = OptimizedCrisisDetector()
+    return _crisis_detector_instance
+
+def get_search_service_instance():
+    global _search_service_instance
+    if _search_service_instance is None:
+        _search_service_instance = OptimizedSearchService()
+    return _search_service_instance
+
+def get_chat_service_instance():
+    global _chat_service_instance
+    if _chat_service_instance is None:
+        _chat_service_instance = OptimizedChatService(get_db_instance())
+    return _chat_service_instance
 
 # === LangGraph 节点函数 ===
 
-
+"""输入预处理节点"""
 def preprocess_input(state: OptimizedSessionState) -> OptimizedSessionState:
-    """输入预处理节点"""
     start_time = datetime.now().timestamp()
     state.total_start_time = start_time
 
@@ -371,6 +510,7 @@ def preprocess_input(state: OptimizedSessionState) -> OptimizedSessionState:
     state.processing_stage = "preprocessed"
 
     # 判断是否需要搜索
+    search_service = get_search_service_instance()
     state.need_search = search_service.should_search(state.user_input)
 
     # 记录时间
@@ -379,10 +519,11 @@ def preprocess_input(state: OptimizedSessionState) -> OptimizedSessionState:
     return state
 
 
+"""危机检测节点"""
 def detect_crisis(state: OptimizedSessionState) -> OptimizedSessionState:
-    """危机检测节点"""
     start_time = datetime.now().timestamp()
 
+    crisis_detector = get_crisis_detector_instance()
     crisis, reason, severity = crisis_detector.check(state.user_input)
     state.crisis_detected = crisis
     state.crisis_reason = reason
@@ -409,6 +550,7 @@ def detect_crisis(state: OptimizedSessionState) -> OptimizedSessionState:
 
         state.processing_stage = "crisis_handled"
         # 保存危机记录
+        chat_service = get_chat_service_instance()
         chat_service.db.save_long_term_memory(
             state.user_id, f"[CRISIS-{severity.upper()}] {state.user_input} – {reason}"
         )
@@ -417,11 +559,244 @@ def detect_crisis(state: OptimizedSessionState) -> OptimizedSessionState:
     return state
 
 
+"""意图识别节点"""
+def intent_analysis(state: OptimizedSessionState) -> OptimizedSessionState:
+    start_time = datetime.now().timestamp()
+    
+    try:
+        # 如果危机已检测到，跳过意图分析
+        if state.crisis_detected:
+            state.route_decision = "direct_chat"
+            state.need_rag = False
+            state.need_search = False
+            state.stage_timings["intent_analysis"] = datetime.now().timestamp() - start_time
+            return state
+        
+        # 获取聊天服务实例进行意图分析
+        chat_service = get_chat_service_instance()
+        
+        if chat_service and chat_service.intent_router:
+            # 构建对话上下文
+            context = ""
+            if state.history:
+                recent_messages = state.history[-3:]  # 取最近3轮对话
+                context = "\n".join([
+                    f"用户: {msg.get('user', '')}\n咨询师: {msg.get('assistant', '')}"
+                    for msg in recent_messages
+                ])
+            
+            # 执行意图识别
+            routing_decision = chat_service.intent_router.get_routing_decision(
+                state.user_input, context
+            )
+            
+            state.intent_result = routing_decision['intent']
+            state.route_decision = routing_decision['route']
+            
+            # 设置路由标志
+            if state.route_decision == "rag":
+                state.need_rag = True
+                state.need_search = False
+            elif state.route_decision == "web_search":
+                state.need_rag = False
+                state.need_search = True
+            else:
+                state.need_rag = False
+                state.need_search = False
+                
+            print(f"意图识别结果: 路由到 {state.route_decision}")
+            
+        else:
+            # 如果RAG不可用，使用简单的关键词判断
+            from rag.intent_router import SimpleIntentRouter
+            simple_router = SimpleIntentRouter()
+            
+            state.need_rag = simple_router.should_use_rag(state.user_input)
+            state.need_search = simple_router.should_use_web_search(state.user_input)
+            
+            if state.need_rag:
+                state.route_decision = "rag"
+            elif state.need_search:
+                state.route_decision = "web_search"
+            else:
+                state.route_decision = "direct_chat"
+                
+    except Exception as e:
+        print(f"意图识别失败: {e}")
+        state.route_decision = "direct_chat"
+        state.need_rag = False
+        state.need_search = False
+    
+    state.stage_timings["intent_analysis"] = datetime.now().timestamp() - start_time
+    return state
+
+
+"""RAG检索节点"""
+def rag_retrieval(state: OptimizedSessionState) -> OptimizedSessionState:
+    start_time = datetime.now().timestamp()
+    
+    try:
+        chat_service = get_chat_service_instance()
+        
+        if chat_service and chat_service.rag_service:
+            # 直接使用RAG服务进行检索，显示详细的粗排和精排过程
+            logger.info(f"开始RAG检索: {state.user_input[:50]}...")
+            print(f"🔍 开始RAG检索，查询: {state.user_input}")
+            
+            # 执行详细的RAG搜索，获取粗排和精排结果
+            retriever = chat_service.rag_service.retriever
+            
+            # 1. 粗排阶段：向量相似度搜索，获取更多候选
+            print("\n📊 第一阶段：粗排 (向量相似度搜索)")
+            vector_results = chat_service.rag_service.vector_store.search(
+                state.user_input, 
+                top_k=6  # 获取更多候选用于展示粗排效果
+            )
+            
+            if vector_results:
+                print(f"   ✅ 粗排完成，获得 {len(vector_results)} 个候选文档")
+                for i, result in enumerate(vector_results, 1):
+                    print(f"   [{i}] 相似度: {result.score:.4f} | 来源: {result.chunk.source_file}")
+                    print(f"       内容预览: {result.chunk.content[:80]}...")
+            else:
+                print("   ❌ 粗排未找到相关文档")
+                state.rag_context = ""
+                state.has_rag_context = False
+                return state
+            
+            # 2. 精排阶段：使用重排序模型
+            print(f"\n🎯 第二阶段：精排 (重排序模型)")
+            if retriever.rerank_enabled:
+                print("   ⚡ 使用Qwen重排序模型进行精排...")
+                reranked_results = retriever.search(
+                    state.user_input, 
+                    top_k=3, 
+                    use_rerank=True,
+                    rerank_top_k=len(vector_results)
+                )
+                
+                if reranked_results:
+                    print(f"   ✅ 精排完成，最终选择 {len(reranked_results)} 个最相关文档")
+                    for result in reranked_results:
+                        rerank_str = f"重排序: {result.rerank_score:.4f}" if result.rerank_score is not None else "未重排序"
+                        print(f"   [TOP{result.final_rank}] 相似度: {result.similarity_score:.4f} | {rerank_str}")
+                        print(f"           来源: {result.chunk.source_file}")
+                        print(f"           内容: {result.chunk.content[:60]}...")
+                else:
+                    print("   ❌ 精排处理失败")
+                    reranked_results = []
+            else:
+                print("   ⚠️ 重排序模型未启用，使用粗排结果")
+                reranked_results = []
+                for i, result in enumerate(vector_results[:3]):
+                    from rag.core.rag_retriever import RerankedResult
+                    reranked_results.append(RerankedResult(
+                        chunk=result.chunk,
+                        similarity_score=result.score,
+                        rerank_score=None,
+                        final_rank=i + 1
+                    ))
+            
+            # 3. 生成最终上下文
+            if reranked_results:
+                context_parts = []
+                for i, result in enumerate(reranked_results, 1):
+                    context_parts.append(f"[文档{i}] 来源: {result.chunk.source_file}")
+                    context_parts.append(result.chunk.content)
+                    context_parts.append("")  # 空行分隔
+                
+                context = "\n".join(context_parts)
+                
+                logger.info(f"RAG检索成功，获得 {len(context)} 字符的上下文")
+                state.rag_context = context
+                state.has_rag_context = True
+                print(f"\n📋 上下文生成完成: {len(context)} 字符")
+                
+                # 4. 显示发送给模型的完整prompt
+                print(f"\n💬 发送给模型的完整prompt:")
+                print("=" * 80)
+                
+                # 构建完整的prompt（模拟实际发送给模型的内容）
+                system_context = "你是一个专业的心理健康助手，基于提供的参考文档来回答用户问题。"
+                full_prompt = f"""系统角色: {system_context}
+
+参考文档:
+{context}
+
+用户问题: {state.user_input}
+
+请基于上述参考文档，为用户提供专业、准确的回答。如果参考文档中没有相关信息，请诚实说明。"""
+                
+                print(full_prompt)
+                print("=" * 80)
+                
+            else:
+                logger.warning("RAG检索未找到相关内容")
+                state.rag_context = ""
+                state.has_rag_context = False
+                print("RAG检索未找到相关内容")
+        else:
+            print("RAG服务不可用")
+            state.rag_context = ""
+            state.has_rag_context = False
+            
+    except Exception as e:
+        print(f"RAG检索失败: {e}")
+        logger.error(f"RAG检索失败: {e}")
+        state.rag_context = ""
+        state.has_rag_context = False
+    
+    state.stage_timings["rag_retrieval"] = datetime.now().timestamp() - start_time
+    return state
+
+
+"""网络搜索检索节点"""
+def web_search_retrieval(state: OptimizedSessionState) -> OptimizedSessionState:
+    """网络搜索检索节点"""
+    start_time = datetime.now().timestamp()
+    
+    try:
+        chat_service = get_chat_service_instance()
+        search_service = get_search_service_instance()
+        
+        print(f"🌐 进入网络搜索节点，查询: {state.user_input}")
+        
+        # 首先尝试使用全局搜索服务
+        if search_service and search_service.api_key:
+            print("✅ 使用全局搜索服务进行网络搜索")
+            # 使用同步搜索
+            search_results = search_service._sync_search(state.user_input)
+            state.search_results = search_results
+            print(f"🎯 网络搜索完成，结果长度: {len(search_results)} 字符")
+        elif chat_service and chat_service.web_search_node:
+            print("🔄 使用备用网络搜索节点")
+            # 使用网络搜索节点
+            state_dict = {
+                "user_input": state.user_input,
+                "need_web_search": True,
+                "intent_result": {}
+            }
+            result_dict = chat_service.web_search_node(state_dict)
+            state.search_results = result_dict.get("search_results", "")
+            print(f"🎯 网络搜索完成，结果长度: {len(state.search_results or '')} 字符")
+        else:
+            print("❌ 网络搜索服务不可用: 未设置SERPAPI_KEY或搜索服务未初始化")
+            state.search_results = "⚠️ [搜索功能未启用: 未设置 SERPAPI_KEY]"
+            
+    except Exception as e:
+        print(f"❌ 网络搜索失败: {e}")
+        state.search_results = f"搜索出错: {e}"
+    
+    state.stage_timings["web_search"] = datetime.now().timestamp() - start_time
+    return state
+
+
+"""上下文构建节点"""
 def build_context(state: OptimizedSessionState) -> OptimizedSessionState:
-    """上下文构建节点"""
     start_time = datetime.now().timestamp()
 
     # 批量获取用户数据
+    chat_service = get_chat_service_instance()
     user_data = chat_service.batch_get_user_data(state.user_id)
 
     state.user_profile = user_data.get("profile", {})
@@ -435,25 +810,8 @@ def build_context(state: OptimizedSessionState) -> OptimizedSessionState:
     return state
 
 
-def search_information(state: OptimizedSessionState) -> OptimizedSessionState:
-    """搜索信息节点（同步版本）"""
-    start_time = datetime.now().timestamp()
-
-    if state.need_search and not state.skip_search:
-        try:
-            search_results = search_service._sync_search(state.user_input)
-            state.search_results = search_results
-        except Exception as e:
-            state.search_results = f"搜索功能暂时不可用: {e}"
-
-    state.processing_stage = "search_completed"
-    state.stage_timings["search"] = datetime.now().timestamp() - start_time
-
-    return state
-
-
+"""更新对话计划节点"""
 def update_plan(state: OptimizedSessionState) -> OptimizedSessionState:
-    """更新对话计划节点"""
     start_time = datetime.now().timestamp()
 
     if state.skip_plan_update:
@@ -462,6 +820,7 @@ def update_plan(state: OptimizedSessionState) -> OptimizedSessionState:
 
     try:
         # 获取或创建计划
+        chat_service = get_chat_service_instance()
         plan = chat_service.db.get_session_plan(state.session_id)
         if not plan:
             plan = {
@@ -532,12 +891,13 @@ def update_plan(state: OptimizedSessionState) -> OptimizedSessionState:
     return state
 
 
+"""生成AI响应节点"""
 def generate_response(state: OptimizedSessionState) -> OptimizedSessionState:
-    """生成AI响应节点"""
     start_time = datetime.now().timestamp()
 
     try:
         # 格式化历史记录
+        chat_service = get_chat_service_instance()
         messages = [{"role": "system", "content": chat_service.prompt_template}]
 
         # 添加历史对话
@@ -552,6 +912,10 @@ def generate_response(state: OptimizedSessionState) -> OptimizedSessionState:
 
         # 准备附加上下文
         additional_context = ""
+
+        # 添加RAG上下文
+        if state.has_rag_context and state.rag_context:
+            additional_context += f"\n\n专业知识参考：{state.rag_context}"
 
         if state.plan:
             additional_context += (
@@ -587,11 +951,14 @@ def generate_response(state: OptimizedSessionState) -> OptimizedSessionState:
     return state
 
 
+"""后处理和数据保存节点"""
 def postprocess_and_save(state: OptimizedSessionState) -> OptimizedSessionState:
-    """后处理和数据保存节点"""
     start_time = datetime.now().timestamp()
 
     try:
+        # 获取chat_service实例
+        chat_service = get_chat_service_instance()
+        
         # 计算情绪评分
         emotion_score = SnowNLP(state.user_input).sentiments * 2 - 1
 
@@ -669,14 +1036,37 @@ def should_skip_to_response(state: OptimizedSessionState) -> str:
     """检查是否应该跳过某些步骤直接生成响应"""
     if state.crisis_detected:
         return "postprocess_save"
+    return "intent_analysis"
+
+
+def route_after_intent(state: OptimizedSessionState) -> str:
+    """根据意图识别结果进行路由"""
+    if state.route_decision == "rag":
+        return "rag_retrieval"
+    elif state.route_decision == "web_search":
+        return "web_search"
+    else:
+        return "context_build"
+
+
+def should_update_plan_after_context(state: OptimizedSessionState) -> str:
+    """上下文构建后检查是否需要更新计划"""
+    # 简单的启发式：如果是问候语或简单回复，跳过计划更新
+    simple_inputs = {"你好", "谢谢", "好的", "嗯", "是的", "不是"}
+    if state.user_input in simple_inputs:
+        state.skip_plan_update = True
+        return "generate_response"
+    return "plan_update"
+
+
+def continue_after_rag(state: OptimizedSessionState) -> str:
+    """RAG检索后的路由"""
     return "context_build"
 
 
-def should_search(state: OptimizedSessionState) -> str:
-    """检查是否需要搜索"""
-    if state.need_search:
-        return "search_info"
-    return "plan_update"
+def continue_after_web_search(state: OptimizedSessionState) -> str:
+    """网络搜索后的路由"""
+    return "context_build"
 
 
 def should_update_plan(state: OptimizedSessionState) -> str:
@@ -697,8 +1087,10 @@ workflow = StateGraph(OptimizedSessionState)
 # 添加节点
 workflow.add_node("preprocess", preprocess_input)
 workflow.add_node("crisis_check", detect_crisis)
+workflow.add_node("intent_analysis", intent_analysis)
 workflow.add_node("context_build", build_context)
-workflow.add_node("search_info", search_information)
+workflow.add_node("rag_retrieval", rag_retrieval)
+workflow.add_node("web_search", web_search_retrieval)
 workflow.add_node("plan_update", update_plan)
 workflow.add_node("generate_response", generate_response)
 workflow.add_node("postprocess_save", postprocess_and_save)
@@ -711,15 +1103,29 @@ workflow.add_edge("preprocess", "crisis_check")
 workflow.add_conditional_edges(
     "crisis_check",
     should_skip_to_response,
-    {"context_build": "context_build", "postprocess_save": "postprocess_save"},
+    {"intent_analysis": "intent_analysis", "postprocess_save": "postprocess_save"},
+)
+workflow.add_conditional_edges(
+    "intent_analysis",
+    route_after_intent,
+    {
+        "rag_retrieval": "rag_retrieval",
+        "web_search": "web_search", 
+        "context_build": "context_build"
+    },
+)
+workflow.add_conditional_edges(
+    "rag_retrieval",
+    continue_after_rag,
+    {"context_build": "context_build"},
+)
+workflow.add_conditional_edges(
+    "web_search",
+    continue_after_web_search,
+    {"context_build": "context_build"},
 )
 workflow.add_conditional_edges(
     "context_build",
-    should_search,
-    {"search_info": "search_info", "plan_update": "plan_update"},
-)
-workflow.add_conditional_edges(
-    "search_info",
     should_update_plan,
     {"plan_update": "plan_update", "generate_response": "generate_response"},
 )
@@ -729,6 +1135,30 @@ workflow.add_edge("postprocess_save", END)
 
 # 编译工作流
 optimized_chat_app = workflow.compile()
+
+# === 系统初始化函数 ===
+
+def initialize_system():
+    """
+    系统启动时初始化所有组件
+    注意：这个函数现在主要用于测试和独立运行，正常启动时由start.py管理
+    """
+    print("🔧 正在初始化系统组件...")
+    
+    # 预先初始化所有服务实例，避免在对话过程中初始化
+    print("   📊 初始化数据库服务...")
+    get_db_instance()
+    
+    print("   🚨 初始化危机检测器...")
+    get_crisis_detector_instance()
+    
+    print("   🔍 初始化搜索服务...")
+    get_search_service_instance()
+    
+    print("   💬 初始化聊天服务...")
+    get_chat_service_instance()
+    
+    print("✅ 系统组件初始化完成")
 
 # === 主要接口函数 ===
 
@@ -778,6 +1208,10 @@ def optimized_chat(
             "crisis_reason": final_state.get("crisis_reason"),
             "search_results": final_state.get("search_results"),
             "pattern_analysis": final_state.get("pattern_analysis"),
+            "rag_context": final_state.get("rag_context"),
+            "has_rag_context": final_state.get("has_rag_context", False),
+            "intent_result": final_state.get("intent_result", {}),
+            "route_decision": final_state.get("route_decision", "direct_chat"),
         }
 
         # 添加性能监控信息
@@ -873,3 +1307,23 @@ if __name__ == "__main__":
                         print(f"  {stage}: {time_spent:.2f}s")
 
             history = result["history"]
+
+
+# === 模块级别的初始化 ===
+# 当模块被导入时，预先初始化基础组件，但不初始化RAG相关组件
+# RAG组件由start.py统一管理
+if __name__ != "__main__":
+    # 只在模块被导入时初始化基础组件，不在直接运行时初始化（避免在测试时重复初始化）
+    print("🔧 正在初始化基础对话组件...")
+    
+    # 只预先初始化基础服务实例，不包括聊天服务（避免RAG重复初始化）
+    print("   📊 初始化数据库服务...")
+    get_db_instance()
+    
+    print("   🚨 初始化危机检测器...")
+    get_crisis_detector_instance()
+    
+    print("   🔍 初始化搜索服务...")
+    get_search_service_instance()
+    
+    print("✅ 基础对话组件初始化完成")

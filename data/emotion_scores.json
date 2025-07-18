@@ -84,5 +84,25 @@
       "emotion_category": "neutral",
       "timestamp": "2025-07-06T04:15:59.272163"
     }
+  ],
+  "user_1745993667103127": [
+    {
+      "session_id": "393edc86-7c0e-44bd-beed-2cb62ccd55d3",
+      "emotion_score": 0.37415925082953905,
+      "emotion_category": "sleepy",
+      "timestamp": "2025-07-18T19:56:24.264517"
+    },
+    {
+      "session_id": "393edc86-7c0e-44bd-beed-2cb62ccd55d3",
+      "emotion_score": -0.033259761707713054,
+      "emotion_category": "sleepy",
+      "timestamp": "2025-07-18T20:05:10.826727"
+    },
+    {
+      "session_id": "393edc86-7c0e-44bd-beed-2cb62ccd55d3",
+      "emotion_score": 0.7368421052631582,
+      "emotion_category": "happy",
+      "timestamp": "2025-07-18T20:06:27.220628"
+    }
   ]
 }
