@@ -1,4 +1,8 @@
 \documentclass[12pt,a4paper]{article}
+% \usepackage[UTF8]{ctex}  % 自动加载xeCJK或LuaLaTeX下的支持
+\usepackage{multirow}
+\usepackage{bbm}
+\newcommand{\xmark}{$\mathbbm{x}$}
 
 % =============================================================================
 % PACKAGES AND SETTINGS
@@ -61,7 +65,7 @@
   {\normalfont\large\bfseries}{\thesubsection}{1em}{}
 \titleformat{\subsubsection}
   {\normalfont\large\bfseries}{\thesubsubsection}{1em}{}
-
+\titleformat{\paragraph} {\normalfont\large\bfseries}{\thesubsubsection}{1em}{}
 % Configure page headers and footers
 \pagestyle{fancy}
 \fancyhf{}
@@ -71,7 +75,7 @@
 
 % Title and author information
 \title{Introspection: Empowering Mental Health Support with Agentic AI}
-\author{Chen Yuan (3036383185) \\ Xu Hanlin (3036410665) \\ Yu Yitao (3036380846) \\ Su Yingcheng (3036380846)}
+\author{Chen Yuan (3036383185) \\ Xu Hanlin (3036410665) \\ Yu Yitao (3036380846) \\ Su Yingcheng (3036408856)}
 \date{July 18, 2025}
 
 % =============================================================================
@@ -79,6 +83,7 @@
 % =============================================================================
 
 \begin{document}
+
 
 % Front matter
 \input{cover.tex}
@@ -108,6 +113,6 @@
 \input{appendices/contributions.tex}
 \input{appendices/software.tex}
 \input{appendices/manual.tex}
-\input{appendices/datasheets.tex}
+% \input{appendices/datasheets.tex}
 
 \end{document} 
