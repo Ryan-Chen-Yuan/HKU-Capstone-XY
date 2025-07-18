@@ -74,13 +74,47 @@ class MoodService:
 
             # Parse the response
             result = response.choices[0].message.content.strip()
-            return json.loads(result)
+            
+            # 尝试提取JSON内容（可能被包含在代码块中）
+            if "```json" in result:
+                # 提取JSON代码块
+                json_start = result.find("```json") + 7
+                json_end = result.find("```", json_start)
+                if json_end != -1:
+                    result = result[json_start:json_end].strip()
+            elif "```" in result:
+                # 提取普通代码块
+                json_start = result.find("```") + 3
+                json_end = result.find("```", json_start)
+                if json_end != -1:
+                    result = result[json_start:json_end].strip()
+            
+            # 尝试解析JSON
+            try:
+                return json.loads(result)
+            except json.JSONDecodeError:
+                # 如果JSON解析失败，尝试修复常见问题
+                print(f"JSON解析失败，原始响应: {result}")
+                
+                # 尝试查找JSON对象的开始和结束
+                json_start = result.find("{")
+                json_end = result.rfind("}")
+                
+                if json_start != -1 and json_end != -1 and json_end > json_start:
+                    json_content = result[json_start:json_end+1]
+                    try:
+                        return json.loads(json_content)
+                    except json.JSONDecodeError:
+                        pass
+                
+                # 如果还是失败，返回默认值
+                raise Exception(f"无法解析AI响应为JSON格式: {result}")
 
         except Exception as e:
             print(f"Error analyzing mood: {str(e)}")
             return {
                 "moodIntensity": 0.0,
                 "moodCategory": "neutral",
-                "thinking": "Balanced",
-                "scene": "General",
+                "thinking": "情绪分析暂时不可用",
+                "scene": "一般场景",
             }

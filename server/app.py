@@ -13,7 +13,9 @@ from collections import Counter
 # 加载环境变量
 from load_env import load_environment
 
-load_environment()
+# 只有在直接运行此文件时才加载环境变量
+if __name__ == "__main__":
+    load_environment()
 
 from service.mood_service import MoodService
 from service.event_service import EventService
