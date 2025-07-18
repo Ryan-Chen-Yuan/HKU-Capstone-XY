@@ -1,42 +1,83 @@
-\section{Theoretical/Algorithmic/Experimental Results}
+\section{Experimental Results}
 \label{sec:results}
 
-\subsection{AI Model Performance}
+In this section, we present a qualitative evaluation of our LLM-based psychological counseling agent and its WeChat Mini Program frontend. While the FAITA-MENTAL framework\cite{golden2024describing} provides a comprehensive set of evaluation domains for LLMs in mental health applications, it does not offer a ready-to-use dataset or benchmark for direct quantitative assessment. Moreover, the primary scope of our project is to design a robust workflow for applying LLMs in psychological counseling, rather than optimizing for benchmark performance. As LLM technology advances, our agent can naturally benefit from future improvements.
 
-The Meta-Llama-3.1-8B-Instruct model demonstrated exceptional performance in emotional support tasks, achieving significant success across multiple evaluation dimensions. The model's response quality assessment revealed that 85\% of generated responses were rated as empathetic and appropriate by independent evaluators with backgrounds in psychology and mental health counseling. This high performance level indicates the model's capability to generate responses that meet professional standards for emotional support while maintaining appropriate therapeutic boundaries.
+\subsection{Settings}
 
-Context understanding capabilities were evaluated through comprehensive testing of conversation continuity and coherence. The model achieved 92\% accuracy in maintaining conversation context across extended interactions, demonstrating sophisticated understanding of user emotional states and conversation history. This high accuracy rate enables the system to provide increasingly personalized support as user interactions progress, creating a more effective therapeutic relationship.
+Our system consists of a backend agent implemented with a modular, workflow-driven architecture (see Section~\ref{sec:methodology} Methodology), and a WeChat Mini Program as the user interface. The agent leverages large language models(LLM configuration see Appendix~\ref{sec:manual} Manual) for dialogue, mood analysis, and event extraction.
 
-Safety compliance represents a critical aspect of mental health AI systems, and the model demonstrated 100\% adherence to safety protocols for crisis situations. The safety evaluation included testing with various crisis scenarios including self-harm ideation, severe depression indicators, and emergency mental health situations. The model consistently identified these situations and implemented appropriate escalation procedures, ensuring user safety while maintaining privacy and dignity.
+\subsection{FAITA-MENTAL Evaluation Framework}
 
-\subsection{User Engagement Metrics}
+The FAITA-MENTAL framework defines 12 key domains for evaluating LLM-based mental health system. Table~\ref{tab:faita-mental} summarizes the coverage of each domain in our system, where \checkmark~indicates the domain is addressed, and \xmark~indicates it is not fully covered.
 
-Preliminary testing with a sample of 50 users revealed promising engagement patterns that indicate strong user acceptance and system effectiveness. The daily active user rate of 78\% demonstrates that users find significant value in the system's support capabilities, with the majority of users returning within 24 hours of their initial interaction. This high retention rate suggests that the system successfully addresses user needs and provides meaningful mental health support.
+% Table: FAITA-MENTAL Domain Coverage
 
-Session duration analysis revealed an average conversation length of 15 minutes, indicating substantial user engagement with the AI assistant. This duration suggests that users are willing to invest significant time in mental health conversations, demonstrating trust in the system's capabilities and comfort with the conversational interface. The session duration patterns also indicate that users are engaging in meaningful therapeutic conversations rather than brief interactions.
+\begin{table}[h]
+\centering
+\begin{tabular}{lcc}
+\toprule
+\textbf{FAITA-MENTAL Domain} & \textbf{Introspection Agent} \\
+\midrule
+Proposed goal & \checkmark \\
+Evidence-based content & \checkmark \\
+Retention & \checkmark \\
+Personalization and evolution & \checkmark \\
+Interactivity quality & \checkmark \\
+Feedback mechanism and support & \checkmark \\
+User autonomy, data protection, and privacy & \xmark \\
+User empowerment & \xmark \\
+Cultural sensitivity and inclusivity & \xmark \\
+Bias and fairness & \checkmark \\
+Transparency & \checkmark \\
+Safety and crisis management & \checkmark \\
 
-Feature adoption rates provide insights into user preferences and system usability. The assessment completion rate of 82\% for monthly psychological evaluations indicates strong user engagement with the system's assessment capabilities. This high completion rate suggests that users find value in the psychological assessment features and are willing to participate in regular mental health monitoring.
+\bottomrule
+\end{tabular}
+\caption{Coverage of FAITA-MENTAL domains in our system (\checkmark: addressed, \xmark: not fully addressed).}
+\label{tab:faita-mental}
+\end{table}
 
-\subsection{Emotional Support Effectiveness}
+\subsection{Qualitative Analysis}
 
-Analysis of user feedback and conversation patterns revealed significant positive outcomes in emotional support effectiveness. The emotional improvement rate of 70\% indicates that the majority of users reported feeling better after interactions with the AI assistant. This improvement rate demonstrates the system's capability to provide genuine emotional support and therapeutic benefit to users experiencing mental health challenges.
+Based on the FAITA-MENTAL framework's 12 key domains, we provide a qualitative analysis of how the Introspection Agent addresses each area. For domains that are covered (\checkmark), we describe the implementation and strengths; for those not fully addressed (\xmark), we briefly discuss the limitations.
 
-Self-reflection engagement analysis revealed that 85\% of users engaged in deeper self-reflection through AI guidance. This high engagement rate indicates that the system successfully facilitates introspective processes that are essential for mental health improvement. The self-reflection capabilities enable users to gain deeper understanding of their emotional states and behavioral patterns, supporting long-term mental health progress.
+\paragraph{Addressed Domains (\checkmark)}
+\begin{itemize}
+    \item \textbf{Proposed goal:} The system is designed with a clear, specific, and measurable goal: to provide non-clinical, evidence-based psychological support and self-reflection tools for users, especially adolescents, via a WeChat Mini Program.
+    \item \textbf{Evidence-based content:} Core features such as mood analysis and event extraction are grounded in established psychological theories (e.g., Cognitive Behavioral Therapy). The agent structures user input into interpretable psychological constructs, making evidence-based content explicit and actionable.
+    \item \textbf{Retention:} The current system include medal mechanisms to track and promote long-term user engagement.
+    \item \textbf{Personalization and evolution:} The agent maintains user profiles and conversation history, enabling personalized responses and adaptive dialogue strategies. User feedback on mood and event extraction results is incorporated to refine future interactions, supporting continuous improvement.
+    \item \textbf{Interactivity quality:} The system delivers natural, contextually appropriate, and supportive interactions. Dialogue flows are guided by a planning module that ensures responses are empathetic and relevant to the user's current state.
+    \item \textbf{Feedback mechanism and support:} Users can provide direct feedback on mood and event analysis results, including editing, confirming, or rejecting system-generated content. This human-in-the-loop mechanism ensures that the final records reflect the user's own understanding and preferences.
+    \item \textbf{Bias and fairness:} The agent is designed to minimize bias by using neutral, supportive language and by allowing users to review and correct analytical outputs. The system does not make clinical diagnoses, reducing the risk of inappropriate or biased advice.
+    \item \textbf{Transparency:} The development process, system architecture, and data flow are documented in the project report. Users are informed about the agent's capabilities and limitations, and all analytical outputs are visible and editable.
+    \item \textbf{Safety and crisis management:} A dedicated crisis detection module monitors user input for high-risk language. When a crisis is detected, the agent immediately provides psychological hotline information and logs the event, following best practices for user safety.
+\end{itemize}
 
-The system's ability to facilitate meaningful therapeutic conversations was evidenced by user feedback indicating increased emotional awareness and improved coping strategies. Users reported that the AI assistant helped them identify emotional patterns, develop new perspectives on challenging situations, and implement effective coping mechanisms. These outcomes demonstrate the system's effectiveness in providing evidence-based psychological support.
+\paragraph{Not Fully Addressed Domains (\xmark)}
+\begin{itemize}
+    \item \textbf{User autonomy, data protection, and privacy:} Advanced privacy features such as end-to-end encryption, secure data storage, and granular user control over data (e.g., export, deletion, consent management) are not yet implemented. User data is stored locally without robust security guarantees.
+    \item \textbf{User empowerment:} While the agent provides supportive feedback, it does not actively promote user self-efficacy or offer tools for users to independently manage their mental health beyond the conversational context.
+    \item \textbf{Cultural sensitivity and inclusivity:} The system is primarily designed for Chinese-speaking users and does not explicitly address broader cultural diversity or inclusivity in its interactions or content.
+\end{itemize}
 
-\subsection{Technical Performance}
+\begin{figure}[h!]
+  \includegraphics[width=0.48\linewidth]{figs/evidence-based content-and-feedback.jpg.jpg} \hfill
+  \includegraphics[width=0.48\linewidth]{figs/Crisis-management.jpg}
+  \caption{
+(a) Evidence-based content and feedback: The system presents user input in a structured manner as emotion intensity (8/10), type (depression), thinking content ("feeling powerless to change"), and triggering scenario ("feeling pressure at work"), with confirmation/editing buttons provided at the bottom; 
+(b) Crisis management: After a user expresses work pressure ("forced to work overtime every day"), the AI helps the user perceive their emotions through questioning, and automatically provides psychological assistance hotline 400-161-9995 when it detects medium risk words such as "despair"
+}
+  \label{fig:illustrative-examples}
+\end{figure}
 
-System performance metrics consistently met or exceeded design requirements across all evaluation dimensions. The average response generation time of 2.3 seconds demonstrates the system's capability to provide near-real-time support while maintaining high-quality responses. This response time enables natural conversation flow while ensuring that users receive timely support when needed.
+\paragraph{Illustrative Examples}
 
-System uptime of 99.5\% during the testing period indicates robust technical performance and reliable service delivery. This high availability rate ensures that users can access mental health support whenever needed, which is particularly important for individuals experiencing mental health challenges who may require immediate assistance. The system's reliability contributes significantly to user trust and engagement.
+\begin{itemize}
+    \item \textbf{Evidence-based content and feedback:} As figure~\ref{fig:illustrative-examples}(a) illustrated, when a user expresses distress, the agent performs mood analysis and event extraction, presenting results as structured cards (e.g., mood intensity, category, cognitive appraisal, and triggering event). The user can edit or confirm these results, ensuring that the final record is both evidence-based and user-validated.
+    \item \textbf{Crisis management:} As figure~\ref{fig:illustrative-examples}(b) illustrated, If the user input contains high-risk keywords (e.g., expressions of suicidal ideation), the agent immediately outputs a crisis intervention message and provides a psychological help hotline, in accordance with safety protocols.
+\end{itemize}
 
-Data security evaluation revealed zero data breaches or privacy violations during the testing period. This perfect security record demonstrates the effectiveness of the system's privacy protection measures and data management protocols. The security performance is particularly important for mental health applications where user privacy and confidentiality are paramount concerns.
+Overall, the Introspection Agent demonstrates strong coverage of core FAITA-MENTAL domains related to evidence-based practice, personalization, interactivity, transparency, and safety. However, future work is needed to enhance user retention, autonomy, privacy, empowerment, and inclusivity.
 
-Scalability testing demonstrated the system's capability to handle 100 concurrent users without performance degradation. This scalability performance indicates that the system can support significant user populations while maintaining response quality and system reliability. The scalability capabilities enable the system to serve diverse user populations and accommodate growth in user demand.
-
-\subsection{Comparative Analysis}
-
-The system's performance was compared against established benchmarks in mental health support and AI conversational systems. The emotional support effectiveness rates exceeded those reported in similar AI mental health applications, while the technical performance metrics met or exceeded industry standards for conversational AI systems. The combination of high user engagement, strong emotional support effectiveness, and robust technical performance positions the system as a viable solution for addressing mental health support gaps.
-
-The evaluation results demonstrate that the Introspection system successfully addresses the identified challenges in mental health support provision. The high user engagement rates, strong emotional support effectiveness, and robust technical performance indicate that the system provides meaningful value to users while maintaining appropriate therapeutic standards. These results support the system's potential for widespread deployment and its ability to complement traditional mental health services. 
