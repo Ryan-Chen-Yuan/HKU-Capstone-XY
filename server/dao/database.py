@@ -885,3 +885,114 @@ class Database:
         except Exception as e:
             print(f"Error getting inquiry history: {str(e)}")
             return []
+
+    def save_analysis_report(self, user_id, report_data):
+        """保存分析报告
+
+        Args:
+            user_id: 用户ID
+            report_data: 分析报告数据
+        """
+        try:
+            reports_dir = os.path.join(self.data_dir, "analysis_reports")
+            os.makedirs(reports_dir, exist_ok=True)
+
+            # 使用时间戳作为文件名的一部分
+            timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+            report_file = os.path.join(reports_dir, f"{user_id}_{timestamp}.json")
+
+            # 添加保存时间戳
+            report_data["saved_at"] = datetime.now().isoformat()
+
+            with self.lock:
+                with open(report_file, "w", encoding="utf-8") as f:
+                    json.dump(report_data, f, ensure_ascii=False, indent=2)
+
+        except Exception as e:
+            print(f"Error saving analysis report: {str(e)}")
+
+    def get_latest_analysis_report(self, user_id):
+        """获取用户最新的分析报告
+
+        Args:
+            user_id: 用户ID
+
+        Returns:
+            dict: 最新的分析报告数据
+        """
+        try:
+            reports_dir = os.path.join(self.data_dir, "analysis_reports")
+            
+            if not os.path.exists(reports_dir):
+                return {}
+
+            # 获取用户的所有报告文件
+            user_reports = []
+            for filename in os.listdir(reports_dir):
+                if filename.startswith(f"{user_id}_") and filename.endswith(".json"):
+                    user_reports.append(filename)
+
+            if not user_reports:
+                return {}
+
+            # 按时间戳排序，获取最新的
+            user_reports.sort(reverse=True)
+            latest_report_file = os.path.join(reports_dir, user_reports[0])
+
+            with self.lock:
+                with open(latest_report_file, "r", encoding="utf-8") as f:
+                    return json.load(f)
+
+        except Exception as e:
+            print(f"Error getting latest analysis report: {str(e)}")
+            return {}
+
+    def get_analysis_reports_history(self, user_id, limit=None):
+        """获取用户的分析报告历史
+
+        Args:
+            user_id: 用户ID
+            limit: 获取的报告数量限制
+
+        Returns:
+            list: 分析报告历史列表
+        """
+        try:
+            reports_dir = os.path.join(self.data_dir, "analysis_reports")
+            
+            if not os.path.exists(reports_dir):
+                return []
+
+            # 获取用户的所有报告文件
+            user_reports = []
+            for filename in os.listdir(reports_dir):
+                if filename.startswith(f"{user_id}_") and filename.endswith(".json"):
+                    user_reports.append(filename)
+
+            if not user_reports:
+                return []
+
+            # 按时间戳排序（最新的在前）
+            user_reports.sort(reverse=True)
+
+            if limit is not None and limit > 0:
+                user_reports = user_reports[:limit]
+
+            # 读取报告数据
+            reports = []
+            for filename in user_reports:
+                try:
+                    report_file = os.path.join(reports_dir, filename)
+                    with self.lock:
+                        with open(report_file, "r", encoding="utf-8") as f:
+                            report_data = json.load(f)
+                            reports.append(report_data)
+                except Exception as e:
+                    print(f"Error reading report file {filename}: {str(e)}")
+                    continue
+
+            return reports
+
+        except Exception as e:
+            print(f"Error getting analysis reports history: {str(e)}")
+            return []
