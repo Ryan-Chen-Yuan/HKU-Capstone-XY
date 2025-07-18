@@ -34,28 +34,11 @@
 
 \subsection{Environment Variable Configuration}
 
-The system uses a \texttt{.env} file in the \texttt{server/} directory to manage configuration. Key parameters include:
-
-\begin{itemize}
-    \item \texttt{FLASK_ENV}: Set to \texttt{development} for local testing.
-    \item \texttt{PORT}: Backend server port (default: 5858).
-    \item \texttt{HOST}: Server host (default: 0.0.0.0).
-    \item \texttt{OPENAI_API_KEY}: Your OpenAI API key (required for LLM features).
-    \item \texttt{BASE_URL}: LLM API base URL (default: https://api.sambanova.ai/v1).
-    \item \texttt{MODEL_NAME}: Main LLM model (e.g., Meta-Llama-3.1-8B-Instruct).
-    \item \texttt{MAX_TOKENS}: Maximum tokens per response (default: 1000).
-    \item \texttt{TEMPERATURE}: Sampling temperature (e.g., 0.1 for stable, 0.7 for more creative).
-    \item \texttt{ENABLE_GUIDED_INQUIRY}: Enable guided inquiry tool (True/False).
-    \item \texttt{ENABLE_PATTERN_ANALYSIS}: Enable pattern analysis tool (True/False).
-    \item \texttt{CHAT_API_KEY}, \texttt{CHAT_MODEL_NAME}, \texttt{CHAT_BASE_URL}: For chat-specific LLM configuration.
-    \item \texttt{EVENT_API_KEY}, \texttt{EVENT_MODEL_NAME}, \texttt{EVENT_BASE_URL}: For event extraction LLM configuration.
-    \item \texttt{SERPAPI_KEY}: API key for search feature (optional).
-\end{itemize}
+The system uses a \texttt{.env} file in the \texttt{server/} directory to manage configuration. 
 
 \subsection{User Guide}
 
 \subsubsection{Getting Started}
-<<<<<<< HEAD
 \begin{enumerate}
     \item Open the WeChat Mini Program in the developer tools or on your device.
     \item Start a conversation with the AI assistant.
@@ -71,86 +54,15 @@ The system uses a \texttt{.env} file in the \texttt{server/} directory to manage
     \item \textbf{Slow Responses}: May occur during peak usage or if the LLM API rate limit is reached. Try again later.
     \item \textbf{Connection Errors}: Ensure the backend server is running and accessible at the configured address.
     \item \textbf{API Key Issues}: Make sure all required API keys are set and valid in the \texttt{.env} file.
-    \item \textbf{AI Response Quality}: Adjust \texttt{MODEL_NAME} or \texttt{TEMPERATURE} in the \texttt{.env} file for different response styles.
+    \item \textbf{Content integrity}: Since the rag function in our code requires two models with a total size of 4GB, which exceeds the file size allowed for upload by moodle, we put the code containing the complete rag function on github instead of moodle. Here is the github link: \url{https://github.com/Ryan-Chen-Yuan/HKU-Capstone-XY}.
 \end{itemize}
 
 \subsubsection{Support}
 For technical support, contact:
 \begin{itemize}
-    \item Chen Yuan (\texttt{ryan.chenyuan@connect.hku.hk})
-    \item Xu Hanlin (\texttt{hallymxu@gmail.com})
-    \item Yu Yitao (\texttt{yitao_yu2024@connect.hku.hk})
-    \item Su Yingcheng (\texttt{suyingc@connect.hku.hk})
-    \item Wang Xueyao (\texttt{xywang5@connect.hku.hk})
+    \item Chen Yuan (ryan.chenyuan@connect.hku.hk))
+    \item Xu Hanlin (hallymxu@gmail.com)
+    \item Yu Yitao (yitao\_yu2024@connect.hku.hk)
+    \item Su Yingcheng (suyingc@connect.hku.hk)
+    \item Wang Xueyao (xywang5@connect.hku.hk)
 \end{itemize}
-=======
-
-\begin{enumerate}
-    \item Open the WeChat Mini Program
-    \item Start a conversation with the AI assistant
-    \item Express your thoughts and feelings
-    \item Receive empathetic responses and emotional analysis
-\end{enumerate}
-
-\subsubsection{Features}
-
-\begin{itemize}
-    \item \textbf{Emotional Support}: Receive understanding and supportive responses
-    \item \textbf{Mood Analysis}: Get real-time emotional state analysis
-    \item \textbf{Event Tracking}: Automatic identification of significant psychological events
-    \item \textbf{Progress Tracking}: Monitor emotional patterns over time
-    \item \textbf{Personalized Insights}: AI-generated recommendations based on your patterns
-\end{itemize}
-
-\subsection{System Architecture}
-
-\subsubsection{Backend Services}
-
-The backend implements a microservices architecture:
-
-\begin{itemize}
-    \item API Gateway for request routing and authentication
-    \item Chat Service for conversation management
-    \item Emotion Analysis Service for sentiment processing
-    \item Event Extraction Service for pattern recognition
-    \item User Profile Service for data management
-\end{itemize}
-
-\subsubsection{Data Storage}
-
-The system employs local file-based storage with encryption:
-
-\begin{itemize}
-    \item User profiles stored in encrypted JSON files
-    \item Conversation history with compression
-    \item Assessment data with privacy protection
-    \item System logs for monitoring and debugging
-\end{itemize}
-
-\subsubsection{Security Implementation}
-
-Security measures include:
-
-\begin{itemize}
-    \item End-to-end encryption for all data transmission
-    \item Local storage to minimize data exposure
-    \item User anonymity features
-    \item Access control and authentication
-    \item Regular security audits and updates
-\end{itemize}
-
-\subsection{Troubleshooting}
-
-\subsubsection{Common Issues}
-
-\begin{itemize}
-    \item \textbf{Connection Problems}: Check internet connection and server status
-    \item \textbf{Slow Responses}: May occur during peak usage times
-    \item \textbf{Data Loss}: Ensure regular backups of conversation history
-    \item \textbf{AI Response Quality}: Adjust model parameters if needed
-\end{itemize}
-
-\subsubsection{Support}
-
-For technical support, contact the development team through the provided channels in the project documentation. 
->>>>>>> 31d5f64... Docs: content of report by latex (#56)
