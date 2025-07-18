@@ -18,6 +18,7 @@ class AnalysisReportService:
         self.client = OpenAI(
             api_key=os.environ.get("CHAT_API_KEY"),
             base_url=os.environ.get("CHAT_BASE_URL"),
+            timeout=120  # 增加超时时间到120秒，因为报告生成需要较长时间
         )
         self.analysis_prompt = self._load_analysis_prompt()
         
@@ -72,13 +73,20 @@ class AnalysisReportService:
         
         Args:
             user_id: 用户ID
-            session_ids: 会话ID列表
+            session_ids: 会话ID列表，如果为None则获取所有会话
             time_period: 分析时间段（天数）
             
         Returns:
             Dict: 分析报告
         """
         try:
+            # 如果session_ids为None，获取用户的所有会话
+            if session_ids is None:
+                from dao.database import Database
+                db = Database()
+                session_ids = db.get_user_session_ids(user_id)
+                print(f"🔍 自动获取用户会话: {len(session_ids)} 个会话")
+            
             # 收集用户数据
             user_data = self._collect_user_data(user_id, session_ids, time_period)
             
@@ -139,18 +147,33 @@ class AnalysisReportService:
         }
         
         # 收集事件数据
-        for session_id in session_ids:
+        print(f"📊 开始收集事件数据，会话数量: {len(session_ids)}")
+        for i, session_id in enumerate(session_ids, 1):
+            print(f"  处理会话 {i}/{len(session_ids)}: {session_id}")
             events = db.get_events(session_id)
+            print(f"    原始事件数: {len(events)}")
+            
             # 过滤时间范围内的事件
             filtered_events = [
                 event for event in events 
                 if datetime.fromisoformat(event.get("time", "1900-01-01")) >= cutoff_date
             ]
+            print(f"    时间范围内事件数: {len(filtered_events)}")
+            
+            # 打印事件提取内容
+            if filtered_events:
+                print(f"    事件内容示例:")
+                for j, event in enumerate(filtered_events[:3], 1):  # 只显示前3个事件
+                    print(f"      事件{j}: {event.get('primaryType', '未知类型')} - {event.get('subType', '未知子类型')}")
+                    print(f"        时间: {event.get('time', '未知时间')}")
+                    print(f"        描述: {event.get('description', '无描述')[:100]}...")
+            
             user_data["events"].extend(filtered_events)
             
             # 收集行为模式数据
             pattern = db.get_pattern_analysis(session_id)
             if pattern:
+                print(f"    发现行为模式分析数据")
                 user_data["patterns"].append(pattern)
         
         # 收集情绪数据

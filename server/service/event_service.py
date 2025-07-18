@@ -13,10 +13,31 @@ class EventService:
 
     def __init__(self):
         """初始化事件提取服务"""
-        self.model = os.environ.get("EVENT_MODEL_NAME")
+        # 优先使用专门的事件模型配置，如果没有则使用通用配置
+        self.model = (
+            os.environ.get("EVENT_MODEL_NAME") or 
+            os.environ.get("MODEL_NAME", "deepseek-chat")
+        )
+        
+        api_key = (
+            os.environ.get("EVENT_API_KEY") or 
+            os.environ.get("OPENAI_API_KEY")
+        )
+        
+        base_url = (
+            os.environ.get("EVENT_BASE_URL") or 
+            os.environ.get("BASE_URL", "https://api.deepseek.com/v1")
+        )
+        
+        if not api_key:
+            raise ValueError("未找到API密钥配置，请检查EVENT_API_KEY或OPENAI_API_KEY环境变量")
+        
+        print(f"初始化事件提取服务，模型: {self.model}, 基础URL: {base_url}")
+        
         self.client = OpenAI(
-            api_key=os.environ.get("EVENT_API_KEY"),
-            base_url=os.environ.get("EVENT_BASE_URL"),
+            api_key=api_key,
+            base_url=base_url,
+            timeout=60  # 增加超时时间
         )
         self.prompt_template = self._load_prompt_template()
 
@@ -86,6 +107,11 @@ class EventService:
             List[Dict]: 提取的事件列表
         """
         try:
+            # 检查输入对话是否有效
+            if not conversation or len(conversation) == 0:
+                print("Warning: 对话列表为空，无法提取事件")
+                return []
+
             # 格式化对话历史
             formatted_conversation = "\n".join([
                 f"{msg['role']}: {msg['content']}"
@@ -96,32 +122,121 @@ class EventService:
             user_messages = [msg['content'] for msg in conversation if msg['role'] == 'user']
             dialog_content = "\n".join(user_messages)
 
+            print(f"开始事件提取，对话内容：\n{formatted_conversation}")
+            print(f"用户消息数量：{len(user_messages)}")
+
             # 准备系统提示
             messages = [
                 {"role": "system", "content": self.prompt_template},
                 {"role": "user", "content": f"请从以下对话中提取事件：\n\n{formatted_conversation}"}
             ]
 
-            # 调用OpenAI API，强制要求返回JSON对象
-            response = self.client.chat.completions.create(
-                model=self.model,
-                messages=messages,
-                max_tokens=1000,
-                temperature=0.1,  # 使用较低的温度以获得更确定性的结果
-                response_format={"type": "json_object"}, #使用response_format规定json输出
-            )
+            # 调用OpenAI API
+            print(f"调用LLM进行事件提取，模型：{self.model}")
+            try:
+                # 不使用response_format参数，因为某些模型不支持
+                response = self.client.chat.completions.create(
+                    model=self.model,
+                    messages=messages,
+                    max_tokens=1500,
+                    temperature=0.1,
+                )
+                print(f"LLM API调用成功")
+            except Exception as api_error:
+                print(f"LLM API调用失败: {api_error}")
+                return []
+            
+            # 检查响应是否有效
+            if not response:
+                print("Error: LLM响应对象为None")
+                return []
+            
+            # 检查是否有错误
+            if hasattr(response, 'error') and response.error:
+                print(f"Error: LLM返回错误: {response.error}")
+                return []
+            
+            # 检查choices
+            choices = response.choices if hasattr(response, 'choices') else None
+                
+            if not choices:
+                print("Error: choices字段为空")
+                return []
+                
+            if len(choices) == 0:
+                print("Error: choices为空数组")
+                return []
+            
+            print(f"LLM响应有效，choices数量: {len(choices)}")
+            
+            # 获取第一个选择
+            choice = choices[0]
+            
+            # 检查消息内容是否存在
+            message_content = None
+            if hasattr(choice, 'message') and hasattr(choice.message, 'content'):
+                message_content = choice.message.content
+            elif hasattr(choice, 'text'):
+                message_content = choice.text
+            elif isinstance(choice, dict):
+                if 'message' in choice and 'content' in choice['message']:
+                    message_content = choice['message']['content']
+                elif 'text' in choice:
+                    message_content = choice['text']
+            
+            if not message_content:
+                print("Error: 无法获取消息内容")
+                return []
 
             # 直接获取 JSON 对象
-            events_data = response.choices[0].message.content
+            events_data = message_content
+            print(f"LLM原始响应: {events_data[:200]}...")  # 只显示前200个字符
+
             if isinstance(events_data, str):
-                events_data = json.loads(events_data)
+                try:
+                    events_data = json.loads(events_data)
+                except json.JSONDecodeError as e:
+                    print(f"JSON解析失败，尝试提取JSON部分: {e}")
+                    
+                    # 尝试提取JSON部分
+                    import re
+                    json_match = re.search(r'\{.*\}', events_data, re.DOTALL)
+                    if json_match:
+                        try:
+                            events_data = json.loads(json_match.group())
+                            print("成功从响应中提取JSON")
+                        except json.JSONDecodeError:
+                            print("从响应中提取JSON失败")
+                            return []
+                    else:
+                        print("在响应中未找到JSON格式数据")
+                        return []
+            
             print(f"LLM Response(JSON): {events_data}")  # 添加日志
+
+            # 验证JSON结构
+            if not isinstance(events_data, dict):
+                print(f"Error: 响应不是有效的JSON对象: {type(events_data)}")
+                return []
+
+            if "events" not in events_data:
+                print("Warning: 响应中没有events字段，可能没有提取到事件")
+                return []
 
             # 处理事件数据，添加必要的字段
             current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
             events = events_data.get("events", [])
             
+            print(f"提取到 {len(events)} 个事件")
+            
             for i, event in enumerate(events):
+                # 验证事件结构
+                required_fields = ["primaryType", "subType", "title", "content"]
+                missing_fields = [field for field in required_fields if not event.get(field)]
+                if missing_fields:
+                    print(f"Warning: 事件 {i+1} 缺少必要字段: {missing_fields}")
+                    continue
+
                 # 生成唯一ID，使用时间戳、索引和标题哈希确保唯一性
                 timestamp = int(time.time() * 1000)
                 title_hash = abs(hash(event.get('title', ''))) % 10000
@@ -153,11 +268,16 @@ class EventService:
                     }
                     event["tagColor"] = tag_colors.get(event.get("primaryType", ""), "#848484")
 
+                print(f"事件 {i+1}: {event.get('title', 'N/A')} - {event.get('primaryType', 'N/A')}/{event.get('subType', 'N/A')}")
+
+            print(f"事件提取完成，共提取到 {len(events)} 个有效事件")
             return events
 
         except Exception as e:
             print(f"Error extracting events: {str(e)}")
             print(f"Full error details: {type(e).__name__}: {str(e)}")  # 添加更详细的错误信息
+            import traceback
+            print(f"Traceback: {traceback.format_exc()}")
             return []
 
     def get_events_by_conversation(self, conversation_id: str) -> List[Dict[str, Any]]:

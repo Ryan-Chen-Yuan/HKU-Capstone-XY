@@ -4,6 +4,7 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 import uuid
+import traceback
 from datetime import datetime
 import json
 import os
@@ -39,12 +40,41 @@ analysis_service = AnalysisReportService()
 
 
 def async_event_extraction(session_id, user_id, db, event_service):
-    # 获取最近4条历史消息用于事件提取
-    conversation = db.get_chat_history(session_id, limit=4)
-    if conversation:
+    """异步事件提取函数"""
+    try:
+        print(f"开始异步事件提取，会话ID: {session_id}, 用户ID: {user_id}")
+        
+        # 获取最近4条历史消息用于事件提取
+        conversation = db.get_chat_history(session_id, limit=4)
+        
+        if not conversation:
+            print(f"警告：会话 {session_id} 没有找到历史消息")
+            return
+        
+        print(f"获取到 {len(conversation)} 条历史消息")
+        
+        # 检查是否有用户消息
+        user_messages = [msg for msg in conversation if msg.get('role') == 'user']
+        if not user_messages:
+            print(f"警告：会话 {session_id} 没有用户消息，跳过事件提取")
+            return
+        
+        print(f"其中包含 {len(user_messages)} 条用户消息")
+        
+        # 开始事件提取
         events = event_service.extract_events(conversation)
+        
         if events:
+            print(f"成功提取到 {len(events)} 个事件，开始保存到数据库")
             db.save_events(session_id, events)
+            print(f"事件保存完成")
+        else:
+            print(f"会话 {session_id} 没有提取到任何事件")
+            
+    except Exception as e:
+        print(f"异步事件提取出错：{str(e)}")
+        import traceback
+        print(f"详细错误信息：{traceback.format_exc()}")
 
 
 @app.route("/api/chat", methods=["POST"])
@@ -60,7 +90,7 @@ def chat():
 
         user_id = data["user_id"]
         message = data["message"]
-        session_id = data["session_id"]
+        session_id = data.get("session_id")  # 使用get方法避免KeyError
         if not session_id or session_id == "":
             # 如果没有提供session_id，则生成一个新的
             session_id = str(uuid.uuid4())

@@ -15,6 +15,7 @@ class MoodService:
         self.client = OpenAI(
             api_key=os.environ.get("CHAT_API_KEY"),
             base_url=os.environ.get("CHAT_BASE_URL"),
+            timeout=45  # 增加超时时间
         )
         self.prompt_template = self._create_prompt_template()
 

@@ -103,6 +103,204 @@
       "emotion_score": 0.7368421052631582,
       "emotion_category": "happy",
       "timestamp": "2025-07-18T20:06:27.220628"
+    },
+    {
+      "session_id": "72e18087-52b5-4cb8-9ec3-940446bad21d",
+      "emotion_score": 0.3117256417880858,
+      "emotion_category": "happy",
+      "timestamp": "2025-07-19T04:21:15.135509"
+    },
+    {
+      "session_id": "72e18087-52b5-4cb8-9ec3-940446bad21d",
+      "emotion_score": 0.48193982166833016,
+      "emotion_category": "neutral",
+      "timestamp": "2025-07-19T04:22:45.474021"
+    },
+    {
+      "session_id": "72e18087-52b5-4cb8-9ec3-940446bad21d",
+      "emotion_score": 0.750696109394301,
+      "emotion_category": "sleepy",
+      "timestamp": "2025-07-19T04:26:54.478946"
+    },
+    {
+      "session_id": "d9cf6425-28cf-4dbc-bc04-67fb90b7ba5c",
+      "emotion_score": 0.3117256417880858,
+      "emotion_category": "happy",
+      "timestamp": "2025-07-19T04:37:40.212044"
+    },
+    {
+      "session_id": "d9cf6425-28cf-4dbc-bc04-67fb90b7ba5c",
+      "emotion_score": 0.9498173229673099,
+      "emotion_category": "sleepy",
+      "timestamp": "2025-07-19T04:40:10.942507"
+    },
+    {
+      "session_id": "d9cf6425-28cf-4dbc-bc04-67fb90b7ba5c",
+      "emotion_score": 0.750696109394301,
+      "emotion_category": "sleepy",
+      "timestamp": "2025-07-19T04:43:02.691616"
+    },
+    {
+      "session_id": "d9cf6425-28cf-4dbc-bc04-67fb90b7ba5c",
+      "emotion_score": 0.750696109394301,
+      "emotion_category": "neutral",
+      "timestamp": "2025-07-19T04:44:41.974797"
+    },
+    {
+      "session_id": "32f2e3f3-ed3a-40e6-a079-d1fee607572b",
+      "emotion_score": 0.3117256417880858,
+      "emotion_category": "happy",
+      "timestamp": "2025-07-19T04:57:27.674761"
+    },
+    {
+      "session_id": "32f2e3f3-ed3a-40e6-a079-d1fee607572b",
+      "emotion_score": 0.8907695850209059,
+      "emotion_category": "sleepy",
+      "timestamp": "2025-07-19T04:58:27.542452"
+    },
+    {
+      "session_id": "32f2e3f3-ed3a-40e6-a079-d1fee607572b",
+      "emotion_score": -0.5671178713312104,
+      "emotion_category": "sleepy",
+      "timestamp": "2025-07-19T04:59:43.728747"
+    },
+    {
+      "session_id": "32f2e3f3-ed3a-40e6-a079-d1fee607572b",
+      "emotion_score": 0.750696109394301,
+      "emotion_category": "sleepy",
+      "timestamp": "2025-07-19T05:01:51.644924"
+    },
+    {
+      "session_id": "3504b510-2fde-4dd1-aa34-1bf153d166fe",
+      "emotion_score": 0.6895781921979187,
+      "emotion_category": "sleepy",
+      "timestamp": "2025-07-19T05:23:18.486127"
+    },
+    {
+      "session_id": "3504b510-2fde-4dd1-aa34-1bf153d166fe",
+      "emotion_score": 0.750696109394301,
+      "emotion_category": "sleepy",
+      "timestamp": "2025-07-19T05:24:13.763793"
+    },
+    {
+      "session_id": "92b66da2-87cf-4e8d-9726-00d6bec552a3",
+      "emotion_score": 0.6322324750890671,
+      "emotion_category": "sleepy",
+      "timestamp": "2025-07-19T05:47:08.535025"
+    },
+    {
+      "session_id": "92b66da2-87cf-4e8d-9726-00d6bec552a3",
+      "emotion_score": 0.9828433028914723,
+      "emotion_category": "sad",
+      "timestamp": "2025-07-19T05:48:37.378437"
+    },
+    {
+      "session_id": "92b66da2-87cf-4e8d-9726-00d6bec552a3",
+      "emotion_score": 0.23747717223884734,
+      "emotion_category": "sleepy",
+      "timestamp": "2025-07-19T05:50:18.546544"
+    },
+    {
+      "session_id": "92b66da2-87cf-4e8d-9726-00d6bec552a3",
+      "emotion_score": 0.750696109394301,
+      "emotion_category": "neutral",
+      "timestamp": "2025-07-19T05:51:21.232070"
+    },
+    {
+      "session_id": "cf7d440a-be84-4e82-bbfa-9d700a0331dc",
+      "emotion_score": 0.3117256417880858,
+      "emotion_category": "happy",
+      "timestamp": "2025-07-19T06:25:59.597093"
+    },
+    {
+      "session_id": "cf7d440a-be84-4e82-bbfa-9d700a0331dc",
+      "emotion_score": 0.8346506868544898,
+      "emotion_category": "sad",
+      "timestamp": "2025-07-19T06:27:05.186082"
+    },
+    {
+      "session_id": "cf7d440a-be84-4e82-bbfa-9d700a0331dc",
+      "emotion_score": 0.8903543355941774,
+      "emotion_category": "sad",
+      "timestamp": "2025-07-19T06:28:48.384779"
+    },
+    {
+      "session_id": "cf7d440a-be84-4e82-bbfa-9d700a0331dc",
+      "emotion_score": 0.750696109394301,
+      "emotion_category": "neutral",
+      "timestamp": "2025-07-19T06:29:57.890741"
+    },
+    {
+      "session_id": "cf7d440a-be84-4e82-bbfa-9d700a0331dc",
+      "emotion_score": 0.2089192028076372,
+      "emotion_category": "sleepy",
+      "timestamp": "2025-07-19T06:32:47.931565"
+    }
+  ],
+  "test_user_new_workflow": [
+    {
+      "session_id": "test_session_new_workflow",
+      "emotion_score": -0.2781699864496412,
+      "emotion_category": "happy",
+      "timestamp": "2025-07-19T04:14:27.039359"
+    },
+    {
+      "session_id": "test_session_new_workflow",
+      "emotion_score": 0.19735012209222758,
+      "emotion_category": "sleepy",
+      "timestamp": "2025-07-19T04:15:15.561003"
+    },
+    {
+      "session_id": "test_session_new_workflow",
+      "emotion_score": -0.5032374443401928,
+      "emotion_category": "sleepy",
+      "timestamp": "2025-07-19T04:16:38.465246"
+    },
+    {
+      "session_id": "test_session_new_workflow",
+      "emotion_score": 0.8470993203855173,
+      "emotion_category": "neutral",
+      "timestamp": "2025-07-19T04:17:28.565856"
+    },
+    {
+      "session_id": "test_session_new_workflow",
+      "emotion_score": -0.12794810622667052,
+      "emotion_category": "happy",
+      "timestamp": "2025-07-19T04:18:13.059700"
+    }
+  ],
+  "test_user_fix_verification": [
+    {
+      "session_id": "4c39bbea-781a-4544-ab71-01606049584e",
+      "emotion_score": -0.35740867725229686,
+      "emotion_category": "sad",
+      "timestamp": "2025-07-19T05:17:46.107615"
+    },
+    {
+      "session_id": "44cc70ce-a06a-4ae4-891f-37f3f90769d6",
+      "emotion_score": 0.750696109394301,
+      "emotion_category": "happy",
+      "timestamp": "2025-07-19T05:18:17.255733"
+    },
+    {
+      "session_id": "8210dc00-ec6f-462c-8ff9-9094d82627e6",
+      "emotion_score": 0.4653278401276042,
+      "emotion_category": "sleepy",
+      "timestamp": "2025-07-19T05:19:31.143153"
+    }
+  ],
+  "test_user": [
+    {
+      "session_id": "64b24565-ac34-4c70-8809-4cf334ff5666",
+      "emotion_score": 0.750696109394301,
+      "emotion_category": "happy",
+      "timestamp": "2025-07-19T05:19:33.940373"
+    },
+    {
+      "session_id": "64b631e9-630c-4041-816c-d53f546efe5b",
+      "emotion_score": 0.06250000000000022,
+      "emotion_category": "happy",
+      "timestamp": "2025-07-19T05:20:31.081386"
     }
   ]
 }
