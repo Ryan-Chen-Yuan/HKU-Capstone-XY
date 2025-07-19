@@ -19,7 +19,11 @@ cd server
 pip install -r requirements.txt
 ```
 
-3. Configure environment variables
+3. model download
+
+run download.ipynb
+
+4. Configure environment variables
 
 Copy the environment variable example file and configure it:
 
@@ -27,10 +31,10 @@ Copy the environment variable example file and configure it:
 cp .env .env
 ```
 
-4. Start the server
+5. Start the server
 
 ```bash
-python app.py
+python start.py
 ```
 
 The server will run on http://localhost:5858 by default.
