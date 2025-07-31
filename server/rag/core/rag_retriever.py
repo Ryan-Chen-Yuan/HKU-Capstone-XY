@@ -148,21 +148,45 @@ class RAGRetriever:
         self._load_rerank_model()
         
         if not self.rerank_enabled or self.rerank_model is None:
-            # 重排序不可用，返回原始结果
+            # 重排序不可用，返回原始结果（去重）
             reranked_results = []
-            for i, result in enumerate(search_results[:top_k]):
+            seen_content = set()
+            
+            for i, result in enumerate(search_results):
+                # 内容去重
+                content_key = self._get_content_key(result.chunk.content)
+                if content_key in seen_content:
+                    continue
+                seen_content.add(content_key)
+                
                 reranked_results.append(RerankedResult(
                     chunk=result.chunk,
                     similarity_score=result.score,
                     rerank_score=None,
-                    final_rank=i + 1
+                    final_rank=len(reranked_results) + 1
                 ))
+                
+                if len(reranked_results) >= top_k:
+                    break
+                    
             return reranked_results
         
         try:
+            # 对搜索结果进行预去重
+            unique_results = []
+            seen_content = set()
+            
+            for result in search_results:
+                content_key = self._get_content_key(result.chunk.content)
+                if content_key not in seen_content:
+                    seen_content.add(content_key)
+                    unique_results.append(result)
+            
+            logger.debug(f"重排序前去重: {len(search_results)} -> {len(unique_results)} 个候选")
+            
             # 准备重排序输入
             pairs = []
-            for result in search_results:
+            for result in unique_results:
                 pairs.append([query, result.chunk.content])
             
             # 执行重排序
@@ -171,7 +195,7 @@ class RAGRetriever:
             
             # 组合结果并排序
             combined_results = []
-            for i, (result, rerank_score) in enumerate(zip(search_results, rerank_scores)):
+            for i, (result, rerank_score) in enumerate(zip(unique_results, rerank_scores)):
                 combined_results.append(RerankedResult(
                     chunk=result.chunk,
                     similarity_score=result.score,
@@ -179,7 +203,7 @@ class RAGRetriever:
                     final_rank=0  # 临时值，排序后会更新
                 ))
             
-            # 按重排序分数排序
+            # 按重排序分数排序（从高到低）
             combined_results.sort(key=lambda x: x.rerank_score, reverse=True)
             
             # 更新最终排名并截取top_k
@@ -193,16 +217,35 @@ class RAGRetriever:
             
         except Exception as e:
             logger.error(f"重排序失败: {e}")
-            # 回退到原始结果
+            # 回退到原始结果（去重）
             reranked_results = []
-            for i, result in enumerate(search_results[:top_k]):
+            seen_content = set()
+            
+            for i, result in enumerate(search_results):
+                content_key = self._get_content_key(result.chunk.content)
+                if content_key in seen_content:
+                    continue
+                seen_content.add(content_key)
+                
                 reranked_results.append(RerankedResult(
                     chunk=result.chunk,
                     similarity_score=result.score,
                     rerank_score=None,
-                    final_rank=i + 1
+                    final_rank=len(reranked_results) + 1
                 ))
+                
+                if len(reranked_results) >= top_k:
+                    break
+                    
             return reranked_results
+    
+    def _get_content_key(self, content: str) -> str:
+        """生成内容的唯一标识符"""
+        import hashlib
+        # 使用前200个字符的hash作为去重键，更精确
+        content_sample = content[:200].strip()
+        content_hash = hashlib.md5(content_sample.encode('utf-8')).hexdigest()[:16]
+        return content_hash
     
     def get_context_for_query(self, query: str, top_k: int = 3, use_rerank: bool = True) -> str:
         """

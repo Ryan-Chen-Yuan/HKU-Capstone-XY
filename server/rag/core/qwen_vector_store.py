@@ -7,6 +7,7 @@
 import os
 import json
 import pickle
+import hashlib
 import logging
 import numpy as np
 import torch
@@ -297,18 +298,33 @@ class QwenVectorStore:
         
         all_chunks = []
         all_texts = []
+        existing_content = set()
+        
+        # 收集已存在的内容用于去重
+        for chunk in self.chunks:
+            content_key = self._get_content_key(chunk.content)
+            existing_content.add(content_key)
         
         # 处理所有文档 - 添加进度条
         print(f"📄 开始处理 {len(documents)} 个文档...")
         for content, source_file in tqdm(documents, desc="分析文档", unit="个"):
             chunks = self._split_text_into_chunks(content, source_file)
-            all_chunks.extend(chunks)
-            all_texts.extend([chunk.content for chunk in chunks])
+            
+            # 对新生成的chunks进行去重
+            for chunk in chunks:
+                content_key = self._get_content_key(chunk.content)
+                if content_key not in existing_content:
+                    existing_content.add(content_key)
+                    all_chunks.append(chunk)
+                    all_texts.append(chunk.content)
+                else:
+                    logger.debug(f"跳过重复内容块: {chunk.source_file}_{chunk.chunk_index}")
         
         if not all_texts:
+            print("📊 没有新的文档块需要添加")
             return 0
         
-        print(f"📊 总共生成 {len(all_texts)} 个文档块")
+        print(f"📊 去重后生成 {len(all_texts)} 个新文档块")
         
         # 批量生成嵌入 - 添加进度条
         logger.info(f"生成 {len(all_texts)} 个文档块的嵌入向量...")
@@ -425,7 +441,7 @@ class QwenVectorStore:
             top_k: 返回结果数量
             
         Returns:
-            搜索结果列表
+            搜索结果列表（已去重）
         """
         if self.index is None or len(self.chunks) == 0:
             logger.warning("向量索引为空")
@@ -440,24 +456,47 @@ class QwenVectorStore:
             normalize_embeddings=True
         )
         
-        # 搜索
+        # 搜索更多候选以便去重后仍有足够结果
+        search_k = min(top_k * 3, len(self.chunks))
         scores, indices = self.index.search(
             query_embedding.astype(np.float32), 
-            min(top_k, len(self.chunks))
+            search_k
         )
         
-        # 构建结果
+        # 构建结果并去重
         results = []
+        seen_content = set()  # 用于内容去重
+        
         for rank, (score, idx) in enumerate(zip(scores[0], indices[0])):
             if idx < len(self.chunks):
+                chunk = self.chunks[idx]
+                
+                # 增强的内容去重：使用内容hash和前100字符双重检查
+                content_key = self._get_content_key(chunk.content)
+                if content_key in seen_content:
+                    logger.debug(f"跳过重复内容块: {chunk.source_file}_{chunk.chunk_index}")
+                    continue
+                
+                seen_content.add(content_key)
                 result = SearchResult(
-                    chunk=self.chunks[idx],
+                    chunk=chunk,
                     score=float(score),
-                    rank=rank + 1
+                    rank=len(results) + 1  # 重新计算排名
                 )
                 results.append(result)
+                
+                # 达到所需数量就停止
+                if len(results) >= top_k:
+                    break
         
         return results
+    
+    def _get_content_key(self, content: str) -> str:
+        """生成内容的唯一标识符"""
+        # 使用前200个字符的hash作为去重键，更精确
+        content_sample = content[:200].strip()
+        content_hash = hashlib.md5(content_sample.encode('utf-8')).hexdigest()[:16]
+        return content_hash
     
     def get_stats(self) -> Dict[str, Any]:
         """获取向量存储统计信息"""
