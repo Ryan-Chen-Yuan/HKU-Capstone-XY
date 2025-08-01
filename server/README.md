@@ -20,12 +20,13 @@
 
 1. 克隆仓库或进入已下载的项目目录
 
-2. 安装依赖
+2. 安装依赖，
 
 ```bash
 cd server
 pip install -r requirements.txt
 ```
+download.ipynb下载模型
 
 3. 配置环境变量
 

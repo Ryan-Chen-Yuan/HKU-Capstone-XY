@@ -318,6 +318,7 @@ Page({
     wx.request({
       url: `${API_BASE_URL}/chat/history`,
       method: 'GET',
+      timeout: 30000, // 增加超时时间到30秒
       data: {
         user_id: this.data.user_id,
         session_id: sessionId
@@ -484,6 +485,15 @@ Page({
         isLoading: true
     });
 
+    // 如果是知己报告请求，显示特殊提示
+    if (content.includes('知己报告') || content.includes('分析报告')) {
+      wx.showToast({
+        title: '正在生成深度分析报告，预计需要1-2分钟，请耐心等待...',
+        icon: 'none',
+        duration: 3000
+      });
+    }
+
     this.scrollToBottom();
 
     // Prepare history for context
@@ -497,6 +507,7 @@ Page({
     wx.request({
       url: `${API_BASE_URL}/chat`,
       method: 'POST',
+      timeout: 120000, // 增加超时时间到120秒，以应对知己报告等长时间任务
       data: {
         user_id: this.data.user_id,
         session_id: this.data.session_id, // 如果是新对话，可能为空
@@ -566,7 +577,13 @@ Page({
       },
       fail: (error) => {
         console.error('API请求失败:', error)
-        this.handleApiError()
+        // 检查是否是超时错误
+        const isTimeout = error && (
+          error.errMsg && error.errMsg.includes('timeout') || 
+          error.errno === -3 || 
+          error.errno === 60002
+        )
+        this.handleApiError(null, isTimeout)
       }
     })
 
@@ -586,6 +603,7 @@ Page({
     wx.request({
       url: `${API_BASE_URL}/mood`,
       method: 'POST',
+      timeout: 20000, // 增加超时时间到20秒
       data: {
           user_id: this.data.user_id,
           session_id: this.data.session_id,
@@ -634,11 +652,15 @@ Page({
   },
 
   // 处理API错误
-  handleApiError: function(res) {
+  handleApiError: function(res, isTimeout = false) {
     let errorMsg = '网络连接错误，请稍后再试'
     
-    if (res && res.data && res.data.error_message) {
+    if (isTimeout) {
+      errorMsg = 'AI正在深度分析中，处理时间较长。这通常发生在生成知己报告等复杂任务时，请耐心等待或稍后重试'
+    } else if (res && res.data && res.data.error_message) {
       errorMsg = res.data.error_message
+    } else if (res && res.statusCode) {
+      errorMsg = `服务器错误 (${res.statusCode})，请稍后重试`
     }
 
     const aiResponse = {

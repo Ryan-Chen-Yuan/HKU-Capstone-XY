@@ -26,3 +26,8 @@ prompt.md
 .cursorrules
 .cursor/
 
+/server/models--Qwen--Qwen3-Embedding-0.6B/
+/server/models--tomaarsen--Qwen3-Reranker-0.6B-seq-cls/
+/server/qwen_embeddings/
+/server/qwen_reranker/
+

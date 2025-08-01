@@ -34,23 +34,7 @@
 
 \subsection{Environment Variable Configuration}
 
-The system uses a \texttt{.env} file in the \texttt{server/} directory to manage configuration. Key parameters include:
-
-\begin{itemize}
-    \item \texttt{FLASK_ENV}: Set to \texttt{development} for local testing.
-    \item \texttt{PORT}: Backend server port (default: 5858).
-    \item \texttt{HOST}: Server host (default: 0.0.0.0).
-    \item \texttt{OPENAI_API_KEY}: Your OpenAI API key (required for LLM features).
-    \item \texttt{BASE_URL}: LLM API base URL (default: https://api.sambanova.ai/v1).
-    \item \texttt{MODEL_NAME}: Main LLM model (e.g., Meta-Llama-3.1-8B-Instruct).
-    \item \texttt{MAX_TOKENS}: Maximum tokens per response (default: 1000).
-    \item \texttt{TEMPERATURE}: Sampling temperature (e.g., 0.1 for stable, 0.7 for more creative).
-    \item \texttt{ENABLE_GUIDED_INQUIRY}: Enable guided inquiry tool (True/False).
-    \item \texttt{ENABLE_PATTERN_ANALYSIS}: Enable pattern analysis tool (True/False).
-    \item \texttt{CHAT_API_KEY}, \texttt{CHAT_MODEL_NAME}, \texttt{CHAT_BASE_URL}: For chat-specific LLM configuration.
-    \item \texttt{EVENT_API_KEY}, \texttt{EVENT_MODEL_NAME}, \texttt{EVENT_BASE_URL}: For event extraction LLM configuration.
-    \item \texttt{SERPAPI_KEY}: API key for search feature (optional).
-\end{itemize}
+The system uses a \texttt{.env} file in the \texttt{server/} directory to manage configuration. 
 
 \subsection{User Guide}
 
@@ -70,15 +54,15 @@ The system uses a \texttt{.env} file in the \texttt{server/} directory to manage
     \item \textbf{Slow Responses}: May occur during peak usage or if the LLM API rate limit is reached. Try again later.
     \item \textbf{Connection Errors}: Ensure the backend server is running and accessible at the configured address.
     \item \textbf{API Key Issues}: Make sure all required API keys are set and valid in the \texttt{.env} file.
-    \item \textbf{AI Response Quality}: Adjust \texttt{MODEL_NAME} or \texttt{TEMPERATURE} in the \texttt{.env} file for different response styles.
+    \item \textbf{Content integrity}: Since the rag function in our code requires two models with a total size of 4GB, which exceeds the file size allowed for upload by moodle, we put the code containing the complete rag function on github instead of moodle. Here is the github link: \url{https://github.com/Ryan-Chen-Yuan/HKU-Capstone-XY}.
 \end{itemize}
 
 \subsubsection{Support}
 For technical support, contact:
 \begin{itemize}
-    \item Chen Yuan (\texttt{ryan.chenyuan@connect.hku.hk})
-    \item Xu Hanlin (\texttt{hallymxu@gmail.com})
-    \item Yu Yitao (\texttt{yitao_yu2024@connect.hku.hk})
-    \item Su Yingcheng (\texttt{suyingc@connect.hku.hk})
-    \item Wang Xueyao (\texttt{xywang5@connect.hku.hk})
+    \item Chen Yuan (ryan.chenyuan@connect.hku.hk))
+    \item Xu Hanlin (hallymxu@gmail.com)
+    \item Yu Yitao (yitao\_yu2024@connect.hku.hk)
+    \item Su Yingcheng (suyingc@connect.hku.hk)
+    \item Wang Xueyao (xywang5@connect.hku.hk)
 \end{itemize}

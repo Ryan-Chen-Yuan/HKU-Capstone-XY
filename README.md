@@ -21,7 +21,11 @@ cd server
 pip install -r requirements.txt
 ```
 
-3. Configure environment variables
+3. model download
+
+run download.ipynb
+
+4. Configure environment variables
 
 Copy the environment variable example file and configure it:
 
@@ -29,7 +33,7 @@ Copy the environment variable example file and configure it:
 cp .env.example .env
 ```
 
-4. Start the server
+5. Start the server
 
 ```bash
 python start.py
